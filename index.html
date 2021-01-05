@@ -10,7 +10,7 @@
                 background-image: url(img/tatami.jpg);
             }
             @media screen and (orientation: landscape) {
-                #ban {
+                #honkaya {
                     position: absolute;
                     left: 50%;
                     top: 50%;
@@ -35,11 +35,34 @@
                     border:2px solid #000;
                     width:9vh;
                     height:10vh;
-                    text-align:center;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                    background-size: 7vh 8vh;
+                }
+                #mask {
+                    display: none;
+                    border-collapse:collapse;
+                    border:3px solid #000; 
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 81vh;
+                    height: 90vh;
+                    background-color: #000;
+                    opacity: 0.2;
+                }
+                #mask td {
+                    border:2px solid #000;
+                    width:9vh;
+                    height:10vh;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                    background-size: 8vh 9vh;
                 }
             }
             @media screen and (orientation: portrait) {
-                #ban {
+                #honkaya {
                     position: absolute;
                     left: 50%;
                     top: 50%;
@@ -64,13 +87,36 @@
                     border:2px solid #000;
                     width:9vw;
                     height:10vw;
-                    text-align:center;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                    background-size: 7vw 8vw;
+                }
+                #mask {
+                    display: none;
+                    border-collapse:collapse;
+                    border:3px solid #000; 
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 81vw;
+                    height: 90vw;
+                    background-color: #000;
+                    opacity: 0.2;
+                }
+                #mask td {
+                    border:2px solid #000;
+                    width:9vw;
+                    height:10vw;
+                    background-position: center center;
+                    background-repeat: no-repeat;
+                    background-size: 8vw 9vw;
                 }
             }
         </style>
     </head>
     <body>
-        <div id="ban">
+        <div id="honkaya">
             <table id="board">
                 <tbody>
                 <tr><td id="s11"></td><td id="s12"></td><td id="s13"></td><td id="s14"></td><td id="s15"></td><td id="s16"></td><td id="s17"></td><td id="s18"></td><td id="s19"></td></tr>
@@ -82,6 +128,19 @@
                 <tr><td id="s71"></td><td id="s72"></td><td id="s73"></td><td id="s74"></td><td id="s75"></td><td id="s76"></td><td id="s77"></td><td id="s78"></td><td id="s79"></td></tr>
                 <tr><td id="s81"></td><td id="s82"></td><td id="s83"></td><td id="s84"></td><td id="s85"></td><td id="s86"></td><td id="s87"></td><td id="s88"></td><td id="s89"></td></tr>
                 <tr><td id="s91"></td><td id="s92"></td><td id="s93"></td><td id="s94"></td><td id="s95"></td><td id="s96"></td><td id="s97"></td><td id="s98"></td><td id="s99"></td></tr>
+                </tbody>
+            </table>
+            <table id="mask">
+                <tbody>
+                <tr><td id="ms11"></td><td id="ms12"></td><td id="ms13"></td><td id="ms14"></td><td id="ms15"></td><td id="ms16"></td><td id="ms17"></td><td id="ms18"></td><td id="ms19"></td></tr>
+                <tr><td id="ms21"></td><td id="ms22"></td><td id="ms23"></td><td id="ms24"></td><td id="ms25"></td><td id="ms26"></td><td id="ms27"></td><td id="ms28"></td><td id="ms29"></td></tr>
+                <tr><td id="ms31"></td><td id="ms32"></td><td id="ms33"></td><td id="ms34"></td><td id="ms35"></td><td id="ms36"></td><td id="ms37"></td><td id="ms38"></td><td id="ms39"></td></tr>
+                <tr><td id="ms41"></td><td id="ms42"></td><td id="ms43"></td><td id="ms44"></td><td id="ms45"></td><td id="ms46"></td><td id="ms47"></td><td id="ms48"></td><td id="ms49"></td></tr>
+                <tr><td id="ms51"></td><td id="ms52"></td><td id="ms53"></td><td id="ms54"></td><td id="ms55"></td><td id="ms56"></td><td id="ms57"></td><td id="ms58"></td><td id="ms59"></td></tr>
+                <tr><td id="ms61"></td><td id="ms62"></td><td id="ms63"></td><td id="ms64"></td><td id="ms65"></td><td id="ms66"></td><td id="ms67"></td><td id="ms68"></td><td id="ms69"></td></tr>
+                <tr><td id="ms71"></td><td id="ms72"></td><td id="ms73"></td><td id="ms74"></td><td id="ms75"></td><td id="ms76"></td><td id="ms77"></td><td id="ms78"></td><td id="ms79"></td></tr>
+                <tr><td id="ms81"></td><td id="ms82"></td><td id="ms83"></td><td id="ms84"></td><td id="ms85"></td><td id="ms86"></td><td id="ms87"></td><td id="ms88"></td><td id="ms89"></td></tr>
+                <tr><td id="ms91"></td><td id="ms92"></td><td id="ms93"></td><td id="ms94"></td><td id="ms95"></td><td id="ms96"></td><td id="ms97"></td><td id="ms98"></td><td id="ms99"></td></tr>
                 </tbody>
             </table>
         </div>
