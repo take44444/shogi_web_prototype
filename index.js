@@ -702,6 +702,282 @@ function makePath(x, y) {
             msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
+    } else if (board[x][y] == HI) {
+        for (var yTo = y-1; yTo >= 1; yTo--) {
+            if (board[x][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+            } else if (komaIsGote(board[x][yTo])) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var yTo = y+1; yTo <= 9; yTo++) {
+            if (board[x][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+            } else if (komaIsGote(board[x][yTo])) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x-1; xTo >= 1; xTo--) {
+            if (board[xTo][y] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
+            } else if (komaIsGote(board[xTo][y])) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x+1; xTo <= 9; xTo++) {
+            if (board[xTo][y] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
+            } else if (komaIsGote(board[xTo][y])) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
+                break;
+            } else {
+                break;
+            }
+        }
+    } else if (board[x][y] == EHI) {
+        for (var yTo = y+1; yTo <= 9; yTo++) {
+            if (board[x][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+            } else if (komaIsSente(board[x][yTo])) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var yTo = y-1; yTo >= 1; yTo--) {
+            if (board[x][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+            } else if (komaIsSente(board[x][yTo])) {
+                var msquare = document.getElementById("ms"+x+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x-1; xTo >= 1; xTo--) {
+            if (board[xTo][y] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
+            } else if (komaIsSente(board[xTo][y])) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x+1; xTo <= 9; xTo++) {
+            if (board[xTo][y] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
+            } else if (komaIsSente(board[xTo][y])) {
+                var msquare = document.getElementById("ms"+xTo+y);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
+                break;
+            } else {
+                break;
+            }
+        }
+    } else if (board[x][y] == KA) {
+        for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsGote(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsGote(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsGote(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsGote(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+    } else if (board[x][y] == EKA) {
+        for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsSente(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsSente(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsSente(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
+        for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
+            if (board[xTo][yTo] == EMPTY) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
+            } else if (komaIsSente(board[xTo][yTo])) {
+                var msquare = document.getElementById("ms"+xTo+yTo);
+                msquare.style.opacity = "0.0";
+                msquare.style.backgroundImage = "";
+                // TODO
+                // msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
+                break;
+            } else {
+                break;
+            }
+        }
     }
 }
 
