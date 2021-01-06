@@ -81,6 +81,25 @@
                 background-repeat: no-repeat;
                 background-size: 35px 40px;
             }
+            #komadai_enemy_mask {
+                visibility: hidden;
+                width: 175px;
+                height: 200px;
+                position: absolute;
+                left: 2px;
+                top: 10px;
+                background-size: 200px 200px;
+                background-repeat: repeat;
+                background-image: url("img/ban.jpg");
+            }
+            #komadai_enemy_mask td {
+                width: 52px;
+                height: 57px;
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-size: 35px 40px;
+                background-color: #000;
+            }
             #komadai_self {
                 width: 175px;
                 height: 200px;
@@ -97,6 +116,25 @@
                 background-position: center center;
                 background-repeat: no-repeat;
                 background-size: 35px 40px;
+            }
+            #komadai_self_mask {
+                visibility: hidden;
+                width: 175px;
+                height: 200px;
+                position: absolute;
+                left: 683px;
+                top: 385px;
+                background-size: 200px 200px;
+                background-repeat: repeat;
+                background-image: url("img/ban.jpg");
+            }
+            #komadai_self_mask td {
+                width: 52px;
+                height: 57px;
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-size: 35px 40px;
+                background-color: #000;
             }
         </style>
     </head>
@@ -137,7 +175,21 @@
                 <tr><td id="EKE"></td><td id="EKY"></td><td id="EFU"></td></tr>
                 </tbody>
             </table>
+            <table id="komadai_enemy_mask">
+                <tbody>
+                <tr><td id="EHI"></td><td id="EKA"></td></tr>
+                <tr><td id="EKI"></td><td id="EGI"></td></tr>
+                <tr><td id="EKE"></td><td id="EKY"></td><td id="EFU"></td></tr>
+                </tbody>
+            </table>
             <table id="komadai_self">
+                <tbody>
+                <tr><td id="HI"></td><td id="KA"></td></tr>
+                <tr><td id="KI"></td><td id="GI"></td></tr>
+                <tr><td id="KE"></td><td id="KY"></td><td id="FU"></td></tr>
+                </tbody>
+            </table>
+            <table id="komadai_self_mask">
                 <tbody>
                 <tr><td id="HI"></td><td id="KA"></td></tr>
                 <tr><td id="KI"></td><td id="GI"></td></tr>
