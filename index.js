@@ -91,7 +91,7 @@ function showBoard() {
                 (function() {
                     var xLocal = x, yLocal = y;
                     square.onclick = function() {
-                        if (turn == komaIsSente(board[xLocal][yLocal]) && !nariWindowFlg) {
+                        if (turn == komaIsSente(board[xLocal][yLocal])) {
                             selectSelfKoma(xLocal, yLocal);
                         }
                     }
@@ -100,27 +100,76 @@ function showBoard() {
         }
     }
 
-    showTegoma()
+    showTegoma();
 
     // var turnMessageElement = document.getElementById("turn_message");
     // (turn) ? turnMessageElement.innerHTML = "??????<br>" : turnMessageElement.innerHTML = "??????<br>";
 }
 
 function showTegoma() {
-    document.getElementById("HI").dataset.num = tegoma[1][HI];
-    document.getElementById("KA").dataset.num = tegoma[1][KA];
-    document.getElementById("KI").dataset.num = tegoma[1][KI];
-    document.getElementById("GI").dataset.num = tegoma[1][GI];
-    document.getElementById("KE").dataset.num = tegoma[1][KE];
-    document.getElementById("KY").dataset.num = tegoma[1][KY];
-    document.getElementById("FU").dataset.num = tegoma[1][FU];
-    document.getElementById("EHI").dataset.num = tegoma[0][HI];
-    document.getElementById("EKA").dataset.num = tegoma[0][KA];
-    document.getElementById("EKI").dataset.num = tegoma[0][KI];
-    document.getElementById("EGI").dataset.num = tegoma[0][GI];
-    document.getElementById("EKE").dataset.num = tegoma[0][KE];
-    document.getElementById("EKY").dataset.num = tegoma[0][KY];
-    document.getElementById("EFU").dataset.num = tegoma[0][FU];
+    for(var i = 0; i <= 1; i++){
+		for(var j = 0; j <= HI; j++){
+            var square;
+            if (i == SENTE) {
+                if (j == HI) {
+                    square = document.getElementById("HI");
+                    square.dataset.num = tegoma[SENTE][HI];
+                } else if (j == KA) {
+                    square = document.getElementById("KA");
+                    square.dataset.num = tegoma[SENTE][KA];
+                } else if (j == KI) {
+                    square = document.getElementById("KI");
+                    square.dataset.num = tegoma[SENTE][KI];
+                } else if (j == GI) {
+                    square = document.getElementById("GI");
+                    square.dataset.num = tegoma[SENTE][GI];
+                } else if (j == KE) {
+                    square = document.getElementById("KE");
+                    square.dataset.num = tegoma[SENTE][KE];
+                } else if (j == KY) {
+                    square = document.getElementById("KY");
+                    square.dataset.num = tegoma[SENTE][KY];
+                } else if (j == FU) {
+                    square = document.getElementById("FU");
+                    square.dataset.num = tegoma[SENTE][FU];
+                }
+            } else {
+                if (j == HI) {
+                    square = document.getElementById("EHI");
+                    square.dataset.num = tegoma[GOTE][HI];
+                } else if (j == KA) {
+                    square = document.getElementById("EKA");
+                    square.dataset.num = tegoma[GOTE][KA];
+                } else if (j == KI) {
+                    square = document.getElementById("EKI");
+                    square.dataset.num = tegoma[GOTE][KI];
+                } else if (j == GI) {
+                    square = document.getElementById("EGI");
+                    square.dataset.num = tegoma[GOTE][GI];
+                } else if (j == KE) {
+                    square = document.getElementById("EKE");
+                    square.dataset.num = tegoma[GOTE][KE];
+                } else if (j == KY) {
+                    square = document.getElementById("EKY");
+                    square.dataset.num = tegoma[GOTE][KY];
+                } else if (j == FU) {
+                    square = document.getElementById("EFU");
+                    square.dataset.num = tegoma[GOTE][FU];
+                }
+            }
+
+            if (tegoma[i][j] != 0) {
+                (function() {
+                    var iLocal = i, jLocal = j;
+                    square.onclick = function() {
+                        if (+turn == iLocal) {
+                            selectTegoma(iLocal, jLocal);
+                        }
+                    }
+                })();
+            }
+		}
+	}
 }
 
 function showPath(x, y) {
@@ -128,24 +177,24 @@ function showPath(x, y) {
         if (komaIsGote(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
         } else if (board[x][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
     } else if (board[x][y] == EFU) {
         if (komaIsSente(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
         } else if (board[x][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
     } else if (board[x][y] == KY) {
@@ -153,12 +202,12 @@ function showPath(x, y) {
             if (board[x][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
             } else if (komaIsGote(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
@@ -170,12 +219,12 @@ function showPath(x, y) {
             if (board[x][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
             } else if (komaIsSente(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
@@ -186,470 +235,470 @@ function showPath(x, y) {
         if (komaIsGote(board[x-1][y-2])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-2)+")");
         } else if (board[x-1][y-2] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y-2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-2)+")");
         }
         if (komaIsGote(board[x+1][y-2])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-2)+")");
         } else if (board[x+1][y-2] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y-2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-2)+")");
         }
     } else if (board[x][y] == EKE) {
         if (komaIsSente(board[x-1][y+2])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+2)+")");
         } else if (board[x-1][y+2] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y+2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+2)+")");
         }
         if (komaIsSente(board[x+1][y+2])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+2)+")");
         } else if (board[x+1][y+2] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y+2));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+2)+")");
         }
     } else if (board[x][y] == GI) {
         if (komaIsGote(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
         } else if (board[x-1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
         if (komaIsGote(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
         } else if (board[x][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
         if (komaIsGote(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
         } else if (board[x+1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
         if (komaIsGote(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
         } else if (board[x-1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
         if (komaIsGote(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
         } else if (board[x+1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
     } else if (board[x][y] == EGI) {
         if (komaIsSente(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
         } else if (board[x-1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
         if (komaIsSente(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
         } else if (board[x][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
         if (komaIsSente(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
         } else if (board[x+1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
         if (komaIsSente(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
         } else if (board[x-1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
         if (komaIsSente(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
         } else if (board[x+1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
     } else if (board[x][y] == KI || (board[x][y] >= TO && board[x][y] <= NG)) {
         if (komaIsGote(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
         } else if (board[x-1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
         if (komaIsGote(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
         } else if (board[x][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
         if (komaIsGote(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
         } else if (board[x][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
         if (komaIsGote(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
         } else if (board[x+1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
         if (komaIsGote(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
         } else if (board[x-1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
         if (komaIsGote(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
         } else if (board[x+1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
     } else if (board[x][y] == EKI || (board[x][y] >= ETO && board[x][y] <= ENG)) {
         if (komaIsSente(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
         } else if (board[x][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
         if (komaIsSente(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
         } else if (board[x][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
         if (komaIsSente(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
         } else if (board[x-1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
         if (komaIsSente(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
         } else if (board[x+1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
         if (komaIsSente(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
         } else if (board[x-1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
         if (komaIsSente(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
         } else if (board[x+1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
     } else if (board[x][y] == OU) {
         if (komaIsGote(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
         } else if (board[x-1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
         if (komaIsGote(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
         } else if (board[x+1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
         if (komaIsGote(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
         } else if (board[x-1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
         if (komaIsGote(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
         } else if (board[x][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
         if (komaIsGote(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
         } else if (board[x][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
         if (komaIsGote(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
         } else if (board[x+1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
         if (komaIsGote(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
         } else if (board[x-1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
         if (komaIsGote(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
         } else if (board[x+1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
     } else if (board[x][y] == EOU) {
         if (komaIsSente(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
         } else if (board[x-1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
         if (komaIsSente(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
         } else if (board[x+1][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
         if (komaIsSente(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
         } else if (board[x][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
         if (komaIsSente(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
         } else if (board[x][y-1] == EMPTY) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
         if (komaIsSente(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
         } else if (board[x-1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
         if (komaIsSente(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
         } else if (board[x+1][y+1] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
         if (komaIsSente(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
         } else if (board[x-1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
         if (komaIsSente(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
         } else if (board[x+1][y] == EMPTY) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
-            msquare.style.backgroundImage = "";
+            // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
     } else if (board[x][y] == HI) {
@@ -657,12 +706,12 @@ function showPath(x, y) {
             if (board[x][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
             } else if (komaIsGote(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
@@ -673,12 +722,12 @@ function showPath(x, y) {
             if (board[x][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
             } else if (komaIsGote(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
@@ -689,12 +738,12 @@ function showPath(x, y) {
             if (board[xTo][y] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
             } else if (komaIsGote(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
                 break;
             } else {
@@ -705,12 +754,12 @@ function showPath(x, y) {
             if (board[xTo][y] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
             } else if (komaIsGote(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
                 break;
             } else {
@@ -722,12 +771,12 @@ function showPath(x, y) {
             if (board[x][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
             } else if (komaIsSente(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
@@ -738,12 +787,12 @@ function showPath(x, y) {
             if (board[x][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
             } else if (komaIsSente(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
@@ -754,12 +803,12 @@ function showPath(x, y) {
             if (board[xTo][y] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
             } else if (komaIsSente(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
                 break;
             } else {
@@ -770,12 +819,12 @@ function showPath(x, y) {
             if (board[xTo][y] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
             } else if (komaIsSente(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
                 break;
             } else {
@@ -787,12 +836,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsGote(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -803,12 +852,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsGote(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -819,12 +868,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsGote(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -835,12 +884,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsGote(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -852,12 +901,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsSente(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -868,12 +917,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsSente(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -884,12 +933,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsSente(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -900,12 +949,12 @@ function showPath(x, y) {
             if (board[xTo][yTo] == EMPTY) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
             } else if (komaIsSente(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
                 break;
             } else {
@@ -922,16 +971,33 @@ function selectSelfKoma(x, y) {
                 var msquare = document.getElementById("ms"+xLocal+yLocal);
                 // msquare.style.backgroundImage = komaImg[board[x][y]];
                 msquare.style.opacity = "0.0";
-                msquare.onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden";');
+                msquare.onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
             } else {
                 var msquare = document.getElementById("ms"+xLocal+yLocal);
-                msquare.style.backgroundImage = "";
+                // msquare.style.backgroundImage = "";
                 msquare.style.opacity = "0.2";
-                msquare.onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden";');
+                msquare.onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
             }
         }
     }
 
+    document.getElementById("mHI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mKA").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mKI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mGI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mKE").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mKY").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mFU").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mEHI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mEKA").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mEKI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mEGI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mEKE").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mEKY").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    document.getElementById("mEFU").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+
+    document.getElementById("komadai_self_mask").style.visibility = "visible";
+    document.getElementById("komadai_enemy_mask").style.visibility = "visible";
     document.getElementById("mask").style.visibility = "visible";
     showPath(x, y);
     
@@ -942,17 +1008,141 @@ function selectSelfKoma(x, y) {
     yClicked = y;
 }
 
+function selectTegoma(i, j) {
+    for (var iLocal = 0; iLocal <= 1; iLocal++) {
+		for (var jLocal = 0; jLocal <= HI; jLocal++) {
+            var msquare;
+            if (i == SENTE) {
+                if (j == HI) {
+                    msquare = document.getElementById("mHI");
+                } else if (j == KA) {
+                    msquare = document.getElementById("mKA");
+                } else if (j == KI) {
+                    msquare = document.getElementById("mKI");
+                } else if (j == GI) {
+                    msquare = document.getElementById("mGI");
+                } else if (j == KE) {
+                    msquare = document.getElementById("mKE");
+                } else if (j == KY) {
+                    msquare = document.getElementById("mKY");
+                } else if (j == FU) {
+                    msquare = document.getElementById("mFU");
+                }
+            } else {
+                if (j == HI) {
+                    msquare = document.getElementById("mEHI");
+                } else if (j == KA) {
+                    msquare = document.getElementById("mEKA");
+                } else if (j == KI) {
+                    msquare = document.getElementById("mEKI");
+                } else if (j == GI) {
+                    msquare = document.getElementById("mEGI");
+                } else if (j == KE) {
+                    msquare = document.getElementById("mEKE");
+                } else if (j == KY) {
+                    msquare = document.getElementById("mEKY");
+                } else if (j == FU) {
+                    msquare = document.getElementById("mEFU");
+                }
+            }
+            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+        }
+    }
+    document.getElementById("komadai_self_mask").style.visibility = "visible";
+    document.getElementById("komadai_enemy_mask").style.visibility = "visible";
+    document.getElementById("mask").style.visibility = "visible";
+
+    for (var x = 1; x <= 9; x++) {
+        for (var y = 1; y <= 9; y++) {
+            var msquare = document.getElementById("ms"+x+y);
+            if (board[x][y] != EMPTY) {
+                msquare.style.opacity = "0.2";
+                msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+            } else {
+                if (i == SENTE) {
+                    if ((j == KE && y <= 2) || (j == KY && y == 1)) {
+                        msquare.style.opacity = "0.2";
+                        msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                    } else if (j == FU) {
+                        var flg = true;
+                        for (var yLocal = 1; yLocal <= 9; yLocal++) {
+                            if (board[x][yLocal] == FU) {
+                                flg = false;
+                                break;
+                            }
+                        }
+                        if (!flg || y == 1) {
+                            msquare.style.opacity = "0.2";
+                            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                        } else {
+                            msquare.style.opacity = "0.0";
+                            msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                        }
+                    } else {
+                        msquare.style.opacity = "0.0";
+                        msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                    }
+                } else {
+                    if ((j == KE && y >= 8) || (j == KY && y == 9)) {
+                        msquare.style.opacity = "0.2";
+                        msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                    } else if (j == FU) {
+                        var flg = true;
+                        for (var yLocal = 1; yLocal <= 9; yLocal++) {
+                            if (board[x][yLocal] == EFU) {
+                                flg = false;
+                                break;
+                            }
+                        }
+                        if (!flg || y == 9) {
+                            msquare.style.opacity = "0.2";
+                            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                        } else {
+                            msquare.style.opacity = "0.0";
+                            msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                        }
+                    } else {
+                        msquare.style.opacity = "0.0";
+                        msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                    }
+                }
+            }
+        }
+    }
+
+    komadaiSelected = true;
+    boardSelected = false;
+    selectedKoma = j;
+    if (i == GOTE) {
+        selectedKoma |= ENEMY;
+    }
+}
+
 function selectEmpty(x, y) {
 	if (boardSelected) {
-		board[x][y] = selectedKoma;   
-		board[xClicked][yClicked] = EMPTY;  
-		boardSelected = false;   
+		board[x][y] = selectedKoma;
+		board[xClicked][yClicked] = EMPTY;
+		boardSelected = false;
         komadaiSelected = false;
         for (var xLocal = 1; xLocal <= 9; xLocal++) {
             for (var yLocal = 1; yLocal <= 9; yLocal++) {
                 document.getElementById("s"+xLocal+yLocal).onclick = "";
             }
         }
+        document.getElementById("HI").onclick = "";
+        document.getElementById("KA").onclick = "";
+        document.getElementById("KI").onclick = "";
+        document.getElementById("GI").onclick = "";
+        document.getElementById("KE").onclick = "";
+        document.getElementById("KY").onclick = "";
+        document.getElementById("FU").onclick = "";
+        document.getElementById("EHI").onclick = "";
+        document.getElementById("EKA").onclick = "";
+        document.getElementById("EKI").onclick = "";
+        document.getElementById("EGI").onclick = "";
+        document.getElementById("EKE").onclick = "";
+        document.getElementById("EKY").onclick = "";
+        document.getElementById("EFU").onclick = "";
         
 		if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
             // TODO
@@ -961,15 +1151,51 @@ function selectEmpty(x, y) {
 			
             turn = !turn;
             document.getElementById("mask").style.visibility = "hidden";
+            document.getElementById("komadai_self_mask").style.visibility = "hidden";
+            document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
 			showBoard();
 		} else {
 			selectedKoma = EMPTY;
 			
             turn = !turn;
             document.getElementById("mask").style.visibility = "hidden";
+            document.getElementById("komadai_self_mask").style.visibility = "hidden";
+            document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
             showBoard();
 		}
-	}
+	} else if (komadaiSelected) {
+        tegoma[+turn][selectedKoma & ~ENEMY]--;
+		board[x][y] = selectedKoma;
+		boardSelected = false;
+        komadaiSelected = false;
+        for (var xLocal = 1; xLocal <= 9; xLocal++) {
+            for (var yLocal = 1; yLocal <= 9; yLocal++) {
+                document.getElementById("s"+xLocal+yLocal).onclick = "";
+            }
+        }
+        document.getElementById("HI").onclick = "";
+        document.getElementById("KA").onclick = "";
+        document.getElementById("KI").onclick = "";
+        document.getElementById("GI").onclick = "";
+        document.getElementById("KE").onclick = "";
+        document.getElementById("KY").onclick = "";
+        document.getElementById("FU").onclick = "";
+        document.getElementById("EHI").onclick = "";
+        document.getElementById("EKA").onclick = "";
+        document.getElementById("EKI").onclick = "";
+        document.getElementById("EGI").onclick = "";
+        document.getElementById("EKE").onclick = "";
+        document.getElementById("EKY").onclick = "";
+        document.getElementById("EFU").onclick = "";
+
+        selectedKoma = EMPTY;
+			
+        turn = !turn;
+        document.getElementById("mask").style.visibility = "hidden";
+        document.getElementById("komadai_self_mask").style.visibility = "hidden";
+        document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
+        showBoard();
+    }
 }
 
 function selectEnemy(x, y) {
@@ -991,12 +1217,16 @@ function selectEnemy(x, y) {
         
         turn = !turn;
         document.getElementById("mask").style.visibility = "hidden";
+        document.getElementById("komadai_self_mask").style.visibility = "hidden";
+        document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
         showBoard();
     } else {
         selectedKoma = EMPTY;
         
         turn = !turn;
         document.getElementById("mask").style.visibility = "hidden";
+        document.getElementById("komadai_self_mask").style.visibility = "hidden";
+        document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
         showBoard();
     }
 }
@@ -1062,7 +1292,7 @@ window.onload = function() {
 		tegoma[i] = [];
 		for(var j = 0; j <= HI; j++){
 			tegoma[i][j] = 0;
-		}	
+		}
 	}
 
 	board[1][1] = EKY;
