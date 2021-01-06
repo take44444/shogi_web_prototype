@@ -176,7 +176,7 @@ function showPath(x, y) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
                 break;
@@ -728,7 +728,7 @@ function showPath(x, y) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
                 break;
@@ -744,7 +744,7 @@ function showPath(x, y) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
+                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
                 break;
             } else {
                 break;
