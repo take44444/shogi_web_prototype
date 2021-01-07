@@ -13,43 +13,245 @@ var xClicked, yClicked;
 var selectedKoma;
 var turn;
 
-SENTE = 1;
-GOTE = 0;
+/**
+ * 自分の手盤を表す数値
+ * @const
+ * @type {number}
+ */
+SELF = 1;
+
+/**
+ * 相手の手盤を表す数値
+ * @const
+ * @type {number}
+ */
+ENEMY = 0;
 
 var board = [];
 var tegoma = [];
 
+/**
+ * 盤外のマスを表す数値
+ * @const
+ * @type {number}
+ */
 OUT_OF_BOARD = 128;
+
+/**
+ * 空白マスを表す数値
+ * @const
+ * @type {number}
+ */
 EMPTY = 0;
+
+/**
+ * 歩を表す数値
+ * @const
+ * @type {number}
+ */
 FU = 1;
+
+/**
+ * 香を表す数値
+ * @const
+ * @type {number}
+ */
 KY = 2;
+
+/**
+ * 桂を表す数値
+ * @const
+ * @type {number}
+ */
 KE = 3;
+
+/**
+ * 銀を表す数値
+ * @const
+ * @type {number}
+ */
 GI = 4;
+
+/**
+ * 金を表す数値
+ * @const
+ * @type {number}
+ */
 KI = 5;
+
+/**
+ * 角を表す数値
+ * @const
+ * @type {number}
+ */
 KA = 6;
+
+/**
+ * 飛を表す数値
+ * @const
+ * @type {number}
+ */
 HI = 7;
+
+/**
+ * 王を表す数値
+ * @const
+ * @type {number}
+ */
 OU = 8;
+
+/**
+ * 駒が成っていることを表す数値
+ * @const
+ * @type {number}
+ */
 NARI = 8;
+
+/**
+ * と金を表す数値
+ * @const
+ * @type {number}
+ */
 TO = NARI + FU;
+
+/**
+ * 成香を表す数値
+ * @const
+ * @type {number}
+ */
 NY = NARI + KY;
+
+/**
+ * 成桂を表す数値
+ * @const
+ * @type {number}
+ */
 NK = NARI + KE;
+
+/**
+ * 成銀を表す数値
+ * @const
+ * @type {number}
+ */
 NG = NARI + GI;
+
+/**
+ * 馬を表す数値
+ * @const
+ * @type {number}
+ */
 UM = NARI + KA;
+
+/**
+ * 龍を表す数値
+ * @const
+ * @type {number}
+ */
 RY = NARI + HI;
+
+/**
+ * 敵の駒であることを表す数値
+ * @const
+ * @type {number}
+ */
 ENEMY = 16;
+
+/**
+ * 敵の歩を表す数値
+ * @const
+ * @type {number}
+ */
 EFU = ENEMY + FU;
+
+/**
+ * 敵の香を表す数値
+ * @const
+ * @type {number}
+ */
 EKY = ENEMY + KY;
+
+/**
+ * 敵の桂を表す数値
+ * @const
+ * @type {number}
+ */
 EKE = ENEMY + KE;
+
+/**
+ * 敵の銀を表す数値
+ * @const
+ * @type {number}
+ */
 EGI = ENEMY + GI;
+
+/**
+ * 敵の金を表す数値
+ * @const
+ * @type {number}
+ */
 EKI = ENEMY + KI;
+
+/**
+ * 敵の角を表す数値
+ * @const
+ * @type {number}
+ */
 EKA = ENEMY + KA;
+
+/**
+ * 敵の飛を表す数値
+ * @const
+ * @type {number}
+ */
 EHI = ENEMY + HI;
+
+/**
+ * 敵の王を表す数値
+ * @const
+ * @type {number}
+ */
 EOU = ENEMY + OU;
+
+/**
+ * 敵のと金を表す数値
+ * @const
+ * @type {number}
+ */
 ETO = ENEMY + TO;
+
+/**
+ * 敵の成香を表す数値
+ * @const
+ * @type {number}
+ */
 ENY = ENEMY + NY;
+
+/**
+ * 敵の成桂を表す数値
+ * @const
+ * @type {number}
+ */
 ENK = ENEMY + NK;
+
+/**
+ * 敵の成銀を表す数値
+ * @const
+ * @type {number}
+ */
 ENG = ENEMY + NG;
+
+/**
+ * 敵の馬を表す数値
+ * @const
+ * @type {number}
+ */
 EUM = ENEMY + UM;
+
+/**
+ * 敵の龍を表す数値
+ * @const
+ * @type {number}
+ */
 ERY = ENEMY + RY;
 
 /**
@@ -155,51 +357,51 @@ function showTegoma() {
     for(var i = 0; i <= 1; i++){
 		for(var j = 0; j <= HI; j++){
             var square;
-            if (i == SENTE) {
+            if (i == SELF) {
                 if (j == HI) {
                     square = document.getElementById("HI");
-                    square.dataset.num = tegoma[SENTE][HI];
+                    square.dataset.num = tegoma[SELF][HI];
                 } else if (j == KA) {
                     square = document.getElementById("KA");
-                    square.dataset.num = tegoma[SENTE][KA];
+                    square.dataset.num = tegoma[SELF][KA];
                 } else if (j == KI) {
                     square = document.getElementById("KI");
-                    square.dataset.num = tegoma[SENTE][KI];
+                    square.dataset.num = tegoma[SELF][KI];
                 } else if (j == GI) {
                     square = document.getElementById("GI");
-                    square.dataset.num = tegoma[SENTE][GI];
+                    square.dataset.num = tegoma[SELF][GI];
                 } else if (j == KE) {
                     square = document.getElementById("KE");
-                    square.dataset.num = tegoma[SENTE][KE];
+                    square.dataset.num = tegoma[SELF][KE];
                 } else if (j == KY) {
                     square = document.getElementById("KY");
-                    square.dataset.num = tegoma[SENTE][KY];
+                    square.dataset.num = tegoma[SELF][KY];
                 } else if (j == FU) {
                     square = document.getElementById("FU");
-                    square.dataset.num = tegoma[SENTE][FU];
+                    square.dataset.num = tegoma[SELF][FU];
                 }
             } else {
                 if (j == HI) {
                     square = document.getElementById("EHI");
-                    square.dataset.num = tegoma[GOTE][HI];
+                    square.dataset.num = tegoma[ENEMY][HI];
                 } else if (j == KA) {
                     square = document.getElementById("EKA");
-                    square.dataset.num = tegoma[GOTE][KA];
+                    square.dataset.num = tegoma[ENEMY][KA];
                 } else if (j == KI) {
                     square = document.getElementById("EKI");
-                    square.dataset.num = tegoma[GOTE][KI];
+                    square.dataset.num = tegoma[ENEMY][KI];
                 } else if (j == GI) {
                     square = document.getElementById("EGI");
-                    square.dataset.num = tegoma[GOTE][GI];
+                    square.dataset.num = tegoma[ENEMY][GI];
                 } else if (j == KE) {
                     square = document.getElementById("EKE");
-                    square.dataset.num = tegoma[GOTE][KE];
+                    square.dataset.num = tegoma[ENEMY][KE];
                 } else if (j == KY) {
                     square = document.getElementById("EKY");
-                    square.dataset.num = tegoma[GOTE][KY];
+                    square.dataset.num = tegoma[ENEMY][KY];
                 } else if (j == FU) {
                     square = document.getElementById("EFU");
-                    square.dataset.num = tegoma[GOTE][FU];
+                    square.dataset.num = tegoma[ENEMY][FU];
                 }
             }
 
@@ -1072,7 +1274,7 @@ function selectTegoma(i, j) {
     for (var iLocal = 0; iLocal <= 1; iLocal++) {
 		for (var jLocal = 0; jLocal <= HI; jLocal++) {
             var msquare;
-            if (i == SENTE) {
+            if (i == SELF) {
                 if (j == HI) {
                     msquare = document.getElementById("mHI");
                 } else if (j == KA) {
@@ -1119,7 +1321,7 @@ function selectTegoma(i, j) {
                 msquare.style.opacity = "0.2";
                 msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
             } else {
-                if (i == SENTE) {
+                if (i == SELF) {
                     if ((j == KE && y <= 2) || (j == KY && y == 1)) {
                         msquare.style.opacity = "0.2";
                         msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
@@ -1173,7 +1375,7 @@ function selectTegoma(i, j) {
     komadaiSelected = true;
     boardSelected = false;
     selectedKoma = j;
-    if (i == GOTE) {
+    if (i == ENEMY) {
         selectedKoma |= ENEMY;
     }
 }
