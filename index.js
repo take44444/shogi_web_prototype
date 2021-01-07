@@ -52,47 +52,89 @@ ENG = ENEMY + NG;
 EUM = ENEMY + UM;
 ERY = ENEMY + RY;
 
-function komaIsSente(koma) {
+/**
+ * 自分の駒か否かをBooleanで返す関数
+ * @param {Number} koma 駒を表す数値
+ * @return {Boolean} 引数で与えられた駒が自分の駒の場合はtrue，違う場合はfalseを返す
+ */
+function komaIsSelf(koma) {
     return (FU <= koma && koma <= RY);
 }
 
-function komaIsGote(koma) {
+/**
+ * 敵の駒か否かをBooleanで返す関数
+ * @param {Number} koma 駒を表す数値
+ * @return {Boolean} 引数で与えられた駒が敵の駒の場合はtrue，違う場合はfalseを返す
+ */
+function komaIsEnemy(koma) {
     return (EFU <= koma && koma <= ERY);
 }
 
+/**
+ * 成れる駒か否かをBooleanで返す関数
+ * @param {Number} koma 駒を表す数値
+ * @return {Boolean} 引数で与えられた駒が成れる駒の場合はtrue，違う場合はfalseを返す
+ */
 function komaCanNari(koma) {
     var k = koma & ~ENEMY;
     return (FU <= k && k <= HI && k != KI && k != OU);
 }
 
+/**
+ * 駒を表す数値かをBooleanで返す関数
+ * @param {Number} koma 数値
+ * @return {Boolean} 引数で与えられた数値が駒の場合はtrue，違う場合はfalseを返す
+ */
 function isKoma(koma) {
     return ((FU <= koma && koma <= RY) || (EFU <= koma && koma <= ERY));
 }
 
-function isSenteArea(x, y) {
+/**
+ * 自分の陣地ないか否かをBooleanで返す関数
+ * @param {Number} x 盤における筋
+ * @param {Number} y 盤における段
+ * @return {Boolean} 引数で与えられたマスが自分の陣地内の場合はtrue，違う場合はfalseを返す
+ */
+function isSelfArea(x, y) {
     return (7 <= y && y <= 9 && 1 <= x && x <= 9);
 }
 
-function isGoteArea(x, y) {
+/**
+ * 敵の陣地ないか否かをBooleanで返す関数
+ * @param {Number} x 盤における筋
+ * @param {Number} y 盤における段
+ * @return {Boolean} 引数で与えられたマスが敵の陣地内の場合はtrue，違う場合はfalseを返す
+ */
+function isEnemyArea(x, y) {
 	return (1 <= y && y <= 3 && 1 <= x && x <= 9);
 }
 
+/**
+ * 与えられた駒がそのマスに移動した時に成れる否かをBooleanで返す関数
+ * @param {Number} koma 駒を表す数値
+ * @param {Number} x 盤における筋
+ * @param {Number} y 盤における段
+ * @return {Boolean} 引数で与えられた駒が，同じく引数で与えられたマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
+ */
 function canNari(koma, x, y) {
-	return (komaCanNari(koma) && ((komaIsSente(koma) && isGoteArea(x, y)) || (komaIsGote(koma) && isSenteArea(x, y))));
+	return (komaCanNari(koma) && ((komaIsSelf(koma) && isEnemyArea(x, y)) || (komaIsEnemy(koma) && isSelfArea(x, y))));
 }
 
+/**
+ * 手番の駒を動かすことができる盤を表示する関数
+ */
 function showBoard() {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
             var square = document.getElementById("s"+x+y);
             square.style.backgroundImage = komaImg[board[x][y]];
 
-            if (board[x][y] != EMPTY && board[x][y] != OUT_OF_BOARD) {
+            if (board[x][y] != EMPTY) {
                 (function() {
                     var xLocal = x, yLocal = y;
                     square.onclick = function() {
-                        if (turn == komaIsSente(board[xLocal][yLocal])) {
-                            selectSelfKoma(xLocal, yLocal);
+                        if (turn == komaIsSelf(board[xLocal][yLocal])) {
+                            selectKomaToMove(xLocal, yLocal);
                         }
                     }
                 })();
@@ -106,6 +148,9 @@ function showBoard() {
     // (turn) ? turnMessageElement.innerHTML = "??????<br>" : turnMessageElement.innerHTML = "??????<br>";
 }
 
+/**
+ * 手駒を表示する関数
+ */
 function showTegoma() {
     for(var i = 0; i <= 1; i++){
 		for(var j = 0; j <= HI; j++){
@@ -172,9 +217,14 @@ function showTegoma() {
 	}
 }
 
+/**
+ * 盤上の，与えられたマスにある駒が現在移動することができるマスを明るく表示する関数
+ * @param {Number} x 盤における筋
+ * @param {Number} y 盤における段
+ */
 function showPath(x, y) {
     if (board[x][y] == FU) {
-        if (komaIsGote(board[x][y-1])) {
+        if (komaIsEnemy(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -186,7 +236,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
     } else if (board[x][y] == EFU) {
-        if (komaIsSente(board[x][y+1])) {
+        if (komaIsSelf(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -204,7 +254,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsGote(board[x][yTo])) {
+            } else if (komaIsEnemy(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -221,7 +271,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSente(board[x][yTo])) {
+            } else if (komaIsSelf(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -232,7 +282,7 @@ function showPath(x, y) {
             }
         }
     } else if (board[x][y] == KE) {
-        if (komaIsGote(board[x-1][y-2])) {
+        if (komaIsEnemy(board[x-1][y-2])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-2));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -243,7 +293,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-2)+")");
         }
-        if (komaIsGote(board[x+1][y-2])) {
+        if (komaIsEnemy(board[x+1][y-2])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-2));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -255,7 +305,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-2)+")");
         }
     } else if (board[x][y] == EKE) {
-        if (komaIsSente(board[x-1][y+2])) {
+        if (komaIsSelf(board[x-1][y+2])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+2));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -266,7 +316,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+2)+")");
         }
-        if (komaIsSente(board[x+1][y+2])) {
+        if (komaIsSelf(board[x+1][y+2])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+2));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -278,7 +328,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+2)+")");
         }
     } else if (board[x][y] == GI) {
-        if (komaIsGote(board[x-1][y-1])) {
+        if (komaIsEnemy(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -289,7 +339,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
-        if (komaIsGote(board[x][y-1])) {
+        if (komaIsEnemy(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -300,7 +350,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
-        if (komaIsGote(board[x+1][y-1])) {
+        if (komaIsEnemy(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -311,7 +361,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
-        if (komaIsGote(board[x-1][y+1])) {
+        if (komaIsEnemy(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -322,7 +372,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
-        if (komaIsGote(board[x+1][y+1])) {
+        if (komaIsEnemy(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -334,7 +384,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
     } else if (board[x][y] == EGI) {
-        if (komaIsSente(board[x-1][y-1])) {
+        if (komaIsSelf(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -345,7 +395,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
-        if (komaIsSente(board[x][y+1])) {
+        if (komaIsSelf(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -356,7 +406,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
-        if (komaIsSente(board[x+1][y-1])) {
+        if (komaIsSelf(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -367,7 +417,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
-        if (komaIsSente(board[x-1][y+1])) {
+        if (komaIsSelf(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -378,7 +428,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
-        if (komaIsSente(board[x+1][y+1])) {
+        if (komaIsSelf(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -390,7 +440,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
     } else if (board[x][y] == KI || (board[x][y] >= TO && board[x][y] <= NG)) {
-        if (komaIsGote(board[x-1][y-1])) {
+        if (komaIsEnemy(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -401,7 +451,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
-        if (komaIsGote(board[x][y-1])) {
+        if (komaIsEnemy(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -412,7 +462,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
-        if (komaIsGote(board[x][y+1])) {
+        if (komaIsEnemy(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -423,7 +473,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
-        if (komaIsGote(board[x+1][y-1])) {
+        if (komaIsEnemy(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -434,7 +484,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
-        if (komaIsGote(board[x-1][y])) {
+        if (komaIsEnemy(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -445,7 +495,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
-        if (komaIsGote(board[x+1][y])) {
+        if (komaIsEnemy(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -457,7 +507,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
     } else if (board[x][y] == EKI || (board[x][y] >= ETO && board[x][y] <= ENG)) {
-        if (komaIsSente(board[x][y+1])) {
+        if (komaIsSelf(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -468,7 +518,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
-        if (komaIsSente(board[x][y-1])) {
+        if (komaIsSelf(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -479,7 +529,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
-        if (komaIsSente(board[x-1][y+1])) {
+        if (komaIsSelf(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -490,7 +540,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
-        if (komaIsSente(board[x+1][y+1])) {
+        if (komaIsSelf(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -501,7 +551,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
-        if (komaIsSente(board[x-1][y])) {
+        if (komaIsSelf(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -512,7 +562,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
-        if (komaIsSente(board[x+1][y])) {
+        if (komaIsSelf(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -524,7 +574,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
     } else if (board[x][y] == OU) {
-        if (komaIsGote(board[x-1][y+1])) {
+        if (komaIsEnemy(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -535,7 +585,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
-        if (komaIsGote(board[x+1][y+1])) {
+        if (komaIsEnemy(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -546,7 +596,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
-        if (komaIsGote(board[x-1][y-1])) {
+        if (komaIsEnemy(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -557,7 +607,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
-        if (komaIsGote(board[x][y-1])) {
+        if (komaIsEnemy(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -568,7 +618,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
-        if (komaIsGote(board[x][y+1])) {
+        if (komaIsEnemy(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -579,7 +629,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
-        if (komaIsGote(board[x+1][y-1])) {
+        if (komaIsEnemy(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -590,7 +640,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
-        if (komaIsGote(board[x-1][y])) {
+        if (komaIsEnemy(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -601,7 +651,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
-        if (komaIsGote(board[x+1][y])) {
+        if (komaIsEnemy(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -613,7 +663,7 @@ function showPath(x, y) {
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
         }
     } else if (board[x][y] == EOU) {
-        if (komaIsSente(board[x-1][y-1])) {
+        if (komaIsSelf(board[x-1][y-1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -624,7 +674,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
         }
-        if (komaIsSente(board[x+1][y-1])) {
+        if (komaIsSelf(board[x+1][y-1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -635,7 +685,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
         }
-        if (komaIsSente(board[x][y+1])) {
+        if (komaIsSelf(board[x][y+1])) {
             var msquare = document.getElementById("ms"+x+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -646,7 +696,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
         }
-        if (komaIsSente(board[x][y-1])) {
+        if (komaIsSelf(board[x][y-1])) {
             var msquare = document.getElementById("ms"+x+(y-1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -657,7 +707,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
         }
-        if (komaIsSente(board[x-1][y+1])) {
+        if (komaIsSelf(board[x-1][y+1])) {
             var msquare = document.getElementById("ms"+(x-1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -668,7 +718,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
         }
-        if (komaIsSente(board[x+1][y+1])) {
+        if (komaIsSelf(board[x+1][y+1])) {
             var msquare = document.getElementById("ms"+(x+1)+(y+1));
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -679,7 +729,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
         }
-        if (komaIsSente(board[x-1][y])) {
+        if (komaIsSelf(board[x-1][y])) {
             var msquare = document.getElementById("ms"+(x-1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -690,7 +740,7 @@ function showPath(x, y) {
             // msquare.style.backgroundImage = "";
             msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
         }
-        if (komaIsSente(board[x+1][y])) {
+        if (komaIsSelf(board[x+1][y])) {
             var msquare = document.getElementById("ms"+(x+1)+y);
             msquare.style.opacity = "0.0";
             // msquare.style.backgroundImage = "";
@@ -708,7 +758,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsGote(board[x][yTo])) {
+            } else if (komaIsEnemy(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -724,7 +774,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsGote(board[x][yTo])) {
+            } else if (komaIsEnemy(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -740,7 +790,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsGote(board[xTo][y])) {
+            } else if (komaIsEnemy(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -756,7 +806,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsGote(board[xTo][y])) {
+            } else if (komaIsEnemy(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -773,7 +823,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSente(board[x][yTo])) {
+            } else if (komaIsSelf(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -789,7 +839,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSente(board[x][yTo])) {
+            } else if (komaIsSelf(board[x][yTo])) {
                 var msquare = document.getElementById("ms"+x+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -805,7 +855,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsSente(board[xTo][y])) {
+            } else if (komaIsSelf(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -821,7 +871,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsSente(board[xTo][y])) {
+            } else if (komaIsSelf(board[xTo][y])) {
                 var msquare = document.getElementById("ms"+xTo+y);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -838,7 +888,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsGote(board[xTo][yTo])) {
+            } else if (komaIsEnemy(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -854,7 +904,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsGote(board[xTo][yTo])) {
+            } else if (komaIsEnemy(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -870,7 +920,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsGote(board[xTo][yTo])) {
+            } else if (komaIsEnemy(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -886,7 +936,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsGote(board[xTo][yTo])) {
+            } else if (komaIsEnemy(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -903,7 +953,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSente(board[xTo][yTo])) {
+            } else if (komaIsSelf(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -919,7 +969,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSente(board[xTo][yTo])) {
+            } else if (komaIsSelf(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -935,7 +985,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSente(board[xTo][yTo])) {
+            } else if (komaIsSelf(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -951,7 +1001,7 @@ function showPath(x, y) {
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
                 msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSente(board[xTo][yTo])) {
+            } else if (komaIsSelf(board[xTo][yTo])) {
                 var msquare = document.getElementById("ms"+xTo+yTo);
                 msquare.style.opacity = "0.0";
                 // msquare.style.backgroundImage = "";
@@ -964,7 +1014,12 @@ function showPath(x, y) {
     }
 }
 
-function selectSelfKoma(x, y) {
+/**
+ * 動かす駒を選択した時に必要な処理を行う関数
+ * @param {Number} x 盤における筋
+ * @param {Number} y 盤における段
+ */
+function selectKomaToMove(x, y) {
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
             if (xLocal == x && yLocal == y) {
@@ -1008,6 +1063,11 @@ function selectSelfKoma(x, y) {
     yClicked = y;
 }
 
+/**
+ * 使う手駒を選択した時に必要な処理を行う関数
+ * @param {Number} i 手番(自分=1/敵=0)
+ * @param {Number} j 駒を表す数値
+ */
 function selectTegoma(i, j) {
     for (var iLocal = 0; iLocal <= 1; iLocal++) {
 		for (var jLocal = 0; jLocal <= HI; jLocal++) {
@@ -1118,6 +1178,11 @@ function selectTegoma(i, j) {
     }
 }
 
+/**
+ * 動かしたい(使いたい)駒を選択した後に，設置可能な空白マスを選択した時に必要な処理を行う関数
+ * @param {Number} x 選択した，設置可能な空白マスの筋
+ * @param {Number} y 選択した，設置可能な空白マスの段
+ */
 function selectEmpty(x, y) {
 	if (boardSelected) {
 		board[x][y] = selectedKoma;
@@ -1198,6 +1263,11 @@ function selectEmpty(x, y) {
     }
 }
 
+/**
+ * 動かしたい駒を選択した後に，取ることが可能な駒を選択した時に必要な処理を行う関数
+ * @param {Number} x 選択した，取ることが可能な駒のマスの筋
+ * @param {Number} y 選択した，取ることが可能な駒のマスの段
+ */
 function selectEnemy(x, y) {
     tegoma[+turn][board[x][y] & ~ENEMY & ~NARI]++;
     board[x][y] = selectedKoma;
@@ -1231,6 +1301,9 @@ function selectEnemy(x, y) {
     }
 }
 
+/**
+ * DOMが構築された後に発生するイベントのハンドラ
+ */
 window.onload = function() {
     turn = true;
 
