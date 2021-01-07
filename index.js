@@ -16,16 +16,14 @@ var turn;
 /**
  * 自分の手盤を表す数値
  * @const
- * @type {number}
  */
-SELF = 1;
+SELF_TURN = 1;
 
 /**
  * 相手の手盤を表す数値
  * @const
- * @type {number}
  */
-ENEMY = 0;
+ENEMY_TURN = 0;
 
 var board = [];
 var tegoma = [];
@@ -33,224 +31,192 @@ var tegoma = [];
 /**
  * 盤外のマスを表す数値
  * @const
- * @type {number}
  */
 OUT_OF_BOARD = 128;
 
 /**
  * 空白マスを表す数値
  * @const
- * @type {number}
  */
 EMPTY = 0;
 
 /**
  * 歩を表す数値
  * @const
- * @type {number}
  */
 FU = 1;
 
 /**
  * 香を表す数値
  * @const
- * @type {number}
  */
 KY = 2;
 
 /**
  * 桂を表す数値
  * @const
- * @type {number}
  */
 KE = 3;
 
 /**
  * 銀を表す数値
  * @const
- * @type {number}
  */
 GI = 4;
 
 /**
  * 金を表す数値
  * @const
- * @type {number}
  */
 KI = 5;
 
 /**
  * 角を表す数値
  * @const
- * @type {number}
  */
 KA = 6;
 
 /**
  * 飛を表す数値
  * @const
- * @type {number}
  */
 HI = 7;
 
 /**
  * 王を表す数値
  * @const
- * @type {number}
  */
 OU = 8;
 
 /**
  * 駒が成っていることを表す数値
  * @const
- * @type {number}
  */
 NARI = 8;
 
 /**
  * と金を表す数値
  * @const
- * @type {number}
  */
 TO = NARI + FU;
 
 /**
  * 成香を表す数値
  * @const
- * @type {number}
  */
 NY = NARI + KY;
 
 /**
  * 成桂を表す数値
  * @const
- * @type {number}
  */
 NK = NARI + KE;
 
 /**
  * 成銀を表す数値
  * @const
- * @type {number}
  */
 NG = NARI + GI;
 
 /**
  * 馬を表す数値
  * @const
- * @type {number}
  */
 UM = NARI + KA;
 
 /**
  * 龍を表す数値
  * @const
- * @type {number}
  */
 RY = NARI + HI;
 
 /**
  * 敵の駒であることを表す数値
  * @const
- * @type {number}
  */
 ENEMY = 16;
 
 /**
  * 敵の歩を表す数値
  * @const
- * @type {number}
  */
 EFU = ENEMY + FU;
 
 /**
  * 敵の香を表す数値
  * @const
- * @type {number}
  */
 EKY = ENEMY + KY;
 
 /**
  * 敵の桂を表す数値
  * @const
- * @type {number}
  */
 EKE = ENEMY + KE;
 
 /**
  * 敵の銀を表す数値
  * @const
- * @type {number}
  */
 EGI = ENEMY + GI;
 
 /**
  * 敵の金を表す数値
  * @const
- * @type {number}
  */
 EKI = ENEMY + KI;
 
 /**
  * 敵の角を表す数値
  * @const
- * @type {number}
  */
 EKA = ENEMY + KA;
 
 /**
  * 敵の飛を表す数値
  * @const
- * @type {number}
  */
 EHI = ENEMY + HI;
 
 /**
  * 敵の王を表す数値
  * @const
- * @type {number}
  */
 EOU = ENEMY + OU;
 
 /**
  * 敵のと金を表す数値
  * @const
- * @type {number}
  */
 ETO = ENEMY + TO;
 
 /**
  * 敵の成香を表す数値
  * @const
- * @type {number}
  */
 ENY = ENEMY + NY;
 
 /**
  * 敵の成桂を表す数値
  * @const
- * @type {number}
  */
 ENK = ENEMY + NK;
 
 /**
  * 敵の成銀を表す数値
  * @const
- * @type {number}
  */
 ENG = ENEMY + NG;
 
 /**
  * 敵の馬を表す数値
  * @const
- * @type {number}
  */
 EUM = ENEMY + UM;
 
 /**
  * 敵の龍を表す数値
  * @const
- * @type {number}
  */
 ERY = ENEMY + RY;
 
@@ -354,55 +320,15 @@ function showBoard() {
  * 手駒を表示する関数
  */
 function showTegoma() {
-    for(var i = 0; i <= 1; i++){
-		for(var j = 0; j <= HI; j++){
+    for (var i = 0; i <= 1; i++) {
+		for (var j = 0; j <= HI; j++) {
             var square;
-            if (i == SELF) {
-                if (j == HI) {
-                    square = document.getElementById("HI");
-                    square.dataset.num = tegoma[SELF][HI];
-                } else if (j == KA) {
-                    square = document.getElementById("KA");
-                    square.dataset.num = tegoma[SELF][KA];
-                } else if (j == KI) {
-                    square = document.getElementById("KI");
-                    square.dataset.num = tegoma[SELF][KI];
-                } else if (j == GI) {
-                    square = document.getElementById("GI");
-                    square.dataset.num = tegoma[SELF][GI];
-                } else if (j == KE) {
-                    square = document.getElementById("KE");
-                    square.dataset.num = tegoma[SELF][KE];
-                } else if (j == KY) {
-                    square = document.getElementById("KY");
-                    square.dataset.num = tegoma[SELF][KY];
-                } else if (j == FU) {
-                    square = document.getElementById("FU");
-                    square.dataset.num = tegoma[SELF][FU];
-                }
-            } else {
-                if (j == HI) {
-                    square = document.getElementById("EHI");
-                    square.dataset.num = tegoma[ENEMY][HI];
-                } else if (j == KA) {
-                    square = document.getElementById("EKA");
-                    square.dataset.num = tegoma[ENEMY][KA];
-                } else if (j == KI) {
-                    square = document.getElementById("EKI");
-                    square.dataset.num = tegoma[ENEMY][KI];
-                } else if (j == GI) {
-                    square = document.getElementById("EGI");
-                    square.dataset.num = tegoma[ENEMY][GI];
-                } else if (j == KE) {
-                    square = document.getElementById("EKE");
-                    square.dataset.num = tegoma[ENEMY][KE];
-                } else if (j == KY) {
-                    square = document.getElementById("EKY");
-                    square.dataset.num = tegoma[ENEMY][KY];
-                } else if (j == FU) {
-                    square = document.getElementById("EFU");
-                    square.dataset.num = tegoma[ENEMY][FU];
-                }
+            if (i == SELF_TURN && isKoma(j)) {
+                square = document.getElementById("S"+j);
+                square.dataset.num = tegoma[SELF_TURN][j];
+            } else if (isKoma(j)) {
+                square = document.getElementById("E"+j);
+                square.dataset.num = tegoma[ENEMY_TURN][j];
             }
 
             if (tegoma[i][j] != 0) {
@@ -1228,34 +1154,26 @@ function selectKomaToMove(x, y) {
                 var msquare = document.getElementById("ms"+xLocal+yLocal);
                 // msquare.style.backgroundImage = komaImg[board[x][y]];
                 msquare.style.opacity = "0.0";
-                msquare.onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                msquare.onclick = new Function('boardSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
             } else {
                 var msquare = document.getElementById("ms"+xLocal+yLocal);
                 // msquare.style.backgroundImage = "";
                 msquare.style.opacity = "0.2";
-                msquare.onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                msquare.onclick = new Function('boardSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
             }
         }
     }
 
-    document.getElementById("mHI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mKA").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mKI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mGI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mKE").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mKY").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mFU").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mEHI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mEKA").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mEKI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mEGI").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mEKE").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mEKY").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
-    document.getElementById("mEFU").onclick = new Function('boardSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    for (var i = 0; i <= HI; i++) {
+        if (isKoma(i)) {
+            document.getElementById("mS"+i).onclick = new Function('boardSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+            document.getElementById("mE"+i).onclick = new Function('boardSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+        }
+    }
 
     document.getElementById("komadai_self_mask").style.visibility = "visible";
     document.getElementById("komadai_enemy_mask").style.visibility = "visible";
-    document.getElementById("mask").style.visibility = "visible";
+    document.getElementById("board_mask").style.visibility = "visible";
     showPath(x, y);
     
     boardSelected = true;
@@ -1271,60 +1189,27 @@ function selectKomaToMove(x, y) {
  * @param {Number} j 駒を表す数値
  */
 function selectTegoma(i, j) {
-    for (var iLocal = 0; iLocal <= 1; iLocal++) {
-		for (var jLocal = 0; jLocal <= HI; jLocal++) {
-            var msquare;
-            if (i == SELF) {
-                if (j == HI) {
-                    msquare = document.getElementById("mHI");
-                } else if (j == KA) {
-                    msquare = document.getElementById("mKA");
-                } else if (j == KI) {
-                    msquare = document.getElementById("mKI");
-                } else if (j == GI) {
-                    msquare = document.getElementById("mGI");
-                } else if (j == KE) {
-                    msquare = document.getElementById("mKE");
-                } else if (j == KY) {
-                    msquare = document.getElementById("mKY");
-                } else if (j == FU) {
-                    msquare = document.getElementById("mFU");
-                }
-            } else {
-                if (j == HI) {
-                    msquare = document.getElementById("mEHI");
-                } else if (j == KA) {
-                    msquare = document.getElementById("mEKA");
-                } else if (j == KI) {
-                    msquare = document.getElementById("mEKI");
-                } else if (j == GI) {
-                    msquare = document.getElementById("mEGI");
-                } else if (j == KE) {
-                    msquare = document.getElementById("mEKE");
-                } else if (j == KY) {
-                    msquare = document.getElementById("mEKY");
-                } else if (j == FU) {
-                    msquare = document.getElementById("mEFU");
-                }
-            }
-            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+    for (var iLocal = 0; iLocal <= HI; iLocal++) {
+        if (isKoma(iLocal)) {
+            document.getElementById("mS"+iLocal).onclick = new Function('komadaiSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+            document.getElementById("mE"+iLocal).onclick = new Function('komadaiSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
         }
     }
     document.getElementById("komadai_self_mask").style.visibility = "visible";
     document.getElementById("komadai_enemy_mask").style.visibility = "visible";
-    document.getElementById("mask").style.visibility = "visible";
+    document.getElementById("board_mask").style.visibility = "visible";
 
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
             var msquare = document.getElementById("ms"+x+y);
             if (board[x][y] != EMPTY) {
                 msquare.style.opacity = "0.2";
-                msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                msquare.onclick = new Function('komadaiSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
             } else {
-                if (i == SELF) {
+                if (i == SELF_TURN) {
                     if ((j == KE && y <= 2) || (j == KY && y == 1)) {
                         msquare.style.opacity = "0.2";
-                        msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                        msquare.onclick = new Function('komadaiSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
                     } else if (j == FU) {
                         var flg = true;
                         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -1335,7 +1220,7 @@ function selectTegoma(i, j) {
                         }
                         if (!flg || y == 1) {
                             msquare.style.opacity = "0.2";
-                            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
                         } else {
                             msquare.style.opacity = "0.0";
                             msquare.onclick = new Function("selectEmpty("+x+","+y+");");
@@ -1347,7 +1232,7 @@ function selectTegoma(i, j) {
                 } else {
                     if ((j == KE && y >= 8) || (j == KY && y == 9)) {
                         msquare.style.opacity = "0.2";
-                        msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                        msquare.onclick = new Function('komadaiSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
                     } else if (j == FU) {
                         var flg = true;
                         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -1358,7 +1243,7 @@ function selectTegoma(i, j) {
                         }
                         if (!flg || y == 9) {
                             msquare.style.opacity = "0.2";
-                            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
+                            msquare.onclick = new Function('komadaiSelected = false; document.getElementById("board_mask").style.visibility = "hidden"; document.getElementById("komadai_self_mask").style.visibility = "hidden"; document.getElementById("komadai_enemy_mask").style.visibility = "hidden";');
                         } else {
                             msquare.style.opacity = "0.0";
                             msquare.onclick = new Function("selectEmpty("+x+","+y+");");
@@ -1375,7 +1260,7 @@ function selectTegoma(i, j) {
     komadaiSelected = true;
     boardSelected = false;
     selectedKoma = j;
-    if (i == ENEMY) {
+    if (i == ENEMY_TURN) {
         selectedKoma |= ENEMY;
     }
 }
@@ -1396,20 +1281,12 @@ function selectEmpty(x, y) {
                 document.getElementById("s"+xLocal+yLocal).onclick = "";
             }
         }
-        document.getElementById("HI").onclick = "";
-        document.getElementById("KA").onclick = "";
-        document.getElementById("KI").onclick = "";
-        document.getElementById("GI").onclick = "";
-        document.getElementById("KE").onclick = "";
-        document.getElementById("KY").onclick = "";
-        document.getElementById("FU").onclick = "";
-        document.getElementById("EHI").onclick = "";
-        document.getElementById("EKA").onclick = "";
-        document.getElementById("EKI").onclick = "";
-        document.getElementById("EGI").onclick = "";
-        document.getElementById("EKE").onclick = "";
-        document.getElementById("EKY").onclick = "";
-        document.getElementById("EFU").onclick = "";
+        for (var i = 0; i <= HI; i++) {
+            if (isKoma(i)) {
+                document.getElementById("S"+i).onclick = "";
+                document.getElementById("E"+i).onclick = "";
+            }
+        }
         
 		if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
             // TODO
@@ -1417,7 +1294,7 @@ function selectEmpty(x, y) {
 			selectedKoma = EMPTY;
 			
             turn = !turn;
-            document.getElementById("mask").style.visibility = "hidden";
+            document.getElementById("board_mask").style.visibility = "hidden";
             document.getElementById("komadai_self_mask").style.visibility = "hidden";
             document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
 			showBoard();
@@ -1425,7 +1302,7 @@ function selectEmpty(x, y) {
 			selectedKoma = EMPTY;
 			
             turn = !turn;
-            document.getElementById("mask").style.visibility = "hidden";
+            document.getElementById("board_mask").style.visibility = "hidden";
             document.getElementById("komadai_self_mask").style.visibility = "hidden";
             document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
             showBoard();
@@ -1440,25 +1317,17 @@ function selectEmpty(x, y) {
                 document.getElementById("s"+xLocal+yLocal).onclick = "";
             }
         }
-        document.getElementById("HI").onclick = "";
-        document.getElementById("KA").onclick = "";
-        document.getElementById("KI").onclick = "";
-        document.getElementById("GI").onclick = "";
-        document.getElementById("KE").onclick = "";
-        document.getElementById("KY").onclick = "";
-        document.getElementById("FU").onclick = "";
-        document.getElementById("EHI").onclick = "";
-        document.getElementById("EKA").onclick = "";
-        document.getElementById("EKI").onclick = "";
-        document.getElementById("EGI").onclick = "";
-        document.getElementById("EKE").onclick = "";
-        document.getElementById("EKY").onclick = "";
-        document.getElementById("EFU").onclick = "";
+        for (var i = 0; i <= HI; i++) {
+            if (isKoma(i)) {
+                document.getElementById("S"+i).onclick = "";
+                document.getElementById("E"+i).onclick = "";
+            }
+        }
 
         selectedKoma = EMPTY;
 			
         turn = !turn;
-        document.getElementById("mask").style.visibility = "hidden";
+        document.getElementById("board_mask").style.visibility = "hidden";
         document.getElementById("komadai_self_mask").style.visibility = "hidden";
         document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
         showBoard();
@@ -1488,7 +1357,7 @@ function selectEnemy(x, y) {
         selectedKoma = EMPTY;
         
         turn = !turn;
-        document.getElementById("mask").style.visibility = "hidden";
+        document.getElementById("board_mask").style.visibility = "hidden";
         document.getElementById("komadai_self_mask").style.visibility = "hidden";
         document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
         showBoard();
@@ -1496,7 +1365,7 @@ function selectEnemy(x, y) {
         selectedKoma = EMPTY;
         
         turn = !turn;
-        document.getElementById("mask").style.visibility = "hidden";
+        document.getElementById("board_mask").style.visibility = "hidden";
         document.getElementById("komadai_self_mask").style.visibility = "hidden";
         document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
         showBoard();

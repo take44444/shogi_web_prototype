@@ -44,7 +44,7 @@
                 background-repeat: no-repeat;
                 background-size: 42px 50px;
             }
-            #mask {
+            #board_mask {
                 visibility: hidden;
                 border-collapse:collapse;
                 border:3px solid #000; 
@@ -55,7 +55,7 @@
                 height: 513px;
                 opacity: 1.0;
             }
-            #mask td {
+            #board_mask td {
                 border: 2px solid #000;
                 width: 52px;
                 height: 57px;
@@ -180,46 +180,46 @@
                 background-repeat: no-repeat;
                 /* background-size: 42px 50px; */
             }
-            #HI {
+            #S7 {
                 background-image: url(img/HI_pos.png);
             }
-            #KA {
+            #S6 {
                 background-image: url(img/KA_pos.png);
             }
-            #KI {
+            #S5 {
                 background-image: url(img/KI_pos.png);
             }
-            #GI {
+            #S4 {
                 background-image: url(img/GI_pos.png);
             }
-            #KE {
+            #S3 {
                 background-image: url(img/KE_pos.png);
             }
-            #KY {
+            #S2 {
                 background-image: url(img/KY_pos.png);
             }
-            #FU {
+            #S1 {
                 background-image: url(img/FU_pos.png);
             }
-            #EHI {
+            #E7 {
                 background-image: url(img/HI_neg.png);
             }
-            #EKA {
+            #E6 {
                 background-image: url(img/KA_neg.png);
             }
-            #EKI {
+            #E5 {
                 background-image: url(img/KI_neg.png);
             }
-            #EGI {
+            #E4 {
                 background-image: url(img/GI_neg.png);
             }
-            #EKE {
+            #E3 {
                 background-image: url(img/KE_neg.png);
             }
-            #EKY {
+            #E2 {
                 background-image: url(img/KY_neg.png);
             }
-            #EFU {
+            #E1 {
                 background-image: url(img/FU_neg.png);
             }
         </style>
@@ -240,7 +240,7 @@
                     <tr><td id="s99"></td><td id="s89"></td><td id="s79"></td><td id="s69"></td><td id="s59"></td><td id="s49"></td><td id="s39"></td><td id="s29"></td><td id="s19"></td></tr>
                     </tbody>
                 </table>
-                <table id="mask">
+                <table id="board_mask">
                     <tbody>
                     <tr><td id="ms91"></td><td id="ms81"></td><td id="ms71"></td><td id="ms61"></td><td id="ms51"></td><td id="ms41"></td><td id="ms31"></td><td id="ms21"></td><td id="ms11"></td></tr>
                     <tr><td id="ms92"></td><td id="ms82"></td><td id="ms72"></td><td id="ms62"></td><td id="ms52"></td><td id="ms42"></td><td id="ms32"></td><td id="ms22"></td><td id="ms12"></td></tr>
@@ -256,30 +256,35 @@
             </div>
             <table id="komadai_enemy">
                 <tbody>
-                <tr><td id="EHI" data-num="0"></td><td id="EKA" data-num="0"></td></tr>
-                <tr><td id="EKI" data-num="0"></td><td id="EGI" data-num="0"></td></tr>
-                <tr><td id="EKE" data-num="0"></td><td id="EKY" data-num="0"></td><td id="EFU" data-num="0"></td></tr>
+                <tr><td id="E7" data-num="0"></td><td id="E6" data-num="0"></td></tr>
+                <tr><td id="E5" data-num="0"></td><td id="E4" data-num="0"></td></tr>
+                <tr><td id="E3" data-num="0"></td><td id="E2" data-num="0"></td><td id="E1" data-num="0"></td></tr>
                 </tbody>
             </table>
             <table id="komadai_enemy_mask">
                 <tbody>
-                <tr><td id="mEHI"></td><td id="mEKA"></td></tr>
-                <tr><td id="mEKI"></td><td id="mEGI"></td></tr>
-                <tr><td id="mEKE"></td><td id="mEKY"></td><td id="mEFU"></td></tr>
+                <tr><td id="mE7"></td><td id="mE6"></td></tr>
+                <tr><td id="mE5"></td><td id="mE4"></td></tr>
+                <tr><td id="mE3"></td><td id="mE2"></td><td id="mE1"></td></tr>
                 </tbody>
             </table>
             <table id="komadai_self">
                 <tbody>
-                <tr><td id="HI" data-num="0"></td><td id="KA" data-num="0"></td></tr>
-                <tr><td id="KI" data-num="0"></td><td id="GI" data-num="0"></td></tr>
-                <tr><td id="KE" data-num="0"></td><td id="KY" data-num="0"></td><td id="FU" data-num="0"></td></tr>
+                <tr><td id="S7" data-num="0"></td><td id="S6" data-num="0"></td></tr>
+                <tr><td id="S5" data-num="0"></td><td id="S4" data-num="0"></td></tr>
+                <tr><td id="S3" data-num="0"></td><td id="S2" data-num="0"></td><td id="S1" data-num="0"></td></tr>
                 </tbody>
             </table>
             <table id="komadai_self_mask">
                 <tbody>
-                <tr><td id="mHI"></td><td id="mKA"></td></tr>
-                <tr><td id="mKI"></td><td id="mGI"></td></tr>
-                <tr><td id="mKE"></td><td id="mKY"></td><td id="mFU"></td></tr>
+                <tr><td id="mS7"></td><td id="mS6"></td></tr>
+                <tr><td id="mS5"></td><td id="mS4"></td></tr>
+                <tr><td id="mS3"></td><td id="mS2"></td><td id="mS1"></td></tr>
+                </tbody>
+            </table>
+            <table id="nari_window">
+                <tbody>
+                    <tr><td id="NARI"></td><td id="NARAZU"></td></tr>
                 </tbody>
             </table>
         </div>
