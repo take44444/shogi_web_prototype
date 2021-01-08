@@ -359,12 +359,15 @@ function showNariWindow(x, y) {
     var nariWindow = document.getElementById("nari_window");
     nariWindow.style.left = "" + (196 + 52 * (9 - x) - 26) + "px";
     nariWindow.style.top = "" + (21 + 59 * (y - 1)) + "px";
+
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = komaSet[selectedKoma + NARI].img;
     nari.onclick = new Function("board[" + x + "][" + y + "] += NARI; document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
+
     var narazu = document.getElementById("NARAZU");
     narazu.style.backgroundImage = komaSet[selectedKoma].img;
     narazu.onclick = new Function("document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
+
     nariWindow.style.visibility = "visible";
 }
 

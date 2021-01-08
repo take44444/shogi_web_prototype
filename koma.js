@@ -29,6 +29,11 @@ const ENG = ENEMY + NG;
 const EUM = ENEMY + UM;
 const ERY = ENEMY + RY;
 
+/**
+ * 駒のクラス
+ * @param {number} koma 駒を表す数値
+ * @constructor
+ */
 class Koma {
     static komaImg_ = [
         "",
