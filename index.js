@@ -1,58 +1,58 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
-var komaImg;
+let komaImg;
 
-var xClicked, yClicked;
+let xClicked, yClicked;
 
-var selectedKoma;
-var turn;
-var state;
+let selectedKoma;
+let turn;
+let state;
 
-SELECTING = 0;
-BOARD_SELECTED = 1;
-KOMADAI_SELECTED = 2;
-SELECTED = 2;
-NARI_SELECTING = 3;
+const SELECTING = 0;
+const BOARD_SELECTED = 1;
+const KOMADAI_SELECTED = 2;
+const SELECTED = 2;
+const NARI_SELECTING = 3;
 
-SELF_TURN = 1;
-ENEMY_TURN = 0;
+const SELF_TURN = 1;
+const ENEMY_TURN = 0;
 
 var board = [];
 var tegoma = [];
 
-OUT_OF_BOARD = 128;
-EMPTY = 0;
+const OUT_OF_BOARD = 128;
+const EMPTY = 0;
 
-FU = 1;
-KY = 2;
-KE = 3;
-GI = 4;
-KI = 5;
-KA = 6;
-HI = 7;
-OU = 8;
-NARI = 8;
-TO = NARI + FU;
-NY = NARI + KY;
-NK = NARI + KE;
-NG = NARI + GI;
-UM = NARI + KA;
-RY = NARI + HI;
-ENEMY = 16;
-EFU = ENEMY + FU;
-EKY = ENEMY + KY;
-EKE = ENEMY + KE;
-EGI = ENEMY + GI;
-EKI = ENEMY + KI;
-EKA = ENEMY + KA;
-EHI = ENEMY + HI;
-EOU = ENEMY + OU;
-ETO = ENEMY + TO;
-ENY = ENEMY + NY;
-ENK = ENEMY + NK;
-ENG = ENEMY + NG;
-EUM = ENEMY + UM;
-ERY = ENEMY + RY;
+const FU = 1;
+const KY = 2;
+const KE = 3;
+const GI = 4;
+const KI = 5;
+const KA = 6;
+const HI = 7;
+const OU = 8;
+const NARI = 8;
+const TO = NARI + FU;
+const NY = NARI + KY;
+const NK = NARI + KE;
+const NG = NARI + GI;
+const UM = NARI + KA;
+const RY = NARI + HI;
+const ENEMY = 16;
+const EFU = ENEMY + FU;
+const EKY = ENEMY + KY;
+const EKE = ENEMY + KE;
+const EGI = ENEMY + GI;
+const EKI = ENEMY + KI;
+const EKA = ENEMY + KA;
+const EHI = ENEMY + HI;
+const EOU = ENEMY + OU;
+const ETO = ENEMY + TO;
+const ENY = ENEMY + NY;
+const ENK = ENEMY + NK;
+const ENG = ENEMY + NG;
+const EUM = ENEMY + UM;
+const ERY = ENEMY + RY;
 
 /**
  * 自分の駒か否かをBooleanで返す関数
