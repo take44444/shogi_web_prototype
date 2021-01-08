@@ -315,6 +315,7 @@ function showBoard() {
 
     showTegoma();
 
+    state = SELECTING;
     // var turnMessageElement = document.getElementById("turn_message");
     // (turn) ? turnMessageElement.innerHTML = "??????<br>" : turnMessageElement.innerHTML = "??????<br>";
 }
@@ -1275,17 +1276,6 @@ function selectEmpty(x, y) {
 	if (state == BOARD_SELECTED) {
 		board[x][y] = selectedKoma;
 		board[xClicked][yClicked] = EMPTY;
-        for (var xLocal = 1; xLocal <= 9; xLocal++) {
-            for (var yLocal = 1; yLocal <= 9; yLocal++) {
-                document.getElementById("s"+xLocal+yLocal).onclick = "";
-            }
-        }
-        for (var i = 0; i <= HI; i++) {
-            if (isKoma(i)) {
-                document.getElementById("S"+i).onclick = "";
-                document.getElementById("E"+i).onclick = "";
-            }
-        }
         
 		if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
             // TODO
@@ -1297,7 +1287,6 @@ function selectEmpty(x, y) {
             document.getElementById("komadai_self_mask").style.visibility = "hidden";
             document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
 
-            state = SELECTING;
 			showBoard();
 		} else {
 			selectedKoma = EMPTY;
@@ -1307,23 +1296,11 @@ function selectEmpty(x, y) {
             document.getElementById("komadai_self_mask").style.visibility = "hidden";
             document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
 
-            state = SELECTING;
             showBoard();
 		}
 	} else if (state == KOMADAI_SELECTED) {
         tegoma[+turn][selectedKoma & ~ENEMY]--;
 		board[x][y] = selectedKoma;
-        for (var xLocal = 1; xLocal <= 9; xLocal++) {
-            for (var yLocal = 1; yLocal <= 9; yLocal++) {
-                document.getElementById("s"+xLocal+yLocal).onclick = "";
-            }
-        }
-        for (var i = 0; i <= HI; i++) {
-            if (isKoma(i)) {
-                document.getElementById("S"+i).onclick = "";
-                document.getElementById("E"+i).onclick = "";
-            }
-        }
 
         selectedKoma = EMPTY;
 			
@@ -1332,7 +1309,6 @@ function selectEmpty(x, y) {
         document.getElementById("komadai_self_mask").style.visibility = "hidden";
         document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
 
-        state = SELECTING;
         showBoard();
     }
 }
@@ -1346,11 +1322,6 @@ function selectEnemy(x, y) {
     tegoma[+turn][board[x][y] & ~ENEMY & ~NARI]++;
     board[x][y] = selectedKoma;
     board[xClicked][yClicked] = EMPTY;
-    for (var xLocal = 1; xLocal <= 9; xLocal++) {
-        for (var yLocal = 1; yLocal <= 9; yLocal++) {
-            document.getElementById("s"+xLocal+yLocal).onclick = "";
-        }
-    }
 
     if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
         // TODO
@@ -1362,7 +1333,6 @@ function selectEnemy(x, y) {
         document.getElementById("komadai_self_mask").style.visibility = "hidden";
         document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
 
-        state = SELECTING;
         showBoard();
     } else {
         selectedKoma = EMPTY;
@@ -1372,7 +1342,6 @@ function selectEnemy(x, y) {
         document.getElementById("komadai_self_mask").style.visibility = "hidden";
         document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
 
-        state = SELECTING;
         showBoard();
     }
 }
