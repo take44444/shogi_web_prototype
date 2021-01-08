@@ -1783,6 +1783,11 @@ function selectEnemy(x, y) {
     }
 }
 
+/**
+ * 成るか成らないかを選択するためのウィンドウを表示する関数
+ * @param {Number} x 選択した駒の移動先のマスの筋
+ * @param {Number} y 選択した駒の移動先のマスの段
+ */
 function showNariWindow(x, y) {
     state = NARI_SELECTING;
     var nariWindow = document.getElementById("nari_window");
@@ -1841,7 +1846,6 @@ window.onload = function() {
         "url(img/RY_neg.png)",
         "",
     ];
-    // pw_img = document.getElementById("pw_img");
 
 	for(var i = 0; i <= 10; i++){
 		board[i] = [];
