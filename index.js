@@ -1729,7 +1729,14 @@ function selectEmpty(x, y) {
 		board[xClicked][yClicked] = EMPTY;
         
 		if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
-            showNariWindow(x, y);
+            if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
+            || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
+                board[x][y] += NARI;
+                rotateTurn();
+                showBoard();
+            } else {
+                showNariWindow(x, y);
+            }
 		} else {
 			selectedKoma = EMPTY;
 			
@@ -1759,7 +1766,14 @@ function selectEnemy(x, y) {
         board[xClicked][yClicked] = EMPTY;
 
         if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
-            showNariWindow(x, y);
+            if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
+            || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
+               board[x][y] += NARI;
+               rotateTurn();
+               showBoard();
+           } else {
+               showNariWindow(x, y);
+           }
         } else {
             selectedKoma = EMPTY;
 
