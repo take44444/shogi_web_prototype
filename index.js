@@ -1,6 +1,754 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
-let komaImg;
+let komaSet = [];
+
+class Koma {
+    static komaImg_ = [
+        "",
+        "url(img/FU_pos.png)",
+        "url(img/KY_pos.png)",
+        "url(img/KE_pos.png)",
+        "url(img/GI_pos.png)",
+        "url(img/KI_pos.png)",
+        "url(img/KA_pos.png)",
+        "url(img/HI_pos.png)",
+        "url(img/OU_pos.png)",
+        "url(img/TO_pos.png)",
+        "url(img/NY_pos.png)",
+        "url(img/NK_pos.png)",
+        "url(img/NG_pos.png)",
+        "url(img/KI_pos.png)",
+        "url(img/UM_pos.png)",
+        "url(img/RY_pos.png)",
+        "",
+        "url(img/FU_neg.png)",
+        "url(img/KY_neg.png)",
+        "url(img/KE_neg.png)",
+        "url(img/GI_neg.png)",
+        "url(img/KI_neg.png)",
+        "url(img/KA_neg.png)",
+        "url(img/HI_neg.png)",
+        "url(img/OU_neg.png)",
+        "url(img/TO_neg.png)",
+        "url(img/NY_neg.png)",
+        "url(img/NK_neg.png)",
+        "url(img/NG_neg.png)",
+        "url(img/KI_neg.png)",
+        "url(img/UM_neg.png)",
+        "url(img/RY_neg.png)",
+        "",
+    ];
+    constructor(koma) {
+        this.isKoma = (FU <= koma && koma <= RY) || (EFU <= koma && koma <= ERY);
+        this.img = Koma.komaImg_[koma];
+        this.isSelf = FU <= koma && koma <= RY;
+        this.isEnemy = EFU <= koma && koma <= ERY;
+        var n = koma & ~ENEMY;
+        this.canNari = FU <= n && n <= HI && n != KI && n != OU;
+        
+        if (koma == FU) {
+            this.pathGen = function* (x, y, board) {
+                if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                } else if (komaIsEnemy(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };
+                }
+            };
+        } else if (koma == EFU) {
+            this.pathGen = function* (x, y, board) {
+                if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                } else if (komaIsSelf(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                }
+            };
+        } else if (koma == KY) {
+            this.pathGen = function* (x, y, board) {
+                for (var yTo = y-1; yTo >= 1; yTo--) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            };
+        } else if (koma == EKY) {
+            this.pathGen = function* (x, y, board) {
+                for (var yTo = y+1; yTo <= 9; yTo++) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            };
+        } else if (koma == KE) {
+            this.pathGen = function* (x, y, board) {
+                if (board[x-1][y-2] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-2, isEmpty: true };
+                } else if (komaIsEnemy(board[x-1][y-2])) {
+                    yield { xTo: x-1, yTo: y-2, isEmpty: false };
+                } 
+                if (board[x+1][y-2] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-2, isEmpty: true };
+                } else if (komaIsEnemy(board[x+1][y-2])) {
+                    yield { xTo: x+1, yTo: y-2, isEmpty: false };
+                }
+            };
+        } else if (koma == EKE) {
+            this.pathGen = function* (x, y, board) {
+                if (board[x-1][y+2] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+2, isEmpty: true };
+                } else if (komaIsSelf(board[x-1][y+2])) {
+                    yield { xTo: x-1, yTo: y+2, isEmpty: false };
+                } 
+                if (board[x+1][y+2] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+2, isEmpty: true };
+                } else if (komaIsSelf(board[x+1][y+2])) {
+                    yield { xTo: x+1, yTo: y+2, isEmpty: false };
+                }
+            };
+        } else if (koma == GI) {
+            this.pathGen = function* (x, y, board) {
+                if (komaIsEnemy(board[x-1][y-1])) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: false };
+                } else if (board[x-1][y-1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };
+                } else if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y-1])) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: false };
+                } else if (board[x+1][y-1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x-1][y+1])) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: false };
+                } else if (board[x-1][y+1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y+1])) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: false };
+                } else if (board[x+1][y+1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: true };
+                }
+            };
+        } else if (koma == EGI) {
+            this.pathGen = function* (x, y, board) {
+                if (komaIsSelf(board[x-1][y-1])) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: false };
+                } else if (board[x-1][y-1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: true};
+                }
+                if (komaIsSelf(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                } else if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y-1])) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: false };
+                } else if (board[x+1][y-1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x-1][y+1])) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: false };
+                } else if (board[x-1][y+1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y+1])) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: false };
+                } else if (board[x+1][y+1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: true };
+                }
+            };
+        } else if (koma == KI || (koma >= TO && koma <= NG)) {
+            this.pathGen = function* (x, y, board) {
+                if (komaIsEnemy(board[x-1][y-1])) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: false };
+                } else if (board[x-1][y-1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };
+                } else if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                } else if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y-1])) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: false };
+                } else if (board[x+1][y-1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x-1][y])) {
+                    yield { xTo: x-1, yTo: y, isEmpty: false };
+                } else if (board[x-1][y] == EMPTY) {
+                    yield { xTo: x-1, yTo: y, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y])) {
+                    yield { xTo: x+1, yTo: y, isEmpty: false };
+                } else if (board[x+1][y] == EMPTY) {
+                    yield { xTo: x+1, yTo: y, isEmpty: true };
+                }
+            };
+        } else if (koma == EKI || (koma >= ETO && koma <= ENG)) {
+            this.pathGen = function* (x, y, board) {
+                if (komaIsSelf(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                } else if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };
+                } else if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x-1][y+1])) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: false };
+                } else if (board[x-1][y+1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y+1])) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: false };
+                } else if (board[x+1][y+1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x-1][y])) {
+                    yield { xTo: x-1, yTo: y, isEmpty: false };
+                } else if (board[x-1][y] == EMPTY) {
+                    yield { xTo: x-1, yTo: y, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y])) {
+                    yield { xTo: x+1, yTo: y, isEmpty: false };
+                } else if (board[x+1][y] == EMPTY) {
+                    yield { xTo: x+1, yTo: y, isEmpty: true };
+                }
+            };
+        } else if (koma == OU) {
+            this.pathGen = function* (x, y, board) {
+                if (komaIsEnemy(board[x-1][y+1])) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: false };
+                } else if (board[x-1][y+1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y+1])) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: false };
+                } else if (board[x+1][y+1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x-1][y-1])) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: false };
+                } else if (board[x-1][y-1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };s
+                } else if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                } else if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y-1])) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: false };
+                } else if (board[x+1][y-1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x-1][y])) {
+                    yield { xTo: x-1, yTo: y, isEmpty: false };
+                } else if (board[x-1][y] == EMPTY) {
+                    yield { xTo: x-1, yTo: y, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y])) {
+                    yield { xTo: x+1, yTo: y, isEmpty: false };
+                } else if (board[x+1][y] == EMPTY) {
+                    yield { xTo: x+1, yTo: y, isEmpty: true };
+                }
+            };
+        } else if (koma == EOU) {
+            this.pathGen = function* (x, y, board) {
+                if (komaIsSelf(board[x-1][y+1])) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: false };
+                } else if (board[x-1][y+1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y+1])) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: false };
+                } else if (board[x+1][y+1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x-1][y-1])) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: false };
+                } else if (board[x-1][y-1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };s
+                } else if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                } else if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y-1])) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: false };
+                } else if (board[x+1][y-1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x-1][y])) {
+                    yield { xTo: x-1, yTo: y, isEmpty: false };
+                } else if (board[x-1][y] == EMPTY) {
+                    yield { xTo: x-1, yTo: y, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y])) {
+                    yield { xTo: x+1, yTo: y, isEmpty: false };
+                } else if (board[x+1][y] == EMPTY) {
+                    yield { xTo: x+1, yTo: y, isEmpty: true };
+                }
+            };
+        } else if (koma == HI) {
+            this.pathGen = function* (x, y, board) {
+                for (var yTo = y-1; yTo >= 1; yTo--) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var yTo = y+1; yTo <= 9; yTo++) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1; xTo >= 1; xTo--) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1; xTo <= 9; xTo++) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            };
+        } else if (koma == EHI) {
+            this.pathGen = function* (x, y, board) {
+                for (var yTo = y-1; yTo >= 1; yTo--) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var yTo = y+1; yTo <= 9; yTo++) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1; xTo >= 1; xTo--) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1; xTo <= 9; xTo++) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            };
+        } else if (koma == KA) {
+            this.pathGen = function* (x, y, board) {
+                for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            };
+        } else if (koma == EKA) {
+            this.pathGen = function* (x, y, board) {
+                for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            };
+        } else if (koma == RY) {
+                this.pathGen = function* (x, y, board) {
+                for (var yTo = y-1; yTo >= 1; yTo--) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var yTo = y+1; yTo <= 9; yTo++) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1; xTo >= 1; xTo--) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1; xTo <= 9; xTo++) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                if (komaIsEnemy(board[x-1][y-1])) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: false };
+                } else if (board[x-1][y-1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y-1])) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: false };
+                } else if (board[x+1][y-1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x-1][y+1])) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: false };
+                } else if (board[x-1][y+1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y+1])) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: false }
+                } else if (board[x+1][y+1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: true };
+                }
+            };
+        } else if (koma == ERY) {
+            this.pathGen = function* (x, y, board) {
+                for (var yTo = y-1; yTo >= 1; yTo--) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var yTo = y+1; yTo <= 9; yTo++) {
+                    if (board[x][yTo] == EMPTY) {
+                        yield { xTo: x, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[x][yTo])) {
+                        yield { xTo: x, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1; xTo >= 1; xTo--) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1; xTo <= 9; xTo++) {
+                    if (board[xTo][y] == EMPTY) {
+                        yield { xTo: xTo, yTo: y, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][y])) {
+                        yield { xTo: xTo, yTo: y, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                if (komaIsSelf(board[x-1][y-1])) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: false };
+                } else if (board[x-1][y-1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y-1])) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: false };
+                } else if (board[x+1][y-1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x-1][y+1])) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: false };
+                } else if (board[x-1][y+1] == EMPTY) {
+                    yield { xTo: x-1, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y+1])) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: false }
+                } else if (board[x+1][y+1] == EMPTY) {
+                    yield { xTo: x+1, yTo: y+1, isEmpty: true };
+                }
+            };
+        } else if (koma == UM) {
+            this.pathGen = function* (x, y, board) {
+                for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsEnemy(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                if (komaIsEnemy(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };
+                } else if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                } else if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x-1][y])) {
+                    yield { xTo: x-1, yTo: y, isEmpty: false };
+                } else if (board[x-1][y] == EMPTY) {
+                    yield { xTo: x-1, yTo: y, isEmpty: true };
+                }
+                if (komaIsEnemy(board[x+1][y])) {
+                    yield { xTo: x+1, yTo: y, isEmpty: false };
+                } else if (board[x+1][y] == EMPTY) {
+                    yield { xTo: x+1, yTo: y, isEmpty: true };
+                }
+            };
+        } else if (koma == EUM) {
+            this.pathGen = function* (x, y, board) {
+                for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
+                    if (board[xTo][yTo] == EMPTY) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                    } else if (komaIsSelf(board[xTo][yTo])) {
+                        yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+                if (komaIsSelf(board[x][y-1])) {
+                    yield { xTo: x, yTo: y-1, isEmpty: false };
+                } else if (board[x][y-1] == EMPTY) {
+                    yield { xTo: x, yTo: y-1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x][y+1])) {
+                    yield { xTo: x, yTo: y+1, isEmpty: false };
+                } else if (board[x][y+1] == EMPTY) {
+                    yield { xTo: x, yTo: y+1, isEmpty: true };
+                }
+                if (komaIsSelf(board[x-1][y])) {
+                    yield { xTo: x-1, yTo: y, isEmpty: false };
+                } else if (board[x-1][y] == EMPTY) {
+                    yield { xTo: x-1, yTo: y, isEmpty: true };
+                }
+                if (komaIsSelf(board[x+1][y])) {
+                    yield { xTo: x+1, yTo: y, isEmpty: false };
+                } else if (board[x+1][y] == EMPTY) {
+                    yield { xTo: x+1, yTo: y, isEmpty: true };
+                }
+            };
+        }
+    }
+}
 
 let xClicked, yClicked;
 
@@ -73,25 +821,6 @@ function komaIsEnemy(koma) {
 }
 
 /**
- * 成れる駒か否かをBooleanで返す関数
- * @param {Number} koma 駒を表す数値
- * @return {Boolean} 引数で与えられた駒が成れる駒の場合はtrue，違う場合はfalseを返す
- */
-function komaCanNari(koma) {
-    var k = koma & ~ENEMY;
-    return (FU <= k && k <= HI && k != KI && k != OU);
-}
-
-/**
- * 駒を表す数値かをBooleanで返す関数
- * @param {Number} koma 数値
- * @return {Boolean} 引数で与えられた数値が駒の場合はtrue，違う場合はfalseを返す
- */
-function isKoma(koma) {
-    return ((FU <= koma && koma <= RY) || (EFU <= koma && koma <= ERY));
-}
-
-/**
  * 自分の陣地ないか否かをBooleanで返す関数
  * @param {Number} x 盤における筋
  * @param {Number} y 盤における段
@@ -119,7 +848,7 @@ function isEnemyArea(x, y) {
  * @return {Boolean} 引数で与えられた駒が，同じく引数で与えられたマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
  */
 function canNari(koma, x, y) {
-	return (komaCanNari(koma) && ((komaIsSelf(koma) && isEnemyArea(x, y)) || (komaIsEnemy(koma) && isSelfArea(x, y))));
+	return (koma.canNari && ((koma.isSelf && isEnemyArea(x, y)) || (koma.isEnemy && isSelfArea(x, y))));
 }
 
 /**
@@ -146,13 +875,13 @@ function showBoard() {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
             var square = document.getElementById("s"+x+y);
-            square.style.backgroundImage = komaImg[board[x][y]];
+            square.style.backgroundImage = komaSet[board[x][y]].img;
 
             if (board[x][y] != EMPTY) {
                 (function() {
                     var xLocal = x, yLocal = y;
                     square.onclick = function() {
-                        if (turn == komaIsSelf(board[xLocal][yLocal]) && state == SELECTING) {
+                        if (turn == komaSet[board[xLocal][yLocal]].isSelf && state == SELECTING) {
                             selectKomaToMove(xLocal, yLocal);
                         }
                     }
@@ -175,10 +904,10 @@ function showTegoma() {
     for (var i = 0; i <= 1; i++) {
 		for (var j = 0; j <= HI; j++) {
             var square;
-            if (i == SELF_TURN && isKoma(j)) {
+            if (i == SELF_TURN && komaSet[j].isKoma) {
                 square = document.getElementById("S"+j);
                 square.dataset.num = tegoma[SELF_TURN][j];
-            } else if (isKoma(j)) {
+            } else if (komaSet[j].isKoma) {
                 square = document.getElementById("E"+j);
                 square.dataset.num = tegoma[ENEMY_TURN][j];
             }
@@ -203,1229 +932,14 @@ function showTegoma() {
  * @param {Number} y 盤における段
  */
 function showPath(x, y) {
-    if (board[x][y] == FU) {
-        if (komaIsEnemy(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-    } else if (board[x][y] == EFU) {
-        if (komaIsSelf(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-    } else if (board[x][y] == KY) {
-        for (var yTo = y-1; yTo >= 1; yTo--) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsEnemy(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-    } else if (board[x][y] == EKY) {
-        for (var yTo = y+1; yTo <= 9; yTo++) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSelf(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-    } else if (board[x][y] == KE) {
-        if (komaIsEnemy(board[x-1][y-2])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-2)+")");
-        } else if (board[x-1][y-2] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-2)+")");
-        }
-        if (komaIsEnemy(board[x+1][y-2])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-2)+")");
-        } else if (board[x+1][y-2] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-2)+")");
-        }
-    } else if (board[x][y] == EKE) {
-        if (komaIsSelf(board[x-1][y+2])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+2)+")");
-        } else if (board[x-1][y+2] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+2)+")");
-        }
-        if (komaIsSelf(board[x+1][y+2])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+2)+")");
-        } else if (board[x+1][y+2] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+2));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+2)+")");
-        }
-    } else if (board[x][y] == GI) {
-        if (komaIsEnemy(board[x-1][y-1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
-        } else if (board[x-1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x+1][y-1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
-        } else if (board[x+1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x-1][y+1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
-        } else if (board[x-1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
-        }
-        if (komaIsEnemy(board[x+1][y+1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
-        } else if (board[x+1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
-        }
-    } else if (board[x][y] == EGI) {
-        if (komaIsSelf(board[x-1][y-1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
-        } else if (board[x-1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x+1][y-1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
-        } else if (board[x+1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x-1][y+1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
-        } else if (board[x-1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x+1][y+1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
-        } else if (board[x+1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
-        }
-    } else if (board[x][y] == KI || (board[x][y] >= TO && board[x][y] <= NG)) {
-        if (komaIsEnemy(board[x-1][y-1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
-        } else if (board[x-1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-        if (komaIsEnemy(board[x+1][y-1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
-        } else if (board[x+1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x-1][y])) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
-        } else if (board[x-1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
-        }
-        if (komaIsEnemy(board[x+1][y])) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
-        } else if (board[x+1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
-        }
-    } else if (board[x][y] == EKI || (board[x][y] >= ETO && board[x][y] <= ENG)) {
-        if (komaIsSelf(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x-1][y+1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
-        } else if (board[x-1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x+1][y+1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
-        } else if (board[x+1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x-1][y])) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
-        } else if (board[x-1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
-        }
-        if (komaIsSelf(board[x+1][y])) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
-        } else if (board[x+1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
-        }
-    } else if (board[x][y] == OU) {
-        if (komaIsEnemy(board[x-1][y+1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
-        } else if (board[x-1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
-        }
-        if (komaIsEnemy(board[x+1][y+1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
-        } else if (board[x+1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
-        }
-        if (komaIsEnemy(board[x-1][y-1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
-        } else if (board[x-1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-        if (komaIsEnemy(board[x+1][y-1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
-        } else if (board[x+1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x-1][y])) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
-        } else if (board[x-1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
-        }
-        if (komaIsEnemy(board[x+1][y])) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
-        } else if (board[x+1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
-        }
-    } else if (board[x][y] == EOU) {
-        if (komaIsSelf(board[x-1][y-1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
-        } else if (board[x-1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x+1][y-1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
-        } else if (board[x+1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x-1][y+1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
-        } else if (board[x-1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x+1][y+1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
-        } else if (board[x+1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x-1][y])) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
-        } else if (board[x-1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
-        }
-        if (komaIsSelf(board[x+1][y])) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
-        } else if (board[x+1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
-        }
-    } else if (board[x][y] == HI) {
-        for (var yTo = y-1; yTo >= 1; yTo--) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsEnemy(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var yTo = y+1; yTo <= 9; yTo++) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsEnemy(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1; xTo >= 1; xTo--) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsEnemy(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1; xTo <= 9; xTo++) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsEnemy(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-    } else if (board[x][y] == EHI) {
-        for (var yTo = y+1; yTo <= 9; yTo++) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSelf(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var yTo = y-1; yTo >= 1; yTo--) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSelf(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1; xTo >= 1; xTo--) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsSelf(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1; xTo <= 9; xTo++) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsSelf(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-    } else if (board[x][y] == KA) {
-        for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-    } else if (board[x][y] == EKA) {
-        for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-    } else if (board[x][y] == RY) {
-        for (var yTo = y-1; yTo >= 1; yTo--) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsEnemy(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var yTo = y+1; yTo <= 9; yTo++) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsEnemy(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1; xTo >= 1; xTo--) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsEnemy(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1; xTo <= 9; xTo++) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsEnemy(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        if (komaIsEnemy(board[x-1][y-1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
-        } else if (board[x-1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x+1][y-1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
-        } else if (board[x+1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x-1][y+1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
-        } else if (board[x-1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
-        }
-        if (komaIsEnemy(board[x+1][y+1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
-        } else if (board[x+1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
-        }
-    } else if (board[x][y] == ERY) {
-        for (var yTo = y+1; yTo <= 9; yTo++) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSelf(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var yTo = y-1; yTo >= 1; yTo--) {
-            if (board[x][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+x+","+yTo+")");
-            } else if (komaIsSelf(board[x][yTo])) {
-                var msquare = document.getElementById("ms"+x+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+x+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1; xTo >= 1; xTo--) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsSelf(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1; xTo <= 9; xTo++) {
-            if (board[xTo][y] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+y+")");
-            } else if (komaIsSelf(board[xTo][y])) {
-                var msquare = document.getElementById("ms"+xTo+y);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+y+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        if (komaIsSelf(board[x-1][y-1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y-1)+")");
-        } else if (board[x-1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x+1][y-1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y-1)+")");
-        } else if (board[x+1][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x-1][y+1])) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+(y+1)+")");
-        } else if (board[x-1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x+1][y+1])) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+(y+1)+")");
-        } else if (board[x+1][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+(y+1)+")");
-        }
-    } else if (board[x][y] == UM) {
-        for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsEnemy(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        if (komaIsEnemy(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-        if (komaIsEnemy(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-        if (komaIsEnemy(board[x-1][y])) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
-        } else if (board[x-1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
-        }
-        if (komaIsEnemy(board[x+1][y])) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
-        } else if (board[x+1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
-        }
-    } else if (board[x][y] == EUM) {
-        for (var xTo = x-1, yTo = y-1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y-1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x-1, yTo = y+1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        for (var xTo = x+1, yTo = y+1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
-            if (board[xTo][yTo] == EMPTY) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEmpty("+xTo+","+yTo+")");
-            } else if (komaIsSelf(board[xTo][yTo])) {
-                var msquare = document.getElementById("ms"+xTo+yTo);
-                msquare.style.opacity = "0.0";
-                // msquare.style.backgroundImage = "";
-                msquare.onclick = new Function("selectEnemy("+xTo+","+yTo+")");
-                break;
-            } else {
-                break;
-            }
-        }
-        if (komaIsSelf(board[x][y+1])) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y+1)+")");
-        } else if (board[x][y+1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y+1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y+1)+")");
-        }
-        if (komaIsSelf(board[x][y-1])) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+x+","+(y-1)+")");
-        } else if (board[x][y-1] == EMPTY) {
-            var msquare = document.getElementById("ms"+x+(y-1));
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+x+","+(y-1)+")");
-        }
-        if (komaIsSelf(board[x-1][y])) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x-1)+","+y+")");
-        } else if (board[x-1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x-1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x-1)+","+y+")");
-        }
-        if (komaIsSelf(board[x+1][y])) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEnemy("+(x+1)+","+y+")");
-        } else if (board[x+1][y] == EMPTY) {
-            var msquare = document.getElementById("ms"+(x+1)+y);
-            msquare.style.opacity = "0.0";
-            // msquare.style.backgroundImage = "";
-            msquare.onclick = new Function("selectEmpty("+(x+1)+","+y+")");
+    for (var path of komaSet[board[x][y]].pathGen(x, y, board)) {
+        var msquare = document.getElementById("ms"+path.xTo+path.yTo);
+        msquare.style.opacity = "0.0";
+        // msquare.style.backgroundImage = "";
+        if (path.isEmpty) {
+            msquare.onclick = new Function("selectEmpty("+path.xTo+","+path.yTo+")");
+        } else {
+            msquare.onclick = new Function("selectEnemy("+path.xTo+","+path.yTo+")");
         }
     }
 }
@@ -1440,7 +954,7 @@ function selectKomaToMove(x, y) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
             if (xLocal == x && yLocal == y) {
                 var msquare = document.getElementById("ms"+xLocal+yLocal);
-                // msquare.style.backgroundImage = komaImg[board[x][y]];
+                // msquare.style.backgroundImage = komaSet[board[x][y]].img;
                 msquare.style.opacity = "0.0";
                 msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
             } else {
@@ -1453,7 +967,7 @@ function selectKomaToMove(x, y) {
     }
 
     for (var i = 0; i <= HI; i++) {
-        if (isKoma(i)) {
+        if (komaSet[i].isKoma) {
             document.getElementById("mS"+i).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
             document.getElementById("mE"+i).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
         }
@@ -1477,7 +991,7 @@ function selectKomaToMove(x, y) {
  */
 function selectTegoma(i, j) {
     for (var iLocal = 0; iLocal <= HI; iLocal++) {
-        if (isKoma(iLocal)) {
+        if (komaSet[iLocal].isKoma) {
             document.getElementById("mS"+iLocal).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
             document.getElementById("mE"+iLocal).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
         }
@@ -1561,7 +1075,7 @@ function selectEmpty(x, y) {
 		board[x][y] = selectedKoma;
 		board[xClicked][yClicked] = EMPTY;
         
-		if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
+		if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xClicked, yClicked)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
             || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
                 board[x][y] += NARI;
@@ -1598,7 +1112,7 @@ function selectEnemy(x, y) {
         board[x][y] = selectedKoma;
         board[xClicked][yClicked] = EMPTY;
 
-        if (canNari(selectedKoma, x, y) || canNari(selectedKoma, xClicked, yClicked)) {
+        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xClicked, yClicked)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
             || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
                board[x][y] += NARI;
@@ -1627,11 +1141,10 @@ function showNariWindow(x, y) {
     nariWindow.style.left = ""+(196+52*(9-x)-26)+"px";
     nariWindow.style.top = ""+(21+59*(y-1))+"px";
     var nari = document.getElementById("NARI");
-    nari.style.backgroundImage = komaImg[selectedKoma + NARI];
+    nari.style.backgroundImage = komaSet[selectedKoma + NARI].img;
     nari.onclick = new Function("board["+x+"]["+y+"] += NARI; document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
     var narazu = document.getElementById("NARAZU");
-    console.log(selectedKoma, komaImg[selectedKoma]);
-    narazu.style.backgroundImage = komaImg[selectedKoma];
+    narazu.style.backgroundImage = komaSet[selectedKoma].img;
     narazu.onclick = new Function("document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
     nariWindow.style.visibility = "visible";
 }
@@ -1644,41 +1157,9 @@ window.onload = function() {
 
     state = SELECTING;
 
-    komaImg = [
-        "",
-        "url(img/FU_pos.png)",
-        "url(img/KY_pos.png)",
-        "url(img/KE_pos.png)",
-        "url(img/GI_pos.png)",
-        "url(img/KI_pos.png)",
-        "url(img/KA_pos.png)",
-        "url(img/HI_pos.png)",
-        "url(img/OU_pos.png)",
-        "url(img/TO_pos.png)",
-        "url(img/NY_pos.png)",
-        "url(img/NK_pos.png)",
-        "url(img/NG_pos.png)",
-        "url(img/KI_pos.png)",
-        "url(img/UM_pos.png)",
-        "url(img/RY_pos.png)",
-        "",
-        "url(img/FU_neg.png)",
-        "url(img/KY_neg.png)",
-        "url(img/KE_neg.png)",
-        "url(img/GI_neg.png)",
-        "url(img/KI_neg.png)",
-        "url(img/KA_neg.png)",
-        "url(img/HI_neg.png)",
-        "url(img/OU_neg.png)",
-        "url(img/TO_neg.png)",
-        "url(img/NY_neg.png)",
-        "url(img/NK_neg.png)",
-        "url(img/NG_neg.png)",
-        "url(img/KI_neg.png)",
-        "url(img/UM_neg.png)",
-        "url(img/RY_neg.png)",
-        "",
-    ];
+    for (var i = 0; i <= 32; i++) {
+        komaSet[i] = new Koma(i);
+    }
 
 	for(var i = 0; i <= 10; i++){
 		board[i] = [];
