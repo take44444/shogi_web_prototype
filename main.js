@@ -87,7 +87,7 @@ function showBoard() {
                         if (turn == komaSet[board[xLocal][yLocal]].isSelf && state == SELECTING) {
                             selectKomaToMove(xLocal, yLocal);
                         }
-                    }
+                    };
                 })();
             }
         }
@@ -155,24 +155,28 @@ function showPath(x, y) {
 function selectKomaToMove(x, y) {
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
+            var msquare = document.getElementById("ms"+xLocal+yLocal);
             if (xLocal == x && yLocal == y) {
-                var msquare = document.getElementById("ms"+xLocal+yLocal);
                 // msquare.style.backgroundImage = komaSet[board[x][y]].img;
                 msquare.style.opacity = "0.0";
-                msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
             } else {
-                var msquare = document.getElementById("ms"+xLocal+yLocal);
                 // msquare.style.backgroundImage = "";
                 msquare.style.opacity = "0.2";
-                msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
             }
+            msquare.onclick = function() {
+                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            };
         }
     }
 
     for (var i = 0; i <= HI; i++) {
         if (komaSet[i].isKoma) {
-            document.getElementById("mS"+i).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
-            document.getElementById("mE"+i).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
+            document.getElementById("mS"+i).onclick = function() {
+                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            };
+            document.getElementById("mE"+i).onclick = function() {
+                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            };
         }
     }
 
@@ -195,8 +199,12 @@ function selectKomaToMove(x, y) {
 function selectTegoma(i, j) {
     for (var iLocal = 0; iLocal <= HI; iLocal++) {
         if (komaSet[iLocal].isKoma) {
-            document.getElementById("mS"+iLocal).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
-            document.getElementById("mE"+iLocal).onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
+            document.getElementById("mS"+iLocal).onclick = function() {
+                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            };
+            document.getElementById("mE"+iLocal).onclick = function() {
+                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            };
         }
     }
     document.getElementById("komadai_self_mask").style.visibility = "visible";
@@ -208,12 +216,16 @@ function selectTegoma(i, j) {
             var msquare = document.getElementById("ms"+x+y);
             if (board[x][y] != EMPTY) {
                 msquare.style.opacity = "0.2";
-                msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
+                msquare.onclick = function() {
+                    if (state <= SELECTED) { state = SELECTING; hideMask(); }
+                };
             } else {
                 if (i == SELF_TURN) {
                     if ((j == KE && y <= 2) || (j == KY && y == 1)) {
                         msquare.style.opacity = "0.2";
-                        msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
+                        msquare.onclick = function() {
+                            if (state <= SELECTED) { state = SELECTING; hideMask(); }
+                        };
                     } else if (j == FU) {
                         var flg = true;
                         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -224,7 +236,9 @@ function selectTegoma(i, j) {
                         }
                         if (!flg || y == 1) {
                             msquare.style.opacity = "0.2";
-                            msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
+                            msquare.onclick = function() {
+                                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+                            };
                         } else {
                             msquare.style.opacity = "0.0";
                             msquare.onclick = new Function("selectEmpty("+x+","+y+");");
@@ -236,7 +250,9 @@ function selectTegoma(i, j) {
                 } else {
                     if ((j == KE && y >= 8) || (j == KY && y == 9)) {
                         msquare.style.opacity = "0.2";
-                        msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
+                        msquare.onclick = function() {
+                            if (state <= SELECTED) { state = SELECTING; hideMask(); }
+                        };
                     } else if (j == FU) {
                         var flg = true;
                         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -247,7 +263,9 @@ function selectTegoma(i, j) {
                         }
                         if (!flg || y == 9) {
                             msquare.style.opacity = "0.2";
-                            msquare.onclick = new Function('if (state <= SELECTED) { state = SELECTING; hideMask(); }');
+                            msquare.onclick = function() {
+                                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+                            };
                         } else {
                             msquare.style.opacity = "0.0";
                             msquare.onclick = new Function("selectEmpty("+x+","+y+");");
@@ -360,7 +378,7 @@ window.onload = function() {
 
     state = SELECTING;
 
-    for (var i = 0; i <= 32; i++) {
+    for (var i = 0; i < 32; i++) {
         komaSet[i] = new Koma(i);
     }
 
