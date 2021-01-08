@@ -1711,15 +1711,6 @@ window.onload = function() {
 	board[9][1] = EKY;
 	board[8][2] = EHI;
 	board[2][2] = EKA;
-	board[1][3] = EFU;
-	board[2][3] = EFU;
-	board[3][3] = EFU;
-	board[4][3] = EFU;
-	board[5][3] = EFU;
-	board[6][3] = EFU;
-	board[7][3] = EFU;
-	board[8][3] = EFU;
-	board[9][3] = EFU;
 	board[1][9] = KY;
 	board[2][9] = KE;
 	board[3][9] = GI;
@@ -1731,15 +1722,10 @@ window.onload = function() {
 	board[9][9] = KY;
 	board[2][8] = HI;
 	board[8][8] = KA;
-	board[1][7] = FU;
-	board[2][7] = FU;
-	board[3][7] = FU;
-	board[4][7] = FU;
-	board[5][7] = FU;
-	board[6][7] = FU;
-	board[7][7] = FU;
-	board[8][7] = FU;
-	board[9][7] = FU;
+    for (var i = 1; i <= 9; i++) {
+        board[i][3] = EFU;
+        board[i][7] = FU;
+    }
 
 	showBoard();
 }
