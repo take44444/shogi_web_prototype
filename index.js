@@ -14,211 +14,44 @@ KOMADAI_SELECTED = 2;
 SELECTED = 2;
 NARI_SELECTING = 3;
 
-/**
- * 自分の手盤を表す数値
- * @const
- */
 SELF_TURN = 1;
-
-/**
- * 相手の手盤を表す数値
- * @const
- */
 ENEMY_TURN = 0;
 
 var board = [];
 var tegoma = [];
 
-/**
- * 盤外のマスを表す数値
- * @const
- */
 OUT_OF_BOARD = 128;
-
-/**
- * 空白マスを表す数値
- * @const
- */
 EMPTY = 0;
 
-/**
- * 歩を表す数値
- * @const
- */
 FU = 1;
-
-/**
- * 香を表す数値
- * @const
- */
 KY = 2;
-
-/**
- * 桂を表す数値
- * @const
- */
 KE = 3;
-
-/**
- * 銀を表す数値
- * @const
- */
 GI = 4;
-
-/**
- * 金を表す数値
- * @const
- */
 KI = 5;
-
-/**
- * 角を表す数値
- * @const
- */
 KA = 6;
-
-/**
- * 飛を表す数値
- * @const
- */
 HI = 7;
-
-/**
- * 王を表す数値
- * @const
- */
 OU = 8;
-
-/**
- * 駒が成っていることを表す数値
- * @const
- */
 NARI = 8;
-
-/**
- * と金を表す数値
- * @const
- */
 TO = NARI + FU;
-
-/**
- * 成香を表す数値
- * @const
- */
 NY = NARI + KY;
-
-/**
- * 成桂を表す数値
- * @const
- */
 NK = NARI + KE;
-
-/**
- * 成銀を表す数値
- * @const
- */
 NG = NARI + GI;
-
-/**
- * 馬を表す数値
- * @const
- */
 UM = NARI + KA;
-
-/**
- * 龍を表す数値
- * @const
- */
 RY = NARI + HI;
-
-/**
- * 敵の駒であることを表す数値
- * @const
- */
 ENEMY = 16;
-
-/**
- * 敵の歩を表す数値
- * @const
- */
 EFU = ENEMY + FU;
-
-/**
- * 敵の香を表す数値
- * @const
- */
 EKY = ENEMY + KY;
-
-/**
- * 敵の桂を表す数値
- * @const
- */
 EKE = ENEMY + KE;
-
-/**
- * 敵の銀を表す数値
- * @const
- */
 EGI = ENEMY + GI;
-
-/**
- * 敵の金を表す数値
- * @const
- */
 EKI = ENEMY + KI;
-
-/**
- * 敵の角を表す数値
- * @const
- */
 EKA = ENEMY + KA;
-
-/**
- * 敵の飛を表す数値
- * @const
- */
 EHI = ENEMY + HI;
-
-/**
- * 敵の王を表す数値
- * @const
- */
 EOU = ENEMY + OU;
-
-/**
- * 敵のと金を表す数値
- * @const
- */
 ETO = ENEMY + TO;
-
-/**
- * 敵の成香を表す数値
- * @const
- */
 ENY = ENEMY + NY;
-
-/**
- * 敵の成桂を表す数値
- * @const
- */
 ENK = ENEMY + NK;
-
-/**
- * 敵の成銀を表す数値
- * @const
- */
 ENG = ENEMY + NG;
-
-/**
- * 敵の馬を表す数値
- * @const
- */
 EUM = ENEMY + UM;
-
-/**
- * 敵の龍を表す数値
- * @const
- */
 ERY = ENEMY + RY;
 
 /**
