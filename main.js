@@ -96,8 +96,6 @@ function showBoard() {
     showTegoma();
 
     state = SELECTING;
-    // var turnMessageElement = document.getElementById("turn_message");
-    // (turn) ? turnMessageElement.innerHTML = "??????<br>" : turnMessageElement.innerHTML = "??????<br>";
 }
 
 /**
