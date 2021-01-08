@@ -40,7 +40,7 @@ function isSelfArea(x, y) {
  * @return {Boolean} 引数で与えられたマスが敵の陣地内の場合はtrue，違う場合はfalseを返す
  */
 function isEnemyArea(x, y) {
-	return (1 <= y && y <= 3 && 1 <= x && x <= 9);
+    return (1 <= y && y <= 3 && 1 <= x && x <= 9);
 }
 
 /**
@@ -51,7 +51,7 @@ function isEnemyArea(x, y) {
  * @return {Boolean} 引数で与えられた駒が，同じく引数で与えられたマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
  */
 function canNari(koma, x, y) {
-	return (koma.canNari && ((koma.isSelf && isEnemyArea(x, y)) || (koma.isEnemy && isSelfArea(x, y))));
+    return (koma.canNari && ((koma.isSelf && isEnemyArea(x, y)) || (koma.isEnemy && isSelfArea(x, y))));
 }
 
 /**
@@ -77,13 +77,13 @@ function rotateTurn() {
 function showBoard() {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
-            var square = document.getElementById("s"+x+y);
+            var square = document.getElementById("s" + x + y);
             square.style.backgroundImage = komaSet[board[x][y]].img;
 
             if (board[x][y] != EMPTY) {
-                (function() {
+                (function () {
                     var xLocal = x, yLocal = y;
-                    square.onclick = function() {
+                    square.onclick = function () {
                         if (turn == komaSet[board[xLocal][yLocal]].isSelf && state == SELECTING) {
                             selectKomaToMove(xLocal, yLocal);
                         }
@@ -103,28 +103,28 @@ function showBoard() {
  */
 function showTegoma() {
     for (var i = 0; i <= 1; i++) {
-		for (var j = 0; j <= HI; j++) {
+        for (var j = 0; j <= HI; j++) {
             var square;
             if (i == SELF_TURN && komaSet[j].isKoma) {
-                square = document.getElementById("S"+j);
+                square = document.getElementById("S" + j);
                 square.dataset.num = tegoma[SELF_TURN][j];
             } else if (komaSet[j].isKoma) {
-                square = document.getElementById("E"+j);
+                square = document.getElementById("E" + j);
                 square.dataset.num = tegoma[ENEMY_TURN][j];
             }
 
             if (tegoma[i][j] != 0) {
-                (function() {
+                (function () {
                     var iLocal = i, jLocal = j;
-                    square.onclick = function() {
+                    square.onclick = function () {
                         if (+turn == iLocal && state == SELECTING) {
                             selectTegoma(iLocal, jLocal);
                         }
                     }
                 })();
             }
-		}
-	}
+        }
+    }
 }
 
 /**
@@ -134,13 +134,13 @@ function showTegoma() {
  */
 function showPath(x, y) {
     for (var path of komaSet[board[x][y]].pathGen(x, y, board)) {
-        var msquare = document.getElementById("ms"+path.xTo+path.yTo);
+        var msquare = document.getElementById("ms" + path.xTo + path.yTo);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
         if (path.isEmpty) {
-            msquare.onclick = new Function("selectEmpty("+path.xTo+","+path.yTo+")");
+            msquare.onclick = new Function("selectEmpty(" + path.xTo + "," + path.yTo + ")");
         } else {
-            msquare.onclick = new Function("selectOpposite("+path.xTo+","+path.yTo+")");
+            msquare.onclick = new Function("selectOpposite(" + path.xTo + "," + path.yTo + ")");
         }
     }
 }
@@ -153,7 +153,7 @@ function showPath(x, y) {
 function selectKomaToMove(x, y) {
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
-            var msquare = document.getElementById("ms"+xLocal+yLocal);
+            var msquare = document.getElementById("ms" + xLocal + yLocal);
             if (xLocal == x && yLocal == y) {
                 // msquare.style.backgroundImage = komaSet[board[x][y]].img;
                 msquare.style.opacity = "0.0";
@@ -161,7 +161,7 @@ function selectKomaToMove(x, y) {
                 // msquare.style.backgroundImage = "";
                 msquare.style.opacity = "0.2";
             }
-            msquare.onclick = function() {
+            msquare.onclick = function () {
                 if (state <= SELECTED) { state = SELECTING; hideMask(); }
             };
         }
@@ -169,10 +169,10 @@ function selectKomaToMove(x, y) {
 
     for (var i = 0; i <= HI; i++) {
         if (komaSet[i].isKoma) {
-            document.getElementById("mS"+i).onclick = function() {
+            document.getElementById("mS" + i).onclick = function () {
                 if (state <= SELECTED) { state = SELECTING; hideMask(); }
             };
-            document.getElementById("mE"+i).onclick = function() {
+            document.getElementById("mE" + i).onclick = function () {
                 if (state <= SELECTED) { state = SELECTING; hideMask(); }
             };
         }
@@ -182,7 +182,7 @@ function selectKomaToMove(x, y) {
     document.getElementById("komadai_enemy_mask").style.visibility = "visible";
     document.getElementById("board_mask").style.visibility = "visible";
     showPath(x, y);
-    
+
     state = BOARD_SELECTED;
     selectedKoma = board[x][y];
     xClicked = x;
@@ -197,10 +197,10 @@ function selectKomaToMove(x, y) {
 function selectTegoma(i, j) {
     for (var iLocal = 0; iLocal <= HI; iLocal++) {
         if (komaSet[iLocal].isKoma) {
-            document.getElementById("mS"+iLocal).onclick = function() {
+            document.getElementById("mS" + iLocal).onclick = function () {
                 if (state <= SELECTED) { state = SELECTING; hideMask(); }
             };
-            document.getElementById("mE"+iLocal).onclick = function() {
+            document.getElementById("mE" + iLocal).onclick = function () {
                 if (state <= SELECTED) { state = SELECTING; hideMask(); }
             };
         }
@@ -211,17 +211,17 @@ function selectTegoma(i, j) {
 
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
-            var msquare = document.getElementById("ms"+x+y);
+            var msquare = document.getElementById("ms" + x + y);
             if (board[x][y] != EMPTY) {
                 msquare.style.opacity = "0.2";
-                msquare.onclick = function() {
+                msquare.onclick = function () {
                     if (state <= SELECTED) { state = SELECTING; hideMask(); }
                 };
             } else {
                 if (i == SELF_TURN) {
                     if ((j == KE && y <= 2) || (j == KY && y == 1)) {
                         msquare.style.opacity = "0.2";
-                        msquare.onclick = function() {
+                        msquare.onclick = function () {
                             if (state <= SELECTED) { state = SELECTING; hideMask(); }
                         };
                     } else if (j == FU) {
@@ -234,21 +234,21 @@ function selectTegoma(i, j) {
                         }
                         if (!flg || y == 1) {
                             msquare.style.opacity = "0.2";
-                            msquare.onclick = function() {
+                            msquare.onclick = function () {
                                 if (state <= SELECTED) { state = SELECTING; hideMask(); }
                             };
                         } else {
                             msquare.style.opacity = "0.0";
-                            msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                            msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
                         }
                     } else {
                         msquare.style.opacity = "0.0";
-                        msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                        msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
                     }
                 } else {
                     if ((j == KE && y >= 8) || (j == KY && y == 9)) {
                         msquare.style.opacity = "0.2";
-                        msquare.onclick = function() {
+                        msquare.onclick = function () {
                             if (state <= SELECTED) { state = SELECTING; hideMask(); }
                         };
                     } else if (j == FU) {
@@ -261,16 +261,16 @@ function selectTegoma(i, j) {
                         }
                         if (!flg || y == 9) {
                             msquare.style.opacity = "0.2";
-                            msquare.onclick = function() {
+                            msquare.onclick = function () {
                                 if (state <= SELECTED) { state = SELECTING; hideMask(); }
                             };
                         } else {
                             msquare.style.opacity = "0.0";
-                            msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                            msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
                         }
                     } else {
                         msquare.style.opacity = "0.0";
-                        msquare.onclick = new Function("selectEmpty("+x+","+y+");");
+                        msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
                     }
                 }
             }
@@ -290,28 +290,28 @@ function selectTegoma(i, j) {
  * @param {Number} y 選択した，設置可能な空白マスの段
  */
 function selectEmpty(x, y) {
-	if (state == BOARD_SELECTED) {
-		board[x][y] = selectedKoma;
-		board[xClicked][yClicked] = EMPTY;
-        
-		if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xClicked, yClicked)) {
+    if (state == BOARD_SELECTED) {
+        board[x][y] = selectedKoma;
+        board[xClicked][yClicked] = EMPTY;
+
+        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xClicked, yClicked)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
-            || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
+                || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
                 board[x][y] += NARI;
                 rotateTurn();
                 showBoard();
             } else {
                 showNariWindow(x, y);
             }
-		} else {
-			selectedKoma = EMPTY;
-			
+        } else {
+            selectedKoma = EMPTY;
+
             rotateTurn();
             showBoard();
-		}
-	} else if (state == KOMADAI_SELECTED) {
+        }
+    } else if (state == KOMADAI_SELECTED) {
         tegoma[+turn][selectedKoma & ~ENEMY]--;
-		board[x][y] = selectedKoma;
+        board[x][y] = selectedKoma;
 
         selectedKoma = EMPTY;
 
@@ -333,13 +333,13 @@ function selectOpposite(x, y) {
 
         if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xClicked, yClicked)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
-            || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
-               board[x][y] += NARI;
-               rotateTurn();
-               showBoard();
-           } else {
-               showNariWindow(x, y);
-           }
+                || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
+                board[x][y] += NARI;
+                rotateTurn();
+                showBoard();
+            } else {
+                showNariWindow(x, y);
+            }
         } else {
             selectedKoma = EMPTY;
 
@@ -357,11 +357,11 @@ function selectOpposite(x, y) {
 function showNariWindow(x, y) {
     state = NARI_SELECTING;
     var nariWindow = document.getElementById("nari_window");
-    nariWindow.style.left = ""+(196+52*(9-x)-26)+"px";
-    nariWindow.style.top = ""+(21+59*(y-1))+"px";
+    nariWindow.style.left = "" + (196 + 52 * (9 - x) - 26) + "px";
+    nariWindow.style.top = "" + (21 + 59 * (y - 1)) + "px";
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = komaSet[selectedKoma + NARI].img;
-    nari.onclick = new Function("board["+x+"]["+y+"] += NARI; document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
+    nari.onclick = new Function("board[" + x + "][" + y + "] += NARI; document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
     var narazu = document.getElementById("NARAZU");
     narazu.style.backgroundImage = komaSet[selectedKoma].img;
     narazu.onclick = new Function("document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
@@ -371,7 +371,7 @@ function showNariWindow(x, y) {
 /**
  * DOMが構築された後に発生するイベントのハンドラ
  */
-window.onload = function() {
+window.onload = function () {
     turn = true;
 
     state = SELECTING;
@@ -380,52 +380,52 @@ window.onload = function() {
         komaSet[i] = new Koma(i);
     }
 
-	for(var i = 0; i <= 10; i++){
-		board[i] = [];
-		for(var j = 0; j <= 10; j++){
-			board[i][j] = OUT_OF_BOARD;	
-		}
-	}
-		
-	for(var i = 1; i <= 9; i++){
-        for(var j = 1; j <= 9; j++){
-            board[i][j] = EMPTY;	
+    for (var i = 0; i <= 10; i++) {
+        board[i] = [];
+        for (var j = 0; j <= 10; j++) {
+            board[i][j] = OUT_OF_BOARD;
         }
-	}
+    }
 
-	for(var i = 0; i <= 1; i++){
-		tegoma[i] = [];
-		for(var j = 0; j <= HI; j++){
-			tegoma[i][j] = 0;
-		}
-	}
+    for (var i = 1; i <= 9; i++) {
+        for (var j = 1; j <= 9; j++) {
+            board[i][j] = EMPTY;
+        }
+    }
 
-	board[1][1] = EKY;
-	board[2][1] = EKE;
-	board[3][1] = EGI;
-	board[4][1] = EKI;
-	board[5][1] = EOU;
-	board[6][1] = EKI;
-	board[7][1] = EGI;
-	board[8][1] = EKE;
-	board[9][1] = EKY;
-	board[8][2] = EHI;
-	board[2][2] = EKA;
-	board[1][9] = KY;
-	board[2][9] = KE;
-	board[3][9] = GI;
-	board[4][9] = KI;
-	board[5][9] = OU;
-	board[6][9] = KI;
-	board[7][9] = GI;
-	board[8][9] = KE;
-	board[9][9] = KY;
-	board[2][8] = HI;
-	board[8][8] = KA;
+    for (var i = 0; i <= 1; i++) {
+        tegoma[i] = [];
+        for (var j = 0; j <= HI; j++) {
+            tegoma[i][j] = 0;
+        }
+    }
+
+    board[1][1] = EKY;
+    board[2][1] = EKE;
+    board[3][1] = EGI;
+    board[4][1] = EKI;
+    board[5][1] = EOU;
+    board[6][1] = EKI;
+    board[7][1] = EGI;
+    board[8][1] = EKE;
+    board[9][1] = EKY;
+    board[8][2] = EHI;
+    board[2][2] = EKA;
+    board[1][9] = KY;
+    board[2][9] = KE;
+    board[3][9] = GI;
+    board[4][9] = KI;
+    board[5][9] = OU;
+    board[6][9] = KI;
+    board[7][9] = GI;
+    board[8][9] = KE;
+    board[9][9] = KY;
+    board[2][8] = HI;
+    board[8][8] = KA;
     for (var i = 1; i <= 9; i++) {
         board[i][3] = EFU;
         board[i][7] = FU;
     }
 
-	showBoard();
+    showBoard();
 }
