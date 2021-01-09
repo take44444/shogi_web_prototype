@@ -54,6 +54,15 @@ function canNari(koma, x, y) {
 }
 
 /**
+ * 全マスクを表示
+ */
+function showMask() {
+    document.getElementById("board_mask").style.visibility = "visible";
+    document.getElementById("komadai_self_mask").style.visibility = "visible";
+    document.getElementById("komadai_enemy_mask").style.visibility = "visible";
+}
+
+/**
  * 全マスクを隠す
  */
 function hideMask() {
@@ -197,9 +206,7 @@ function selectKomaToMove(x, y) {
         }
     }
 
-    document.getElementById("komadai_self_mask").style.visibility = "visible";
-    document.getElementById("komadai_enemy_mask").style.visibility = "visible";
-    document.getElementById("board_mask").style.visibility = "visible";
+    showMask();
 
     showPath(x, y);
 }
@@ -235,9 +242,8 @@ function selectTegoma(turn, koma) {
             };
         }
     }
-    document.getElementById("komadai_self_mask").style.visibility = "visible";
-    document.getElementById("komadai_enemy_mask").style.visibility = "visible";
-    document.getElementById("board_mask").style.visibility = "visible";
+
+    showMask();
 
     showDrop(komaSet[selectedKoma]);
 }
@@ -314,13 +320,20 @@ function showNariWindow(x, y) {
 
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = komaSet[selectedKoma + NARI].img;
-    nari.onclick = new Function("board[" + x + "][" + y + "] += NARI; document.getElementById('nari_window').style.visibility = 'hidden'; rotateTurn(); showBoard();");
+    nari.onclick = new Function("board[" + x + "][" + y + "] += NARI; hideNariWindow(); rotateTurn(); showBoard();");
 
     var narazu = document.getElementById("NARAZU");
     narazu.style.backgroundImage = komaSet[selectedKoma].img;
-    narazu.onclick = new Function("document.getElementById('nari_window').style.visibility = 'hidden'; rotateTurn(); showBoard();");
+    narazu.onclick = new Function("hideNariWindow(); rotateTurn(); showBoard();");
 
     nariWindow.style.visibility = "visible";
+}
+
+/**
+ * 成るか成らないかを選択するためのウィンドウを隠す関数
+ */
+function hideNariWindow() {
+    document.getElementById("nari_window").style.visibility = "hidden";
 }
 
 /**
