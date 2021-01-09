@@ -4,7 +4,7 @@ let komaSet = [];
 let board = [];
 let tegoma = [];
 
-let xSelected, ySelected;
+let selectedSquare = { x: 0, y: 0 };
 
 let selectedKoma;
 let gameTurn;
@@ -176,8 +176,7 @@ function showDrop(koma) {
 function selectKomaToMove(x, y) {
     gameState = BOARD_SELECTED;
     selectedKoma = board[x][y];
-    xSelected = x;
-    ySelected = y;
+    selectedSquare = { x, y };
 
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -252,9 +251,9 @@ function selectTegoma(turn, koma) {
 function selectEmpty(x, y) {
     if (gameState == BOARD_SELECTED) {
         board[x][y] = selectedKoma;
-        board[xSelected][ySelected] = EMPTY;
+        board[selectedSquare.x][selectedSquare.y] = EMPTY;
 
-        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xSelected, ySelected)) {
+        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], selectedSquare.x, selectedSquare.y)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
                 || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
                 board[x][y] += NARI;
@@ -284,9 +283,9 @@ function selectOpposite(x, y) {
     if (gameState == BOARD_SELECTED) {
         tegoma[+gameTurn][board[x][y] & ~ENEMY & ~NARI]++;
         board[x][y] = selectedKoma;
-        board[xSelected][ySelected] = EMPTY;
+        board[selectedSquare.x][selectedSquare.y] = EMPTY;
 
-        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xSelected, ySelected)) {
+        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], selectedSquare.x, selectedSquare.y)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
                 || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
                 board[x][y] += NARI;
