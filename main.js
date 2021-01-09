@@ -1,12 +1,14 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
 let komaSet = [];
+let board = [];
+let tegoma = [];
 
-let xClicked, yClicked;
+let xSelected, ySelected;
 
 let selectedKoma;
-let turn;
-let state;
+let gameTurn;
+let gameState;
 
 const SELECTING = 0;
 const BOARD_SELECTED = 1;
@@ -16,9 +18,6 @@ const NARI_SELECTING = 3;
 
 const SELF_TURN = 1;
 const ENEMY_TURN = 0;
-
-var board = [];
-var tegoma = [];
 
 const OUT_OF_BOARD = 128;
 const EMPTY = 0;
@@ -67,7 +66,7 @@ function hideMask() {
  * 手番を変更する関数
  */
 function rotateTurn() {
-    turn = !turn;
+    gameTurn = !gameTurn;
     hideMask();
 }
 
@@ -84,41 +83,43 @@ function showBoard() {
                 (function () {
                     var xLocal = x, yLocal = y;
                     square.onclick = function () {
-                        if (turn == komaSet[board[xLocal][yLocal]].isSelf && state == SELECTING) {
+                        if (gameTurn == komaSet[board[xLocal][yLocal]].isSelf && gameState == SELECTING) {
                             selectKomaToMove(xLocal, yLocal);
                         }
                     };
                 })();
+            } else {
+                square.onclick = "";
             }
         }
     }
 
     showTegoma();
 
-    state = SELECTING;
+    gameState = SELECTING;
 }
 
 /**
  * 手駒を表示する関数
  */
 function showTegoma() {
-    for (var i = 0; i <= 1; i++) {
-        for (var j = 0; j <= HI; j++) {
+    for (var turn = 0; turn <= 1; turn++) {
+        for (var koma = 0; koma <= HI; koma++) {
             var square;
-            if (i == SELF_TURN && komaSet[j].isKoma) {
-                square = document.getElementById("S" + j);
-                square.dataset.num = tegoma[SELF_TURN][j];
-            } else if (komaSet[j].isKoma) {
-                square = document.getElementById("E" + j);
-                square.dataset.num = tegoma[ENEMY_TURN][j];
+            if (turn == SELF_TURN && komaSet[koma].isKoma) {
+                square = document.getElementById("S" + koma);
+                square.dataset.num = tegoma[SELF_TURN][koma];
+            } else if (komaSet[koma].isKoma) {
+                square = document.getElementById("E" + koma);
+                square.dataset.num = tegoma[ENEMY_TURN][koma];
             }
 
-            if (tegoma[i][j] != 0) {
+            if (tegoma[turn][koma] != 0) {
                 (function () {
-                    var iLocal = i, jLocal = j;
+                    var turnLocal = turn, komaLocal = koma;
                     square.onclick = function () {
-                        if (+turn == iLocal && state == SELECTING) {
-                            selectTegoma(iLocal, jLocal);
+                        if (+gameTurn == turnLocal && gameState == SELECTING) {
+                            selectTegoma(turnLocal, komaLocal);
                         }
                     }
                 })();
@@ -164,10 +165,10 @@ function showDrop(koma) {
  * @param {Number} y 盤における段
  */
 function selectKomaToMove(x, y) {
-    state = BOARD_SELECTED;
+    gameState = BOARD_SELECTED;
     selectedKoma = board[x][y];
-    xClicked = x;
-    yClicked = y;
+    xSelected = x;
+    ySelected = y;
 
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -180,18 +181,18 @@ function selectKomaToMove(x, y) {
                 msquare.style.opacity = "0.2";
             }
             msquare.onclick = function () {
-                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
         }
     }
 
-    for (var i = 0; i <= HI; i++) {
-        if (komaSet[i].isKoma) {
-            document.getElementById("mS" + i).onclick = function () {
-                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+    for (var koma = 0; koma <= HI; koma++) {
+        if (komaSet[koma].isKoma) {
+            document.getElementById("mS" + koma).onclick = function () {
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
-            document.getElementById("mE" + i).onclick = function () {
-                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            document.getElementById("mE" + koma).onclick = function () {
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
         }
     }
@@ -205,13 +206,13 @@ function selectKomaToMove(x, y) {
 
 /**
  * 使う手駒を選択した時に必要な処理を行う関数
- * @param {Number} i 手番(自分=1/敵=0)
- * @param {Number} j 駒を表す数値
+ * @param {Number} turn 手番(自分=1/敵=0)
+ * @param {Number} koma 駒を表す数値
  */
-function selectTegoma(i, j) {
-    state = KOMADAI_SELECTED;
-    selectedKoma = j;
-    if (i == ENEMY_TURN) {
+function selectTegoma(turn, koma) {
+    gameState = KOMADAI_SELECTED;
+    selectedKoma = koma;
+    if (turn == ENEMY_TURN) {
         selectedKoma |= ENEMY;
     }
 
@@ -220,17 +221,17 @@ function selectTegoma(i, j) {
             var msquare = document.getElementById("ms" + x + y);
             msquare.style.opacity = "0.2";
             msquare.onclick = function () {
-                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
         }
     }
-    for (var iLocal = 0; iLocal <= HI; iLocal++) {
-        if (komaSet[iLocal].isKoma) {
-            document.getElementById("mS" + iLocal).onclick = function () {
-                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+    for (var komaLocal = 0; komaLocal <= HI; komaLocal++) {
+        if (komaSet[komaLocal].isKoma) {
+            document.getElementById("mS" + komaLocal).onclick = function () {
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
-            document.getElementById("mE" + iLocal).onclick = function () {
-                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            document.getElementById("mE" + komaLocal).onclick = function () {
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
         }
     }
@@ -247,11 +248,11 @@ function selectTegoma(i, j) {
  * @param {Number} y 選択した，設置可能な空白マスの段
  */
 function selectEmpty(x, y) {
-    if (state == BOARD_SELECTED) {
+    if (gameState == BOARD_SELECTED) {
         board[x][y] = selectedKoma;
-        board[xClicked][yClicked] = EMPTY;
+        board[xSelected][ySelected] = EMPTY;
 
-        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xClicked, yClicked)) {
+        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xSelected, ySelected)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
                 || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
                 board[x][y] += NARI;
@@ -261,17 +262,12 @@ function selectEmpty(x, y) {
                 showNariWindow(x, y);
             }
         } else {
-            selectedKoma = EMPTY;
-
             rotateTurn();
             showBoard();
         }
-    } else if (state == KOMADAI_SELECTED) {
-        tegoma[+turn][selectedKoma & ~ENEMY]--;
+    } else if (gameState == KOMADAI_SELECTED) {
+        tegoma[+gameTurn][selectedKoma & ~ENEMY]--;
         board[x][y] = selectedKoma;
-
-        selectedKoma = EMPTY;
-
         rotateTurn();
         showBoard();
     }
@@ -283,12 +279,12 @@ function selectEmpty(x, y) {
  * @param {Number} y 選択した，取ることが可能な駒のマスの段
  */
 function selectOpposite(x, y) {
-    if (state == BOARD_SELECTED) {
-        tegoma[+turn][board[x][y] & ~ENEMY & ~NARI]++;
+    if (gameState == BOARD_SELECTED) {
+        tegoma[+gameTurn][board[x][y] & ~ENEMY & ~NARI]++;
         board[x][y] = selectedKoma;
-        board[xClicked][yClicked] = EMPTY;
+        board[xSelected][ySelected] = EMPTY;
 
-        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xClicked, yClicked)) {
+        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], xSelected, ySelected)) {
             if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
                 || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
                 board[x][y] += NARI;
@@ -298,8 +294,6 @@ function selectOpposite(x, y) {
                 showNariWindow(x, y);
             }
         } else {
-            selectedKoma = EMPTY;
-
             rotateTurn();
             showBoard();
         }
@@ -312,18 +306,19 @@ function selectOpposite(x, y) {
  * @param {Number} y 選択した駒の移動先のマスの段
  */
 function showNariWindow(x, y) {
-    state = NARI_SELECTING;
+    gameState = NARI_SELECTING;
+
     var nariWindow = document.getElementById("nari_window");
     nariWindow.style.left = "" + (196 + 52 * (9 - x) - 26) + "px";
     nariWindow.style.top = "" + (21 + 59 * (y - 1)) + "px";
 
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = komaSet[selectedKoma + NARI].img;
-    nari.onclick = new Function("board[" + x + "][" + y + "] += NARI; document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
+    nari.onclick = new Function("board[" + x + "][" + y + "] += NARI; document.getElementById('nari_window').style.visibility = 'hidden'; rotateTurn(); showBoard();");
 
     var narazu = document.getElementById("NARAZU");
     narazu.style.backgroundImage = komaSet[selectedKoma].img;
-    narazu.onclick = new Function("document.getElementById('nari_window').style.visibility = 'hidden'; selectedKoma = EMPTY; rotateTurn(); showBoard();");
+    narazu.onclick = new Function("document.getElementById('nari_window').style.visibility = 'hidden'; rotateTurn(); showBoard();");
 
     nariWindow.style.visibility = "visible";
 }
@@ -332,31 +327,29 @@ function showNariWindow(x, y) {
  * DOMが構築された後に発生するイベントのハンドラ
  */
 window.onload = function () {
-    turn = true;
+    gameTurn = true;
 
-    state = SELECTING;
+    gameState = SELECTING;
 
     for (var i = 0; i < 32; i++) {
         komaSet[i] = new Koma(i);
     }
 
-    for (var i = 0; i <= 10; i++) {
-        board[i] = [];
-        for (var j = 0; j <= 10; j++) {
-            board[i][j] = OUT_OF_BOARD;
+    for (var x = 0; x <= 10; x++) {
+        board[x] = [];
+        for (var y = 0; y <= 10; y++) {
+            if (x == 0 || x == 10 || y == 0 || y == 10) {
+                board[x][y] = OUT_OF_BOARD;
+            } else {
+                board[x][y] = EMPTY;
+            }
         }
     }
 
-    for (var i = 1; i <= 9; i++) {
-        for (var j = 1; j <= 9; j++) {
-            board[i][j] = EMPTY;
-        }
-    }
-
-    for (var i = 0; i <= 1; i++) {
-        tegoma[i] = [];
-        for (var j = 0; j <= HI; j++) {
-            tegoma[i][j] = 0;
+    for (var turn = 0; turn <= 1; turn++) {
+        tegoma[turn] = [];
+        for (var koma = 0; koma <= HI; koma++) {
+            tegoma[turn][koma] = 0;
         }
     }
 
