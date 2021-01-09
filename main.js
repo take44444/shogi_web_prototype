@@ -128,7 +128,7 @@ function showTegoma() {
 }
 
 /**
- * 盤上の，与えられたマスにある駒が現在移動することができるマスを明るく表示する関数
+ * 与えられたマスにある駒が現在移動することができるマスを明るく表示する関数
  * @param {Number} x 盤における筋
  * @param {Number} y 盤における段
  */
@@ -146,11 +146,29 @@ function showPath(x, y) {
 }
 
 /**
+ * 与えられた駒を現在打つことができるマスを明るく表示する関数
+ * @param {Number} koma 駒
+ */
+function showDrop(koma) {
+    for (var path of koma.dropGen(board)) {
+        var msquare = document.getElementById("ms" + path.xTo + path.yTo);
+        msquare.style.opacity = "0.0";
+        // msquare.style.backgroundImage = "";
+        msquare.onclick = new Function("selectEmpty(" + path.xTo + "," + path.yTo + ")");
+    }
+}
+
+/**
  * 動かす駒を選択した時に必要な処理を行う関数
  * @param {Number} x 盤における筋
  * @param {Number} y 盤における段
  */
 function selectKomaToMove(x, y) {
+    state = BOARD_SELECTED;
+    selectedKoma = board[x][y];
+    xClicked = x;
+    yClicked = y;
+
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
             var msquare = document.getElementById("ms" + xLocal + yLocal);
@@ -181,12 +199,8 @@ function selectKomaToMove(x, y) {
     document.getElementById("komadai_self_mask").style.visibility = "visible";
     document.getElementById("komadai_enemy_mask").style.visibility = "visible";
     document.getElementById("board_mask").style.visibility = "visible";
-    showPath(x, y);
 
-    state = BOARD_SELECTED;
-    selectedKoma = board[x][y];
-    xClicked = x;
-    yClicked = y;
+    showPath(x, y);
 }
 
 /**
@@ -195,6 +209,21 @@ function selectKomaToMove(x, y) {
  * @param {Number} j 駒を表す数値
  */
 function selectTegoma(i, j) {
+    state = KOMADAI_SELECTED;
+    selectedKoma = j;
+    if (i == ENEMY_TURN) {
+        selectedKoma |= ENEMY;
+    }
+
+    for (var x = 1; x <= 9; x++) {
+        for (var y = 1; y <= 9; y++) {
+            var msquare = document.getElementById("ms" + x + y);
+            msquare.style.opacity = "0.2";
+            msquare.onclick = function () {
+                if (state <= SELECTED) { state = SELECTING; hideMask(); }
+            };
+        }
+    }
     for (var iLocal = 0; iLocal <= HI; iLocal++) {
         if (komaSet[iLocal].isKoma) {
             document.getElementById("mS" + iLocal).onclick = function () {
@@ -209,79 +238,7 @@ function selectTegoma(i, j) {
     document.getElementById("komadai_enemy_mask").style.visibility = "visible";
     document.getElementById("board_mask").style.visibility = "visible";
 
-    for (var x = 1; x <= 9; x++) {
-        for (var y = 1; y <= 9; y++) {
-            var msquare = document.getElementById("ms" + x + y);
-            if (board[x][y] != EMPTY) {
-                msquare.style.opacity = "0.2";
-                msquare.onclick = function () {
-                    if (state <= SELECTED) { state = SELECTING; hideMask(); }
-                };
-            } else {
-                if (i == SELF_TURN) {
-                    if ((j == KE && y <= 2) || (j == KY && y == 1)) {
-                        msquare.style.opacity = "0.2";
-                        msquare.onclick = function () {
-                            if (state <= SELECTED) { state = SELECTING; hideMask(); }
-                        };
-                    } else if (j == FU) {
-                        var flg = true;
-                        for (var yLocal = 1; yLocal <= 9; yLocal++) {
-                            if (board[x][yLocal] == FU) {
-                                flg = false;
-                                break;
-                            }
-                        }
-                        if (!flg || y == 1) {
-                            msquare.style.opacity = "0.2";
-                            msquare.onclick = function () {
-                                if (state <= SELECTED) { state = SELECTING; hideMask(); }
-                            };
-                        } else {
-                            msquare.style.opacity = "0.0";
-                            msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
-                        }
-                    } else {
-                        msquare.style.opacity = "0.0";
-                        msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
-                    }
-                } else {
-                    if ((j == KE && y >= 8) || (j == KY && y == 9)) {
-                        msquare.style.opacity = "0.2";
-                        msquare.onclick = function () {
-                            if (state <= SELECTED) { state = SELECTING; hideMask(); }
-                        };
-                    } else if (j == FU) {
-                        var flg = true;
-                        for (var yLocal = 1; yLocal <= 9; yLocal++) {
-                            if (board[x][yLocal] == EFU) {
-                                flg = false;
-                                break;
-                            }
-                        }
-                        if (!flg || y == 9) {
-                            msquare.style.opacity = "0.2";
-                            msquare.onclick = function () {
-                                if (state <= SELECTED) { state = SELECTING; hideMask(); }
-                            };
-                        } else {
-                            msquare.style.opacity = "0.0";
-                            msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
-                        }
-                    } else {
-                        msquare.style.opacity = "0.0";
-                        msquare.onclick = new Function("selectEmpty(" + x + "," + y + ");");
-                    }
-                }
-            }
-        }
-    }
-
-    state = KOMADAI_SELECTED;
-    selectedKoma = j;
-    if (i == ENEMY_TURN) {
-        selectedKoma |= ENEMY;
-    }
+    showDrop(komaSet[selectedKoma]);
 }
 
 /**

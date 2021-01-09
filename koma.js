@@ -80,6 +80,12 @@ class Koma {
         this.canNari = FU <= n && n <= HI && n != KI && n != OU;
     }
 
+    /**
+     * 駒が移動できるマスのジェネレータ
+     * @param {Number} x 選択した駒の筋
+     * @param {Number} y 選択した駒の段
+     * @param {Array} board 現在の盤の可変参照
+     */
     *pathGen(x, y, board) {
         if (this.value == FU) {
             if (board[x][y - 1] == EMPTY) {
@@ -740,6 +746,37 @@ class Koma {
                 yield { xTo: x + 1, yTo: y, isEmpty: false };
             } else if (board[x + 1][y] == EMPTY) {
                 yield { xTo: x + 1, yTo: y, isEmpty: true };
+            }
+        }
+    }
+
+    /**
+     * 駒を置けるマスのジェネレータ
+     * @param {Array} board 現在の盤の可変参照
+     */
+    *dropGen(board) {
+        for (var x = 1; x <= 9; x++) {
+            var nifuFlg = false;
+            if (this.value == FU) {
+                for (var y = 1; y <= 9; y++) {
+                    if (board[x][y] == FU) { nifuFlg = true; break; }
+                }
+            } else if (this.value == EFU) {
+                for (var y = 1; y <= 9; y++) {
+                    if (board[x][y] == EFU) { nifuFlg = true; break; }
+                }
+            }
+            if (nifuFlg) { continue; }
+
+            for (var y = 1; y <= 9; y++) {
+                if (board[x][y] == EMPTY) {
+                    if ((this.value == KE && y <= 2) || ((this.value == KY || this.value == FU) && y == 1)
+                        || (this.value == EKE && y >= 8) || ((this.value == EKY || this.value == EFU) && y == 9)) {
+                        continue;
+                    } else {
+                        yield { xTo: x, yTo: y };
+                    }
+                }
             }
         }
     }
