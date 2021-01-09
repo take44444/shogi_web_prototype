@@ -35,7 +35,7 @@ const ERY = ENEMY + RY;
  */
 function getImages(urls){
     for (var url of urls){
-        var img = document.createElement("img").src = url;
+        var img = document.createElement("img").style.backgroundImage = url;
     }
 }
 
