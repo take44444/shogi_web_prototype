@@ -35,45 +35,45 @@ const ERY = ENEMY + RY;
  * @constructor
  */
 class Koma {
-    static komaImg_ = [
-        "",
-        "url(img/FU_pos.png)",
-        "url(img/KY_pos.png)",
-        "url(img/KE_pos.png)",
-        "url(img/GI_pos.png)",
-        "url(img/KI_pos.png)",
-        "url(img/KA_pos.png)",
-        "url(img/HI_pos.png)",
-        "url(img/OU_pos.png)",
-        "url(img/TO_pos.png)",
-        "url(img/NY_pos.png)",
-        "url(img/NK_pos.png)",
-        "url(img/NG_pos.png)",
-        "url(img/KI_pos.png)",
-        "url(img/UM_pos.png)",
-        "url(img/RY_pos.png)",
-        "",
-        "url(img/FU_neg.png)",
-        "url(img/KY_neg.png)",
-        "url(img/KE_neg.png)",
-        "url(img/GI_neg.png)",
-        "url(img/KI_neg.png)",
-        "url(img/KA_neg.png)",
-        "url(img/HI_neg.png)",
-        "url(img/OU_neg.png)",
-        "url(img/TO_neg.png)",
-        "url(img/NY_neg.png)",
-        "url(img/NK_neg.png)",
-        "url(img/NG_neg.png)",
-        "url(img/KI_neg.png)",
-        "url(img/UM_neg.png)",
-        "url(img/RY_neg.png)",
-        "",
-    ];
     constructor(koma) {
+        var komaImg = [
+            "",
+            "url(img/FU_pos.png)",
+            "url(img/KY_pos.png)",
+            "url(img/KE_pos.png)",
+            "url(img/GI_pos.png)",
+            "url(img/KI_pos.png)",
+            "url(img/KA_pos.png)",
+            "url(img/HI_pos.png)",
+            "url(img/OU_pos.png)",
+            "url(img/TO_pos.png)",
+            "url(img/NY_pos.png)",
+            "url(img/NK_pos.png)",
+            "url(img/NG_pos.png)",
+            "url(img/KI_pos.png)",
+            "url(img/UM_pos.png)",
+            "url(img/RY_pos.png)",
+            "",
+            "url(img/FU_neg.png)",
+            "url(img/KY_neg.png)",
+            "url(img/KE_neg.png)",
+            "url(img/GI_neg.png)",
+            "url(img/KI_neg.png)",
+            "url(img/KA_neg.png)",
+            "url(img/HI_neg.png)",
+            "url(img/OU_neg.png)",
+            "url(img/TO_neg.png)",
+            "url(img/NY_neg.png)",
+            "url(img/NK_neg.png)",
+            "url(img/NG_neg.png)",
+            "url(img/KI_neg.png)",
+            "url(img/UM_neg.png)",
+            "url(img/RY_neg.png)",
+            "",
+        ];
         this.value = koma;
         this.isKoma = Koma.isSelf_(koma) || Koma.isEnemy_(koma);
-        this.img = Koma.komaImg_[koma];
+        this.img = komaImg[koma];
         this.isSelf = Koma.isSelf_(koma);
         this.isEnemy = Koma.isEnemy_(koma);
         var n = koma & ~ENEMY;
