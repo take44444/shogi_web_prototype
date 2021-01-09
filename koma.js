@@ -30,6 +30,16 @@ const EUM = ENEMY + UM;
 const ERY = ENEMY + RY;
 
 /**
+ * 画像プリロード用関数
+ * @param {Array} urls 
+ */
+function getImages(urls){
+    for (var url of urls){
+        var img = document.createElement("img").src = url;
+    }
+}
+
+/**
  * 駒のクラス
  * @param {number} koma 駒を表す数値
  * @constructor
@@ -71,6 +81,7 @@ class Koma {
             "url(img/RY_neg.png)",
             "",
         ];
+        getImages(komaImg);
         this.value = koma;
         this.isKoma = Koma.isSelf_(koma) || Koma.isEnemy_(koma);
         this.img = komaImg[koma];
