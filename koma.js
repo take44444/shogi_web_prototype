@@ -103,7 +103,7 @@ class Koma {
             for (var yTo = y - 1; yTo >= 1; yTo--) {
                 if (board[x][yTo] == EMPTY) {
                     yield { xTo: x, yTo: yTo, isEmpty: true };
-                } else if (nemy_(board[x][yTo])) {
+                } else if (Koma.isEnemy_(board[x][yTo])) {
                     yield { xTo: x, yTo: yTo, isEmpty: false };
                     break;
                 } else {
