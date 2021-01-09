@@ -113,12 +113,12 @@ function showBoard() {
  */
 function showTegoma() {
     for (var turn = 0; turn <= 1; turn++) {
-        for (var koma = 0; koma <= HI; koma++) {
+        for (var koma = FU; koma <= HI; koma++) {
             var square;
-            if (turn == SELF_TURN && komaSet[koma].isKoma) {
+            if (turn == SELF_TURN) {
                 square = document.getElementById("S" + koma);
                 square.dataset.num = tegoma[SELF_TURN][koma];
-            } else if (komaSet[koma].isKoma) {
+            } else {
                 square = document.getElementById("E" + koma);
                 square.dataset.num = tegoma[ENEMY_TURN][koma];
             }
@@ -195,15 +195,13 @@ function selectKomaToMove(x, y) {
         }
     }
 
-    for (var koma = 0; koma <= HI; koma++) {
-        if (komaSet[koma].isKoma) {
-            document.getElementById("mS" + koma).onclick = function () {
-                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-            };
-            document.getElementById("mE" + koma).onclick = function () {
-                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-            };
-        }
+    for (var koma = FU; koma <= HI; koma++) {
+        document.getElementById("mS" + koma).onclick = function () {
+            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
+        };
+        document.getElementById("mE" + koma).onclick = function () {
+            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
+        };
     }
 
     showMask();
@@ -232,15 +230,13 @@ function selectTegoma(turn, koma) {
             };
         }
     }
-    for (var komaLocal = 0; komaLocal <= HI; komaLocal++) {
-        if (komaSet[komaLocal].isKoma) {
-            document.getElementById("mS" + komaLocal).onclick = function () {
-                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-            };
-            document.getElementById("mE" + komaLocal).onclick = function () {
-                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-            };
-        }
+    for (var komaLocal = FU; komaLocal <= HI; komaLocal++) {
+        document.getElementById("mS" + komaLocal).onclick = function () {
+            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
+        };
+        document.getElementById("mE" + komaLocal).onclick = function () {
+            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
+        };
     }
 
     showMask();

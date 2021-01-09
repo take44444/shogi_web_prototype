@@ -72,7 +72,6 @@ class Koma {
             "",
         ];
         this.value = koma;
-        this.isKoma = Koma.isSelf_(koma) || Koma.isEnemy_(koma);
         this.img = komaImg[koma];
         this.isSelf = Koma.isSelf_(koma);
         this.isEnemy = Koma.isEnemy_(koma);
