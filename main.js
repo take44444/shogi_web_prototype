@@ -50,7 +50,7 @@ function isEnemyArea(x, y) {
  * @return {Boolean} 引数で与えられた駒が，同じく引数で与えられたマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
  */
 function canNari(koma, x, y) {
-    return (koma.canNari && ((koma.isSelf && isEnemyArea(x, y)) || (koma.isEnemy && isSelfArea(x, y))));
+    return (koma.canNari && ((koma.isSelf && isEnemyArea(x, y)) || (!koma.isSelf && isSelfArea(x, y))));
 }
 
 /**
