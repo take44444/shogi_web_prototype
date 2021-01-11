@@ -57,7 +57,7 @@ class Koma {
      * @param {Array} board 現在の盤の可変参照
      */
     pathGen(x, y, board) {
-        if(this.isSelf_()){
+        if(this.isSelf){
             return this.__pathGen(x, y, board, (y, a)=>{return y-a});
         }else{
             return this.__pathGen(x, y, board, (y, a)=>{return y+a});
@@ -74,39 +74,12 @@ class Koma {
      */
     *dropGen(board) {
         for (var x = 1; x <= 9; x++) {
-            var nifuFlg = false;
-            if (this.value == FU) {
-                for (var y = 1; y <= 9; y++) {
-                    if (board[x][y] == FU) { nifuFlg = true; break; }
-                }
-            } else if (this.value == EFU) {
-                for (var y = 1; y <= 9; y++) {
-                    if (board[x][y] == EFU) { nifuFlg = true; break; }
-                }
-            }
-            if (nifuFlg) { continue; }
-
             for (var y = 1; y <= 9; y++) {
                 if (board[x][y] == EMPTY) {
-                    if ((this.value == KE && y <= 2) || ((this.value == KY || this.value == FU) && y == 1)
-                        || (this.value == EKE && y >= 8) || ((this.value == EKY || this.value == EFU) && y == 9)) {
-                        continue;
-                    } else {
-                        yield { xTo: x, yTo: y };
-                    }
+                    yield { xTo: x, yTo: y };
                 }
             }
         }
-    }
-
-    /**
-     * 自分の駒か否かをBooleanで返す関数
-     * @param {Number} koma 駒を表す数値
-     * @return {Boolean} 引数で与えられた駒が自分の駒の場合はtrue，違う場合はfalseを返す
-     */
-    isSelf_() {
-        return this.isSelf
-        return (FU <= koma && koma <= RY);
     }
 
     /**
@@ -121,12 +94,6 @@ class Koma {
             return (FU <= koma && koma <= RY);
         }
     }
-
-
-    static is_in_range(x){
-        return 1 <= x && x <= 9;
-    }
-
 }
 
 class Fu extends Koma{
@@ -137,6 +104,26 @@ class Fu extends Koma{
     
     *__pathGen(x, y, board, advance) {
         yield { xTo: x, yTo: advance(y, 1), isEmpty: (board[x][advance(y, 1)] == EMPTY) };
+    }
+
+    *dropGen(board) {
+        for (var x = 1; x <= 9; x++) {
+            if (this.isSelf && (board[x].includes(FU))) {
+                continue;
+            } else if (!this.isSelf && (board[x].includes(EFU))) {
+                continue;
+            }
+
+            for (var y = 1; y <= 9; y++) {
+                if (board[x][y] == EMPTY) {
+                    if (this.isSelf && y == 1 || !this.isSelf && y == 9) {
+                        continue;
+                    } else {
+                        yield { xTo: x, yTo: y };
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -149,12 +136,26 @@ class Ky extends Koma{
     *__pathGen(x, y, board, advance) {
         for (var yTo = advance(y, 1); 1 <= yTo && yTo <= 9; y = advance(y, 1)) {
             if (board[x][yTo] == EMPTY) {
-                yield { xTo: x, yTo: yTo, isEmpty: true };
+                yield { xTo: x, yTo: yTo };
             } else if (this.isEnemy_(board[x][yTo])) {
-                yield { xTo: x, yTo: yTo, isEmpty: false };
+                yield { xTo: x, yTo: yTo };
                 break;
             } else {
                 break;
+            }
+        }
+    }
+
+    *dropGen(board) {
+        for (var x = 1; x <= 9; x++) {
+            for (var y = 1; y <= 9; y++) {
+                if (board[x][y] == EMPTY) {
+                    if (this.isSelf && y == 1 || !this.isSelf && y == 9) {
+                        continue;
+                    } else {
+                        yield { xTo: x, yTo: y };
+                    }
+                }
             }
         }
     }
@@ -168,14 +169,28 @@ class Ke extends Koma{
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][advance(y, 2)] == EMPTY) {
-            yield { xTo: x - 1, yTo: advance(y, 2), isEmpty: true };
+            yield { xTo: x - 1, yTo: advance(y, 2) };
         } else if (this.isEnemy_(board[x - 1][advance(y, 2)])) {
-            yield { xTo: x - 1, yTo: advance(y, 2), isEmpty: false };
+            yield { xTo: x - 1, yTo: advance(y, 2) };
         }
         if (board[x + 1][advance(y, 2)] == EMPTY) {
-            yield { xTo: x + 1, yTo: advance(y, 2), isEmpty: true };
+            yield { xTo: x + 1, yTo: advance(y, 2) };
         } else if (this.isEnemy_(board[x + 1][advance(y, 2)])) {
-            yield { xTo: x + 1, yTo: advance(y, 2), isEmpty: false };
+            yield { xTo: x + 1, yTo: advance(y, 2) };
+        }
+    }
+
+    *dropGen(board) {
+        for (var x = 1; x <= 9; x++) {
+            for (var y = 1; y <= 9; y++) {
+                if (board[x][y] == EMPTY) {
+                    if (this.isSelf && y <= 2 || !this.isSelf && y >= 8) {
+                        continue;
+                    } else {
+                        yield { xTo: x, yTo: y };
+                    }
+                }
+            }
         }
     }
 }
@@ -188,29 +203,29 @@ class Gi extends Koma{
     
     *__pathGen(x, y, board, advance) {
         if (this.isEnemy_(board[x - 1][advance(y, 1)])) {
-            yield { xTo: x - 1, yTo: advance(y, 1), isEmpty: false };
+            yield { xTo: x - 1, yTo: advance(y, 1) };
         } else if (board[x - 1][advance(y, 1)] == EMPTY) {
-            yield { xTo: x - 1, yTo: advance(y, 1), isEmpty: true };
+            yield { xTo: x - 1, yTo: advance(y, 1) };
         }
         if (this.isEnemy_(board[x][advance(y, 1)])) {
-            yield { xTo: x, yTo: advance(y, 1), isEmpty: false };
+            yield { xTo: x, yTo: advance(y, 1) };
         } else if (board[x][advance(y, 1)] == EMPTY) {
-            yield { xTo: x, yTo: advance(y, 1), isEmpty: true };
+            yield { xTo: x, yTo: advance(y, 1) };
         }
         if (this.isEnemy_(board[x + 1][advance(y, 1)])) {
-            yield { xTo: x + 1, yTo: advance(y, 1), isEmpty: false };
+            yield { xTo: x + 1, yTo: advance(y, 1) };
         } else if (board[x + 1][advance(y, 1)] == EMPTY) {
-            yield { xTo: x + 1, yTo: advance(y, 1), isEmpty: true };
+            yield { xTo: x + 1, yTo: advance(y, 1) };
         }
         if (this.isEnemy_(board[x - 1][advance(y, -1)])) {
-            yield { xTo: x - 1, yTo: advance(y, -1), isEmpty: false };
+            yield { xTo: x - 1, yTo: advance(y, -1) };
         } else if (board[x - 1][advance(y, -1)] == EMPTY) {
-            yield { xTo: x - 1, yTo: advance(y, -1), isEmpty: true };
+            yield { xTo: x - 1, yTo: advance(y, -1) };
         }
         if (this.isEnemy_(board[x + 1][advance(y, -1)])) {
-            yield { xTo: x + 1, yTo: advance(y, -1), isEmpty: false };
+            yield { xTo: x + 1, yTo: advance(y, -1) };
         } else if (board[x + 1][advance(y, -1)] == EMPTY) {
-            yield { xTo: x + 1, yTo: advance(y, -1), isEmpty: true };
+            yield { xTo: x + 1, yTo: advance(y, -1) };
         }
     }
 }
@@ -223,34 +238,34 @@ class Ki extends Koma{
     
     *__pathGen(x, y, board, advance) {
         if (this.isEnemy_(board[x - 1][advance(y, 1)])) {
-            yield { xTo: x - 1, yTo: advance(y, 1), isEmpty: false };
+            yield { xTo: x - 1, yTo: advance(y, 1) };
         } else if (board[x - 1][advance(y, 1)] == EMPTY) {
-            yield { xTo: x - 1, yTo: advance(y, 1), isEmpty: true };
+            yield { xTo: x - 1, yTo: advance(y, 1) };
         }
         if (this.isEnemy_(board[x][advance(y, 1)])) {
-            yield { xTo: x, yTo: advance(y, 1), isEmpty: false };
+            yield { xTo: x, yTo: advance(y, 1) };
         } else if (board[x][advance(y, 1)] == EMPTY) {
-            yield { xTo: x, yTo: advance(y, 1), isEmpty: true };
+            yield { xTo: x, yTo: advance(y, 1) };
         }
         if (this.isEnemy_(board[x][advance(y, -1)])) {
-            yield { xTo: x, yTo: advance(y, -1), isEmpty: false };
+            yield { xTo: x, yTo: advance(y, -1) };
         } else if (board[x][advance(y, -1)] == EMPTY) {
-            yield { xTo: x, yTo: advance(y, -1), isEmpty: true };
+            yield { xTo: x, yTo: advance(y, -1) };
         }
         if (this.isEnemy_(board[x + 1][advance(y, 1)])) {
-            yield { xTo: x + 1, yTo: advance(y, 1), isEmpty: false };
+            yield { xTo: x + 1, yTo: advance(y, 1) };
         } else if (board[x + 1][advance(y, 1)] == EMPTY) {
-            yield { xTo: x + 1, yTo: advance(y, 1), isEmpty: true };
+            yield { xTo: x + 1, yTo: advance(y, 1) };
         }
         if (this.isEnemy_(board[x - 1][y])) {
-            yield { xTo: x - 1, yTo: y, isEmpty: false };
+            yield { xTo: x - 1, yTo: y };
         } else if (board[x - 1][y] == EMPTY) {
-            yield { xTo: x - 1, yTo: y, isEmpty: true };
+            yield { xTo: x - 1, yTo: y };
         }
         if (this.isEnemy_(board[x + 1][y])) {
-            yield { xTo: x + 1, yTo: y, isEmpty: false };
+            yield { xTo: x + 1, yTo: y };
         } else if (board[x + 1][y] == EMPTY) {
-            yield { xTo: x + 1, yTo: y, isEmpty: true };
+            yield { xTo: x + 1, yTo: y };
         }
     }
 }
@@ -264,9 +279,9 @@ class Ka extends Koma{
     *__pathGen(x, y, board, advance) {
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
@@ -274,9 +289,9 @@ class Ka extends Koma{
         }
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
@@ -284,9 +299,9 @@ class Ka extends Koma{
         }
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
@@ -294,9 +309,9 @@ class Ka extends Koma{
         }
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
@@ -314,9 +329,9 @@ class Hi extends Koma{
     *__pathGen(x, y, board, advance) {
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo] == EMPTY) {
-                yield { xTo: x, yTo: yTo, isEmpty: true };
+                yield { xTo: x, yTo: yTo };
             } else if (this.isEnemy_(board[x][yTo])) {
-                yield { xTo: x, yTo: yTo, isEmpty: false };
+                yield { xTo: x, yTo: yTo };
                 break;
             } else {
                 break;
@@ -324,9 +339,9 @@ class Hi extends Koma{
         }
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo] == EMPTY) {
-                yield { xTo: x, yTo: yTo, isEmpty: true };
+                yield { xTo: x, yTo: yTo };
             } else if (this.isEnemy_(board[x][yTo])) {
-                yield { xTo: x, yTo: yTo, isEmpty: false };
+                yield { xTo: x, yTo: yTo };
                 break;
             } else {
                 break;
@@ -334,9 +349,9 @@ class Hi extends Koma{
         }
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y] == EMPTY) {
-                yield { xTo: xTo, yTo: y, isEmpty: true };
+                yield { xTo: xTo, yTo: y };
             } else if (this.isEnemy_(board[xTo][y])) {
-                yield { xTo: xTo, yTo: y, isEmpty: false };
+                yield { xTo: xTo, yTo: y };
                 break;
             } else {
                 break;
@@ -344,9 +359,9 @@ class Hi extends Koma{
         }
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y] == EMPTY) {
-                yield { xTo: xTo, yTo: y, isEmpty: true };
+                yield { xTo: xTo, yTo: y };
             } else if (this.isEnemy_(board[xTo][y])) {
-                yield { xTo: xTo, yTo: y, isEmpty: false };
+                yield { xTo: xTo, yTo: y };
                 break;
             } else {
                 break;
@@ -363,44 +378,44 @@ class Ou extends Koma{
     
     *__pathGen(x, y, board, advance) {
         if (this.isEnemy_(board[x - 1][y + 1])) {
-            yield { xTo: x - 1, yTo: y + 1, isEmpty: false };
+            yield { xTo: x - 1, yTo: y + 1 };
         } else if (board[x - 1][y + 1] == EMPTY) {
-            yield { xTo: x - 1, yTo: y + 1, isEmpty: true };
+            yield { xTo: x - 1, yTo: y + 1 };
         }
         if (this.isEnemy_(board[x + 1][y + 1])) {
-            yield { xTo: x + 1, yTo: y + 1, isEmpty: false };
+            yield { xTo: x + 1, yTo: y + 1 };
         } else if (board[x + 1][y + 1] == EMPTY) {
-            yield { xTo: x + 1, yTo: y + 1, isEmpty: true };
+            yield { xTo: x + 1, yTo: y + 1 };
         }
         if (this.isEnemy_(board[x - 1][y - 1])) {
-            yield { xTo: x - 1, yTo: y - 1, isEmpty: false };
+            yield { xTo: x - 1, yTo: y - 1 };
         } else if (board[x - 1][y - 1] == EMPTY) {
-            yield { xTo: x - 1, yTo: y - 1, isEmpty: true };
+            yield { xTo: x - 1, yTo: y - 1 };
         }
         if (this.isEnemy_(board[x][y - 1])) {
-            yield { xTo: x, yTo: y - 1, isEmpty: false }; s
+            yield { xTo: x, yTo: y - 1 }; s
         } else if (board[x][y - 1] == EMPTY) {
-            yield { xTo: x, yTo: y - 1, isEmpty: true };
+            yield { xTo: x, yTo: y - 1 };
         }
         if (this.isEnemy_(board[x][y + 1])) {
-            yield { xTo: x, yTo: y + 1, isEmpty: false };
+            yield { xTo: x, yTo: y + 1 };
         } else if (board[x][y + 1] == EMPTY) {
-            yield { xTo: x, yTo: y + 1, isEmpty: true };
+            yield { xTo: x, yTo: y + 1 };
         }
         if (this.isEnemy_(board[x + 1][y - 1])) {
-            yield { xTo: x + 1, yTo: y - 1, isEmpty: false };
+            yield { xTo: x + 1, yTo: y - 1 };
         } else if (board[x + 1][y - 1] == EMPTY) {
-            yield { xTo: x + 1, yTo: y - 1, isEmpty: true };
+            yield { xTo: x + 1, yTo: y - 1 };
         }
         if (this.isEnemy_(board[x - 1][y])) {
-            yield { xTo: x - 1, yTo: y, isEmpty: false };
+            yield { xTo: x - 1, yTo: y };
         } else if (board[x - 1][y] == EMPTY) {
-            yield { xTo: x - 1, yTo: y, isEmpty: true };
+            yield { xTo: x - 1, yTo: y };
         }
         if (this.isEnemy_(board[x + 1][y])) {
-            yield { xTo: x + 1, yTo: y, isEmpty: false };
+            yield { xTo: x + 1, yTo: y };
         } else if (board[x + 1][y] == EMPTY) {
-            yield { xTo: x + 1, yTo: y, isEmpty: true };
+            yield { xTo: x + 1, yTo: y };
         }
     }
 }
@@ -442,9 +457,9 @@ class Um extends Koma{
     *__pathGen(x, y, board, advance) {
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
@@ -452,9 +467,9 @@ class Um extends Koma{
         }
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
@@ -462,9 +477,9 @@ class Um extends Koma{
         }
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
@@ -472,33 +487,33 @@ class Um extends Koma{
         }
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo] == EMPTY) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: true };
+                yield { xTo: xTo, yTo: yTo };
             } else if (this.isEnemy_(board[xTo][yTo])) {
-                yield { xTo: xTo, yTo: yTo, isEmpty: false };
+                yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
                 break;
             }
         }
         if (this.isEnemy_(board[x][y - 1])) {
-            yield { xTo: x, yTo: y - 1, isEmpty: false };
+            yield { xTo: x, yTo: y - 1 };
         } else if (board[x][y - 1] == EMPTY) {
-            yield { xTo: x, yTo: y - 1, isEmpty: true };
+            yield { xTo: x, yTo: y - 1 };
         }
         if (this.isEnemy_(board[x][y + 1])) {
-            yield { xTo: x, yTo: y + 1, isEmpty: false };
+            yield { xTo: x, yTo: y + 1 };
         } else if (board[x][y + 1] == EMPTY) {
-            yield { xTo: x, yTo: y + 1, isEmpty: true };
+            yield { xTo: x, yTo: y + 1 };
         }
         if (this.isEnemy_(board[x - 1][y])) {
-            yield { xTo: x - 1, yTo: y, isEmpty: false };
+            yield { xTo: x - 1, yTo: y };
         } else if (board[x - 1][y] == EMPTY) {
-            yield { xTo: x - 1, yTo: y, isEmpty: true };
+            yield { xTo: x - 1, yTo: y };
         }
         if (this.isEnemy_(board[x + 1][y])) {
-            yield { xTo: x + 1, yTo: y, isEmpty: false };
+            yield { xTo: x + 1, yTo: y };
         } else if (board[x + 1][y] == EMPTY) {
-            yield { xTo: x + 1, yTo: y, isEmpty: true };
+            yield { xTo: x + 1, yTo: y };
         }
     }
 }
@@ -512,9 +527,9 @@ class Ry extends Koma{
     *__pathGen(x, y, board, advance) {
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo] == EMPTY) {
-                yield { xTo: x, yTo: yTo, isEmpty: true };
+                yield { xTo: x, yTo: yTo };
             } else if (this.isEnemy_(board[x][yTo])) {
-                yield { xTo: x, yTo: yTo, isEmpty: false };
+                yield { xTo: x, yTo: yTo };
                 break;
             } else {
                 break;
@@ -522,9 +537,9 @@ class Ry extends Koma{
         }
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo] == EMPTY) {
-                yield { xTo: x, yTo: yTo, isEmpty: true };
+                yield { xTo: x, yTo: yTo };
             } else if (this.isEnemy_(board[x][yTo])) {
-                yield { xTo: x, yTo: yTo, isEmpty: false };
+                yield { xTo: x, yTo: yTo };
                 break;
             } else {
                 break;
@@ -532,9 +547,9 @@ class Ry extends Koma{
         }
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y] == EMPTY) {
-                yield { xTo: xTo, yTo: y, isEmpty: true };
+                yield { xTo: xTo, yTo: y };
             } else if (this.isEnemy_(board[xTo][y])) {
-                yield { xTo: xTo, yTo: y, isEmpty: false };
+                yield { xTo: xTo, yTo: y };
                 break;
             } else {
                 break;
@@ -542,33 +557,33 @@ class Ry extends Koma{
         }
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y] == EMPTY) {
-                yield { xTo: xTo, yTo: y, isEmpty: true };
+                yield { xTo: xTo, yTo: y };
             } else if (this.isEnemy_(board[xTo][y])) {
-                yield { xTo: xTo, yTo: y, isEmpty: false };
+                yield { xTo: xTo, yTo: y };
                 break;
             } else {
                 break;
             }
         }
         if (this.isEnemy_(board[x - 1][y - 1])) {
-            yield { xTo: x - 1, yTo: y - 1, isEmpty: false };
+            yield { xTo: x - 1, yTo: y - 1 };
         } else if (board[x - 1][y - 1] == EMPTY) {
-            yield { xTo: x - 1, yTo: y - 1, isEmpty: true };
+            yield { xTo: x - 1, yTo: y - 1 };
         }
         if (this.isEnemy_(board[x + 1][y - 1])) {
-            yield { xTo: x + 1, yTo: y - 1, isEmpty: false };
+            yield { xTo: x + 1, yTo: y - 1 };
         } else if (board[x + 1][y - 1] == EMPTY) {
-            yield { xTo: x + 1, yTo: y - 1, isEmpty: true };
+            yield { xTo: x + 1, yTo: y - 1 };
         }
         if (this.isEnemy_(board[x - 1][y + 1])) {
-            yield { xTo: x - 1, yTo: y + 1, isEmpty: false };
+            yield { xTo: x - 1, yTo: y + 1 };
         } else if (board[x - 1][y + 1] == EMPTY) {
-            yield { xTo: x - 1, yTo: y + 1, isEmpty: true };
+            yield { xTo: x - 1, yTo: y + 1 };
         }
         if (this.isEnemy_(board[x + 1][y + 1])) {
-            yield { xTo: x + 1, yTo: y + 1, isEmpty: false }
+            yield { xTo: x + 1, yTo: y + 1 }
         } else if (board[x + 1][y + 1] == EMPTY) {
-            yield { xTo: x + 1, yTo: y + 1, isEmpty: true };
+            yield { xTo: x + 1, yTo: y + 1 };
         }
     }
 }
@@ -583,8 +598,6 @@ class Empty extends Koma {
 
 var komaClass = [Empty, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, undefined, Um, Ry, undefined, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, undefined, Um, Ry];
 function koma(koma){
-    console.log(komaClass[koma])
-    console.log(`${koma}`)
     if (komaClass[koma]){
         return new komaClass[koma](koma);
     }
