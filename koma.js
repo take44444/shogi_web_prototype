@@ -106,6 +106,7 @@ class Koma {
      */
     isSelf_() {
         return this.isSelf
+        return (FU <= koma && koma <= RY);
     }
 
     /**
@@ -113,9 +114,14 @@ class Koma {
      * @param {Number} koma 駒を表す数値
      * @return {Boolean} 引数で与えられた駒が敵の駒の場合はtrue，違う場合はfalseを返す
      */
-    isEnemy_() {
-        return !this.isSelf;
+    isEnemy_(koma) {
+        if (this.isSelf){
+            return (EFU <= koma && koma <= ERY);
+        }else{
+            return (FU <= koma && koma <= RY);
+        }
     }
+
 
     static is_in_range(x){
         return 1 <= x && x <= 9;
@@ -256,7 +262,7 @@ class Ka extends Koma{
     }
     
     *__pathGen(x, y, board, advance) {
-        for (var xTo = x - 1, yTo = advance(y, 1); is_in_range(xTo) && is_in_range(yTo) ; xTo--, yTo = advance(yTo, 1)) {
+        for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo] == EMPTY) {
                 yield { xTo: xTo, yTo: yTo, isEmpty: true };
             } else if (this.isEnemy_(board[xTo][yTo])) {
@@ -266,7 +272,7 @@ class Ka extends Koma{
                 break;
             }
         }
-        for (var xTo = x + 1, yTo = advance(y, 1); is_in_range(xTo) && is_in_range(yTo) >= 1; xTo++, yTo = advance(yTo, 1)) {
+        for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo] == EMPTY) {
                 yield { xTo: xTo, yTo: yTo, isEmpty: true };
             } else if (this.isEnemy_(board[xTo][yTo])) {
@@ -276,7 +282,7 @@ class Ka extends Koma{
                 break;
             }
         }
-        for (var xTo = x - 1, yTo = advance(y, -1); is_in_range(xTo) && is_in_range(yTo) ; xTo--, yTo = advance(yTo, -1)) {
+        for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo] == EMPTY) {
                 yield { xTo: xTo, yTo: yTo, isEmpty: true };
             } else if (this.isEnemy_(board[xTo][yTo])) {
@@ -286,7 +292,7 @@ class Ka extends Koma{
                 break;
             }
         }
-        for (var xTo = x + 1, yTo = advance(y, -1); is_in_range(xTo) && is_in_range(yTo) ; xTo++, yTo = advance(yTo, -1)) {
+        for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo] == EMPTY) {
                 yield { xTo: xTo, yTo: yTo, isEmpty: true };
             } else if (this.isEnemy_(board[xTo][yTo])) {
@@ -499,7 +505,7 @@ class Um extends Koma{
 
 class Ry extends Koma{
     init() {
-        this.symbol = "UM"
+        this.symbol = "RY"
         this.canNari = false;
     }
     
@@ -575,7 +581,7 @@ class Empty extends Koma {
 }
 
 
-var komaClass = [Empty, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, Um, Ry, undefined, undefined, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, Um, Ry];
+var komaClass = [Empty, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, undefined, Um, Ry, undefined, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, undefined, Um, Ry];
 function koma(koma){
     console.log(komaClass[koma])
     console.log(`${koma}`)
