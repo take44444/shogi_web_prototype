@@ -315,7 +315,7 @@ window.onload = function () {
     gameState = SELECTING;
 
     for (var i = 0; i < 32; i++) {
-        komaSet[i] = new Koma(i);
+        komaSet[i] = koma(i);
     }
 
     showBoard();
