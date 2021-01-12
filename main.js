@@ -20,6 +20,11 @@ const ENEMY_TURN = 0;
 const OUT_OF_BOARD = 128;
 const EMPTY = 0;
 
+const BOARD_LEFT = 196;
+const BOARD_TOP = 19;
+const SQUARE_WIDTH = 52;
+const SQUARE_HEIGHT = 61;
+
 let shogiBoard;
 
 /**
@@ -277,8 +282,8 @@ function showNariWindow(x, y) {
     gameState = NARI_SELECTING;
 
     var nariWindow = document.getElementById("nari_window");
-    nariWindow.style.left = "" + (196 + 52 * (9 - x) - 26) + "px";
-    nariWindow.style.top = "" + (21 + 59 * (y - 1)) + "px";
+    nariWindow.style.left = `${BOARD_LEFT + SQUARE_WIDTH * (9 - x) - SQUARE_WIDTH/2}px`;
+    nariWindow.style.top = `${BOARD_TOP + SQUARE_HEIGHT * (y - 1)}px`;
 
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = komaSet[selectedKoma + NARI].img;
