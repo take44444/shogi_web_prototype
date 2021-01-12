@@ -580,13 +580,9 @@ class Empty extends Koma {
     }
 }
 
-
-var komaClass = [Empty, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, undefined, Um, Ry, undefined, Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, undefined, Um, Ry];
-function koma(koma){
-    console.log(komaClass[koma])
-    console.log(`${koma}`)
-    if (komaClass[koma]){
-        return new komaClass[koma](koma);
-    }
-    return false;
+class Wall extends Koma {
+    constructor(koma) {
+        super()
+        this.img = "";
+    }    
 }

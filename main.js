@@ -1,7 +1,5 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
-let komaSet = [];
-
 let fromSquare = { x: 0, y: 0 };
 let toSquare = { x: 0, y: 0 };
 
@@ -313,10 +311,6 @@ window.onload = function () {
     shogiBoard = new ShogiBoard(true);
 
     gameState = SELECTING;
-
-    for (var i = 0; i < 32; i++) {
-        komaSet[i] = koma(i);
-    }
 
     showBoard();
 }
