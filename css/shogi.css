@@ -173,46 +173,46 @@ body {
     background-repeat: no-repeat;
     /* background-size: 42px 50px; */
 }
-#S7 {
+#SHI {
     background-image: url(../img/HI_pos.png);
 }
-#S6 {
+#SKA {
     background-image: url(../img/KA_pos.png);
 }
-#S5 {
+#SKI {
     background-image: url(../img/KI_pos.png);
 }
-#S4 {
+#SGI {
     background-image: url(../img/GI_pos.png);
 }
-#S3 {
+#SKE {
     background-image: url(../img/KE_pos.png);
 }
-#S2 {
+#SKY {
     background-image: url(../img/KY_pos.png);
 }
-#S1 {
+#SFU {
     background-image: url(../img/FU_pos.png);
 }
-#E7 {
+#EHI {
     background-image: url(../img/HI_neg.png);
 }
-#E6 {
+#EKA {
     background-image: url(../img/KA_neg.png);
 }
-#E5 {
+#EKI {
     background-image: url(../img/KI_neg.png);
 }
-#E4 {
+#EGI {
     background-image: url(../img/GI_neg.png);
 }
-#E3 {
+#EKE {
     background-image: url(../img/KE_neg.png);
 }
-#E2 {
+#EKY {
     background-image: url(../img/KY_neg.png);
 }
-#E1 {
+#EFU {
     background-image: url(../img/FU_neg.png);
 }
 #nari_window {

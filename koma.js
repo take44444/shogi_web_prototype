@@ -95,14 +95,16 @@ class Fu extends Koma {
 
     *dropGen(board) {
         for (var x = 1; x <= 9; x++) {
-            if (this.isSelf && board[x].some(e => {e.symbol == "FU" && e.isSelf})) {
+            /* 2歩チェック */
+            if (this.isSelf && board[x].some(e => {return e.symbol == "FU" && e.isSelf;})) {
                 continue;
-            } else if (!this.isSelf && board[x].some(e => {e.symbol == "FU" && !e.isSelf})) {
+            } else if (!this.isSelf && board[x].some(e => {return e.symbol == "FU" && !e.isSelf;})) {
                 continue;
             }
 
             for (var y = 1; y <= 9; y++) {
                 if (board[x][y].isEmpty_) {
+                    /* 再奥チェック */
                     if (this.isSelf && y == 1 || !this.isSelf && y == 9) {
                         continue;
                     } else {
