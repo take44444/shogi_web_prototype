@@ -1,7 +1,7 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
-let fromSquare = { x: 0, y: 0 };
-let toSquare = { x: 0, y: 0 };
+let fromSquare;
+let toSquare;
 
 let selectedKoma;
 let gameState;
@@ -140,10 +140,10 @@ function showTegoma() {
  */
 function showPath(x, y) {
     for (var path of shogiBoard.board[x][y].pathGen(x, y, shogiBoard.board)) {
-        var msquare = document.getElementById(`ms${path.xTo}${path.yTo}`);
+        var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
-        msquare.onclick = new Function(`selectSquare(${path.xTo}, ${path.yTo})`);
+        msquare.onclick = new Function(`selectSquare(${path.x}, ${path.y})`);
     }
 }
 
@@ -153,10 +153,10 @@ function showPath(x, y) {
  */
 function showDrop(koma) {
     for (var path of koma.dropGen(shogiBoard.board)) {
-        var msquare = document.getElementById(`ms${path.xTo}${path.yTo}`);
+        var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
-        msquare.onclick = new Function(`selectSquare(${path.xTo}, ${path.yTo})`);
+        msquare.onclick = new Function(`selectSquare(${path.x}, ${path.y})`);
     }
 }
 
@@ -168,7 +168,7 @@ function showDrop(koma) {
 function selectKomaToMove(x, y) {
     gameState = BOARD_SELECTED;
     selectedKoma = shogiBoard.board[x][y];
-    fromSquare = { x: x, y: y };
+    fromSquare = new Sq(x, y);
 
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -206,7 +206,7 @@ function selectKomaToMove(x, y) {
 function selectTegoma(koma) {
     gameState = KOMADAI_SELECTED;
     selectedKoma = koma;
-    fromSquare = { x: 0, y: 0 };
+    fromSquare = new Sq(0, 0);
 
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
@@ -237,7 +237,7 @@ function selectTegoma(koma) {
  * @param {Number} y 選択した，設置可能な空白マスの段
  */
 function selectSquare(x, y) {
-    toSquare = { x: x, y: y };
+    toSquare = new Sq(x, y);
     if (gameState == BOARD_SELECTED) {
         if (canNari(selectedKoma, x, y) || canNari(selectedKoma, fromSquare.x, fromSquare.y)) {
             if ((selectedKoma.symbol == "KE" && selectedKoma.isSente && y <= 2)
@@ -303,6 +303,8 @@ function hideNariWindow() {
  * DOMが構築された後に発生するイベントのハンドラ
  */
 window.onload = function () {
+    fromSquare = new Sq(0, 0);
+    toSquare = new Sq(0, 0)
     shogiBoard = new ShogiBoard(true);
 
     gameState = SELECTING;

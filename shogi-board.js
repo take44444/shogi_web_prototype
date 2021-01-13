@@ -4,9 +4,10 @@ class ShogiBoard {
         this.csaData_ = [];
         this.board_ = [];
         this.tegoma_ = [];
-        this.ouSquare_ = [];
-        this.ouSquare_[SENTE] = { x: 5, y: 9 };
-        this.ouSquare_[GOTE] = { x: 5, y: 1 };
+        this.ou_ = [];
+        this.ou_[SENTE] = new Sq(5, 9);
+        this.ou_[GOTE] = new Sq(5, 1);
+        /** 持将棋判定用のカウンターを用意 */
     
         for (var x = 0; x <= 10; x++) {
             this.board_[x] = [];
@@ -89,10 +90,118 @@ class ShogiBoard {
         }
         this.board_[to.x][to.y] = afterKoma;
 
+        if (afterKoma.symbol == "OU") {
+            this.ou_[+afterKoma.isSente].x = to.x;
+            this.ou_[+afterKoma.isSente].y = to.y;
+        } else {
+            console.log(this.checkOute(to, afterKoma));
+        }
+
         // 棋譜を保存
         var csaMove;
         if (this.turn_ == SENTE) { csaMove = "+"; } else { csaMove = "-"; }
         csaMove = csaMove + from.x + from.y + afterKoma.symbol;
         this.csaData_.push(csaMove);
+    }
+
+    /**
+     * 王手をかけている駒を調べるメソッド
+     * @param {Dictionary} lastMove 最後に指した手
+     * @param {Koma} koma 動かした駒
+     * @param {Array} this.board_ 現在の盤面
+     * @return {Array} 王手をかけている駒のマスのリスト
+     */
+    checkOute(lastMove, koma) {
+        let ret = [];
+        var ou = this.ou_[+!koma.isSente];
+
+        /** 直前に指した駒による王手 */
+        for (var path of koma.pathGen(lastMove.x, lastMove.y, this.board_)) {
+            if (path.x == ou.x && path.y == ou.y) {
+                ret.push(lastMove);
+                break;
+            }
+        }
+
+        function pushSet(sqArray, sqElement) {
+            if (sqElement != null
+            && !sqArray.some(e=>{return sqElement.eq(e);})) {
+                sqArray.push(sqElement);
+            }
+        }
+
+        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
+            , (x, i)=>{return x-i;}, (y, i)=>{return y-i;}));
+        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
+            , (x, i)=>{return x+i;}, (y, i)=>{return y-i;}));
+        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
+            , (x, i)=>{return x-i;}, (y, i)=>{return y+i;}));
+        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
+            , (x, i)=>{return x+i;}, (y, i)=>{return y+i;}));
+
+        pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], koma.isSente
+            , (x, i)=>{return x-i;}, (y, i)=>{return y;}));
+        pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], koma.isSente
+            , (x, i)=>{return x+i;}, (y, i)=>{return y;}));
+
+        if (koma.isSente) {
+            pushSet(ret, this.isLookingAt(ou, ["HI", "RY", "KY"], true
+                , (x, i)=>{return x;}, (y, i)=>{return y+i;}));
+            pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], true
+                , (x, i)=>{return x;}, (y, i)=>{return y-i;}));
+        } else {
+            pushSet(ret, this.isLookingAt(ou, ["HI", "RY", "KY"], false
+                , (x, i)=>{return x;}, (y, i)=>{return y-i;}));
+            pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], false
+                , (x, i)=>{return x;}, (y, i)=>{return y+i;}));
+        }
+        return ret;
+    }
+
+    /**
+     * 指定した座標に指定した駒が利いているかを調べるメソッド
+     * @param {Array} checkList 探索する駒のリスト
+     * @param {Boolean} checkTurn 探索する駒の手盤
+     * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
+     * @param {Function} updateY 探索時にyの値を更新するための関数オブジェクト
+     * @return {Dictionary} 暗殺者のマス
+     */
+    isLookingAt(target, checkList, checkTurn, updateX, updateY) {
+        for (var dif = 1; ; dif++) {
+            var x = updateX(target.x, dif);
+            var y = updateY(target.y, dif);
+            var killer = this.board_[x][y];
+            if (killer.isEmpty) {
+                continue;
+            }
+            /** 壁か，調べたい手盤ではない駒にたどり着いた場合はbreak */
+            if (killer.isWall || (killer.isSente != checkTurn)) {
+                break;
+            }
+            /** 引数で与えられたチェックリストに存在する駒の場合はカウンタをインクリメント */
+            for (var check of checkList) {
+                if (killer.symbol == check) {
+                    return new Sq(x, y);
+                }
+            }
+            if (killer.isKoma) {
+                break;
+            }
+        }
+        return null;
+    }
+}
+
+/**
+ * 座標のクラス
+ */
+class Sq {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    eq(other) {
+        return this.x == other.x && this.y == other.y;
     }
 }
