@@ -99,9 +99,9 @@ class Fu extends Koma {
 
     *dropGen(board) {
         for (var x = 1; x <= 9; x++) {
-            if (this.isSente && board[x].some(e => {e.symbol == "FU" && e.isSente})) {
+            if (this.isSente && board[x].some(e=>{return e.symbol == "FU" && e.isSente;})) {
                 continue;
-            } else if (!this.isSente && board[x].some(e => {e.symbol == "FU" && !e.isSente})) {
+            } else if (!this.isSente && board[x].some(e=>{return e.symbol == "FU" && !e.isSente;})) {
                 continue;
             }
 
@@ -165,13 +165,12 @@ class Ke extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         if (board[x - 1][advance(y, 2)].isEmpty_
-        || Koma.isEnemy({ x: x , y: y }, { x: x - 1, y: advance(y, 2) }, board)) {
+        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 2) }, board)) {
             yield { xTo: x - 1, yTo: advance(y, 2) };
         }
         if ((board[x + 1][advance(y, 2)].isEmpty_
-        || Koma.isEnemy({ x: x , y: y }, { x: x - 1, y: advance(y, 2) }, board))) {
+        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 2) }, board))) {
             yield { xTo: x + 1, yTo: advance(y, 2) };
         }
     }
@@ -201,7 +200,6 @@ class Gi extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         if (board[x - 1][advance(y, 1)].isEmpty_
         || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 1) }, board)) {
             yield { xTo: x - 1, yTo: advance(y, 1) };
@@ -231,7 +229,6 @@ class Ki extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         if (board[x - 1][advance(y, 1)].isEmpty_
         || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 1) }, board)) {
             yield { xTo: x - 1, yTo: advance(y, 1) };
@@ -249,7 +246,7 @@ class Ki extends Koma {
             yield { xTo: x + 1, yTo: advance(y, 1) };
         }
         if (board[x - 1][y].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1 , y: y }, board)) {
+        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y }, board)) {
             yield { xTo: x - 1, yTo: y };
         }
         if (board[x + 1][y].isEmpty_
@@ -269,7 +266,6 @@ class Ka extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
@@ -323,7 +319,6 @@ class Hi extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
                 yield { xTo: x, yTo: yTo };
@@ -373,7 +368,6 @@ class Ou extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         if (board[x - 1][y + 1].isEmpty_
         || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y + 1 }, board)) {
             yield { xTo: x - 1, yTo: y + 1 };
@@ -463,7 +457,6 @@ class Um extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
@@ -533,7 +526,6 @@ class Ry extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        var self = board[x][y].isSente;
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
                 yield { xTo: x, yTo: yTo };

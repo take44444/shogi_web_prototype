@@ -4,6 +4,9 @@ class ShogiBoard {
         this.csaData_ = [];
         this.board_ = [];
         this.tegoma_ = [];
+        this.ouSquare_ = [];
+        this.ouSquare_[SENTE] = { x: 5, y: 9 };
+        this.ouSquare_[GOTE] = { x: 5, y: 1 };
     
         for (var x = 0; x <= 10; x++) {
             this.board_[x] = [];
@@ -18,13 +21,13 @@ class ShogiBoard {
     
         for (var turn = 0; turn <= 1; turn++) {
             this.tegoma_[turn] = {};
-            this.tegoma_[turn]["FU"] = { koma: new Fu(turn == 1), num: 0 };
-            this.tegoma_[turn]["KY"] = { koma: new Ky(turn == 1), num: 0 };
-            this.tegoma_[turn]["KE"] = { koma: new Ke(turn == 1), num: 0 };
-            this.tegoma_[turn]["GI"] = { koma: new Gi(turn == 1), num: 0 };
-            this.tegoma_[turn]["KI"] = { koma: new Ki(turn == 1, "KI"), num: 0 };
-            this.tegoma_[turn]["HI"] = { koma: new Hi(turn == 1), num: 0 };
-            this.tegoma_[turn]["KA"] = { koma: new Ka(turn == 1), num: 0 };
+            this.tegoma_[turn]["FU"] = { koma: new Fu(turn == SENTE), num: 0 };
+            this.tegoma_[turn]["KY"] = { koma: new Ky(turn == SENTE), num: 0 };
+            this.tegoma_[turn]["KE"] = { koma: new Ke(turn == SENTE), num: 0 };
+            this.tegoma_[turn]["GI"] = { koma: new Gi(turn == SENTE), num: 0 };
+            this.tegoma_[turn]["KI"] = { koma: new Ki(turn == SENTE, "KI"), num: 0 };
+            this.tegoma_[turn]["HI"] = { koma: new Hi(turn == SENTE), num: 0 };
+            this.tegoma_[turn]["KA"] = { koma: new Ka(turn == SENTE), num: 0 };
         }
     
         this.board_[1][1] = new Ky(false);
