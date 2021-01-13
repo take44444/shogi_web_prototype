@@ -1,7 +1,6 @@
 class ShogiBoard {
-    constructor(sente) {
-        this.sente_ = sente;
-        this.turn_ = sente;
+    constructor() {
+        this.turn_ = true;
         this.csaData_ = [];
         this.board_ = [];
         this.tegoma_ = [];
@@ -76,7 +75,7 @@ class ShogiBoard {
         if (from.x != 0) {
             this.board_[from.x][from.y] = new Empty();
         } else {
-            this.tegoma[+this.turn][afterKoma.symbol].num--;
+            this.tegoma[+this.turn_][afterKoma.symbol].num--;
         }
         if (!this.board_[to.x][to.y].isEmpty) {
             if (this.board_[to.x][to.y].isNari) {
@@ -89,7 +88,7 @@ class ShogiBoard {
 
         // 棋譜を保存
         var csaMove;
-        if (this.turn_ == this.sente_) { csaMove = "+"; } else { csaMove = "-"; }
+        if (this.turn_ == SENTE) { csaMove = "+"; } else { csaMove = "-"; }
         csaMove = csaMove + from.x + from.y + afterKoma.symbol;
         this.csaData_.push(csaMove);
     }

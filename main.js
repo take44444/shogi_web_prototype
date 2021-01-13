@@ -12,11 +12,8 @@ const KOMADAI_SELECTED = 2;
 const SELECTED = 2;
 const NARI_SELECTING = 3;
 
-const SELF_TURN = 1;
-const ENEMY_TURN = 0;
-
-const OUT_OF_BOARD = 128;
-const EMPTY = 0;
+const SENTE = 1;
+const GOTE = 0;
 
 const BOARD_LEFT = 196;
 const BOARD_TOP = 19;
@@ -31,7 +28,7 @@ let shogiBoard;
  * @param {Number} y 盤における段
  * @return {Boolean} 引数で与えられたマスが自分の陣地内の場合はtrue，違う場合はfalseを返す
  */
-function isSelfArea(x, y) {
+function isSenteArea(x, y) {
     return (7 <= y && y <= 9 && 1 <= x && x <= 9);
 }
 
@@ -41,7 +38,7 @@ function isSelfArea(x, y) {
  * @param {Number} y 盤における段
  * @return {Boolean} 引数で与えられたマスが敵の陣地内の場合はtrue，違う場合はfalseを返す
  */
-function isEnemyArea(x, y) {
+function isGoteArea(x, y) {
     return (1 <= y && y <= 3 && 1 <= x && x <= 9);
 }
 
@@ -53,7 +50,7 @@ function isEnemyArea(x, y) {
  * @return {Boolean} 引数で与えられた駒が，同じく引数で与えられたマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
  */
 function canNari(koma, x, y) {
-    return (koma.canNari && ((koma.isSelf && isEnemyArea(x, y)) || (!koma.isSelf && isSelfArea(x, y))));
+    return (koma.canNari && ((koma.isSente && isGoteArea(x, y)) || (!koma.isSente && isSenteArea(x, y))));
 }
 
 /**
@@ -61,8 +58,8 @@ function canNari(koma, x, y) {
  */
 function showMask() {
     document.getElementById("board_mask").style.visibility = "visible";
-    document.getElementById("komadai_self_mask").style.visibility = "visible";
-    document.getElementById("komadai_enemy_mask").style.visibility = "visible";
+    document.getElementById("komadai_sente_mask").style.visibility = "visible";
+    document.getElementById("komadai_gote_mask").style.visibility = "visible";
 }
 
 /**
@@ -70,8 +67,8 @@ function showMask() {
  */
 function hideMask() {
     document.getElementById("board_mask").style.visibility = "hidden";
-    document.getElementById("komadai_self_mask").style.visibility = "hidden";
-    document.getElementById("komadai_enemy_mask").style.visibility = "hidden";
+    document.getElementById("komadai_sente_mask").style.visibility = "hidden";
+    document.getElementById("komadai_gote_mask").style.visibility = "hidden";
 }
 
 /**
@@ -96,7 +93,7 @@ function showBoard() {
                 (function () {
                     var xLocal = x, yLocal = y;
                     square.onclick = function () {
-                        if (shogiBoard.turn == shogiBoard.board[xLocal][yLocal].isSelf && gameState == SELECTING) {
+                        if (shogiBoard.turn == shogiBoard.board[xLocal][yLocal].isSente && gameState == SELECTING) {
                             selectKomaToMove(xLocal, yLocal);
                         }
                     };
@@ -118,7 +115,7 @@ function showBoard() {
 function showTegoma() {
     for (var turn = 0; turn <= 1; turn++) {
         for (var koma in shogiBoard.tegoma[turn]) {
-            var square = document.getElementById(`${turn==SELF_TURN?"S":"E"}${koma}`);
+            var square = document.getElementById(`${turn==SENTE?"S":"G"}${koma}`);
             square.dataset.num = shogiBoard.tegoma[turn][koma].num;
 
             if (shogiBoard.tegoma[turn][koma].num != 0) {
@@ -191,7 +188,7 @@ function selectKomaToMove(x, y) {
 
     for (var turn = 0; turn <= 1; turn++) {
         for (var koma in shogiBoard.tegoma[0]) {
-            document.getElementById(`m${turn==SELF_TURN?"S":"E"}${koma}`).onclick = function () {
+            document.getElementById(`m${turn==SENTE?"S":"G"}${koma}`).onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
         }
@@ -223,7 +220,7 @@ function selectTegoma(koma) {
 
     for (var turn = 0; turn <= 1; turn++) {
         for (var komaLocal in shogiBoard.tegoma[0]) {
-            document.getElementById(`m${turn==SELF_TURN?"S":"E"}${komaLocal}`).onclick = function () {
+            document.getElementById(`m${turn==SENTE?"S":"G"}${komaLocal}`).onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
         }
@@ -243,12 +240,12 @@ function selectSquare(x, y) {
     toSquare = { x: x, y: y };
     if (gameState == BOARD_SELECTED) {
         if (canNari(selectedKoma, x, y) || canNari(selectedKoma, fromSquare.x, fromSquare.y)) {
-            if ((selectedKoma.symbol == "KE" && selectedKoma.isSelf && y <= 2)
-            || (selectedKoma.symbol == "KY" && selectedKoma.isSelf && y == 1)
-            || (selectedKoma.symbol == "FU" && selectedKoma.isSelf && y == 1)
-            || (selectedKoma.symbol == "KE" && !selectedKoma.isSelf && y >= 8)
-            || (selectedKoma.symbol == "KY" && !selectedKoma.isSelf && y == 9)
-            || (selectedKoma.symbol == "FU" && !selectedKoma.isSelf && y == 9)) {
+            if ((selectedKoma.symbol == "KE" && selectedKoma.isSente && y <= 2)
+            || (selectedKoma.symbol == "KY" && selectedKoma.isSente && y == 1)
+            || (selectedKoma.symbol == "FU" && selectedKoma.isSente && y == 1)
+            || (selectedKoma.symbol == "KE" && !selectedKoma.isSente && y >= 8)
+            || (selectedKoma.symbol == "KY" && !selectedKoma.isSente && y == 9)
+            || (selectedKoma.symbol == "FU" && !selectedKoma.isSente && y == 9)) {
                 shogiBoard.move(fromSquare, toSquare, selectedKoma.createNari());
                 rotateTurn();
             } else {
