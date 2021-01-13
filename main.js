@@ -1,7 +1,5 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
-let komaSet = [];
-
 let fromSquare = { x: 0, y: 0 };
 let toSquare = { x: 0, y: 0 };
 
@@ -91,14 +89,14 @@ function rotateTurn() {
 function showBoard() {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
-            var square = document.getElementById("s" + x + y);
-            square.style.backgroundImage = komaSet[shogiBoard.board[x][y]].img;
+            var square = document.getElementById(`s${x}${y}`);
+            square.style.backgroundImage = shogiBoard.board[x][y].img;
 
-            if (shogiBoard.board[x][y] != EMPTY) {
+            if (!shogiBoard.board[x][y].isEmpty) {
                 (function () {
                     var xLocal = x, yLocal = y;
                     square.onclick = function () {
-                        if (shogiBoard.turn == komaSet[shogiBoard.board[xLocal][yLocal]].isSelf && gameState == SELECTING) {
+                        if (shogiBoard.turn == shogiBoard.board[xLocal][yLocal].isSelf && gameState == SELECTING) {
                             selectKomaToMove(xLocal, yLocal);
                         }
                     };
@@ -119,22 +117,17 @@ function showBoard() {
  */
 function showTegoma() {
     for (var turn = 0; turn <= 1; turn++) {
-        for (var koma = FU; koma <= HI; koma++) {
-            var square;
-            if (turn == SELF_TURN) {
-                square = document.getElementById("S" + koma);
-                square.dataset.num = shogiBoard.tegoma[SELF_TURN][koma];
-            } else {
-                square = document.getElementById("E" + koma);
-                square.dataset.num = shogiBoard.tegoma[ENEMY_TURN][koma];
-            }
+        for (var koma in shogiBoard.tegoma[turn]) {
+            var square = document.getElementById(`${turn==SELF_TURN?"S":"E"}${koma}`);
+            square.dataset.num = shogiBoard.tegoma[turn][koma].num;
 
-            if (shogiBoard.tegoma[turn][koma] != 0) {
+            if (shogiBoard.tegoma[turn][koma].num != 0) {
                 (function () {
-                    var turnLocal = turn, komaLocal = koma;
+                    var turnLocal = turn;
+                    var komaLocal = shogiBoard.tegoma[turn][koma].koma;
                     square.onclick = function () {
                         if (+shogiBoard.turn == turnLocal && gameState == SELECTING) {
-                            selectTegoma(turnLocal, komaLocal);
+                            selectTegoma(komaLocal);
                         }
                     }
                 })();
@@ -149,24 +142,24 @@ function showTegoma() {
  * @param {Number} y 盤における段
  */
 function showPath(x, y) {
-    for (var path of komaSet[shogiBoard.board[x][y]].pathGen(x, y, shogiBoard.board)) {
-        var msquare = document.getElementById("ms" + path.xTo + path.yTo);
+    for (var path of shogiBoard.board[x][y].pathGen(x, y, shogiBoard.board)) {
+        var msquare = document.getElementById(`ms${path.xTo}${path.yTo}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
-        msquare.onclick = new Function("selectSquare(" + path.xTo + "," + path.yTo + ")");
+        msquare.onclick = new Function(`selectSquare(${path.xTo}, ${path.yTo})`);
     }
 }
 
 /**
  * 与えられた駒を現在打つことができるマスを明るく表示する関数
- * @param {Number} koma 駒
+ * @param {Koma} koma 駒
  */
 function showDrop(koma) {
     for (var path of koma.dropGen(shogiBoard.board)) {
-        var msquare = document.getElementById("ms" + path.xTo + path.yTo);
+        var msquare = document.getElementById(`ms${path.xTo}${path.yTo}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
-        msquare.onclick = new Function("selectSquare(" + path.xTo + "," + path.yTo + ")");
+        msquare.onclick = new Function(`selectSquare(${path.xTo}, ${path.yTo})`);
     }
 }
 
@@ -182,9 +175,9 @@ function selectKomaToMove(x, y) {
 
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
-            var msquare = document.getElementById("ms" + xLocal + yLocal);
+            var msquare = document.getElementById(`ms${xLocal}${yLocal}`);
             if (xLocal == x && yLocal == y) {
-                // msquare.style.backgroundImage = komaSet[shogiBoard.board[x][y]].img;
+                // msquare.style.backgroundImage = shogiBoard.board[x][y].img;
                 msquare.style.opacity = "0.0";
             } else {
                 // msquare.style.backgroundImage = "";
@@ -196,13 +189,12 @@ function selectKomaToMove(x, y) {
         }
     }
 
-    for (var koma = FU; koma <= HI; koma++) {
-        document.getElementById("mS" + koma).onclick = function () {
-            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-        };
-        document.getElementById("mE" + koma).onclick = function () {
-            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-        };
+    for (var turn = 0; turn <= 1; turn++) {
+        for (var koma in shogiBoard.tegoma[0]) {
+            document.getElementById(`m${turn==SELF_TURN?"S":"E"}${koma}`).onclick = function () {
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
+            };
+        }
     }
 
     showMask();
@@ -212,38 +204,34 @@ function selectKomaToMove(x, y) {
 
 /**
  * 使う手駒を選択した時に必要な処理を行う関数
- * @param {Number} turn 手番(自分=1/敵=0)
  * @param {Number} koma 駒を表す数値
  */
-function selectTegoma(turn, koma) {
+function selectTegoma(koma) {
     gameState = KOMADAI_SELECTED;
     selectedKoma = koma;
-    if (turn == ENEMY_TURN) {
-        selectedKoma |= ENEMY;
-    }
     fromSquare = { x: 0, y: 0 };
 
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
-            var msquare = document.getElementById("ms" + x + y);
+            var msquare = document.getElementById(`ms${x}${y}`);
             msquare.style.opacity = "0.2";
             msquare.onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
         }
     }
-    for (var komaLocal = FU; komaLocal <= HI; komaLocal++) {
-        document.getElementById("mS" + komaLocal).onclick = function () {
-            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-        };
-        document.getElementById("mE" + komaLocal).onclick = function () {
-            if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
-        };
+
+    for (var turn = 0; turn <= 1; turn++) {
+        for (var komaLocal in shogiBoard.tegoma[0]) {
+            document.getElementById(`m${turn==SELF_TURN?"S":"E"}${komaLocal}`).onclick = function () {
+                if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
+            };
+        }
     }
 
     showMask();
 
-    showDrop(komaSet[selectedKoma]);
+    showDrop(selectedKoma);
 }
 
 /**
@@ -254,11 +242,14 @@ function selectTegoma(turn, koma) {
 function selectSquare(x, y) {
     toSquare = { x: x, y: y };
     if (gameState == BOARD_SELECTED) {
-
-        if (canNari(komaSet[selectedKoma], x, y) || canNari(komaSet[selectedKoma], fromSquare.x, fromSquare.y)) {
-            if (((selectedKoma == KE && y <= 2) || ((selectedKoma == KY || selectedKoma == FU) && y == 1))
-                || ((selectedKoma == EKE && y >= 8) || ((selectedKoma == EKY || selectedKoma == EFU) && y == 9))) {
-                shogiBoard.move(fromSquare, toSquare, selectedKoma + NARI);
+        if (canNari(selectedKoma, x, y) || canNari(selectedKoma, fromSquare.x, fromSquare.y)) {
+            if ((selectedKoma.symbol == "KE" && selectedKoma.isSelf && y <= 2)
+            || (selectedKoma.symbol == "KY" && selectedKoma.isSelf && y == 1)
+            || (selectedKoma.symbol == "FU" && selectedKoma.isSelf && y == 1)
+            || (selectedKoma.symbol == "KE" && !selectedKoma.isSelf && y >= 8)
+            || (selectedKoma.symbol == "KY" && !selectedKoma.isSelf && y == 9)
+            || (selectedKoma.symbol == "FU" && !selectedKoma.isSelf && y == 9)) {
+                shogiBoard.move(fromSquare, toSquare, selectedKoma.createNari());
                 rotateTurn();
             } else {
                 showNariWindow(x, y);
@@ -286,15 +277,15 @@ function showNariWindow(x, y) {
     nariWindow.style.top = `${BOARD_TOP + SQUARE_HEIGHT * (y - 1)}px`;
 
     var nari = document.getElementById("NARI");
-    nari.style.backgroundImage = komaSet[selectedKoma + NARI].img;
+    nari.style.backgroundImage = selectedKoma.createNari().img;
     nari.onclick = function() {
-        shogiBoard.move(fromSquare, toSquare, selectedKoma + NARI);
+        shogiBoard.move(fromSquare, toSquare, selectedKoma.createNari());
         hideNariWindow();
         rotateTurn();
     };
 
     var narazu = document.getElementById("NARAZU");
-    narazu.style.backgroundImage = komaSet[selectedKoma].img;
+    narazu.style.backgroundImage = selectedKoma.img;
     narazu.onclick = function() {
         shogiBoard.move(fromSquare, toSquare, selectedKoma);
         hideNariWindow();
@@ -318,10 +309,6 @@ window.onload = function () {
     shogiBoard = new ShogiBoard(true);
 
     gameState = SELECTING;
-
-    for (var i = 0; i < 32; i++) {
-        komaSet[i] = koma(i);
-    }
 
     showBoard();
 }
