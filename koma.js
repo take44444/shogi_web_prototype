@@ -4,15 +4,15 @@
  * @constructor
  */
 class Koma {
-    constructor(symbol, isNari, canNari, isSente) {
+    constructor(symbol, isNari, canNari, isSelf) {
         this.symbol_ = symbol;
         this.isNari_ = isNari;
         this.canNari_ = canNari;
-        this.isSente = isSente;
+        this.isSelf = isSelf;
         this.isWall_ = false;
         this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
+        this.img_ = `url(img/${this.symbol_}_${this.isSelf?"pos":"neg"}.png)`;
     }
 
     get symbol() {
@@ -43,6 +43,10 @@ class Koma {
         return this.img_;
     }
 
+    static isEnemy(from, to, board) {
+        return board[from.x][from.y].isSelf != board[to.x][to.y].isSelf && !board[to.x][to.y].isWall;
+    }
+
     /**
      * 駒が移動できるマスのジェネレータ
      * @param {Number} x 選択した駒の筋
@@ -50,7 +54,7 @@ class Koma {
      * @param {Array} board 現在の盤の可変参照
      */
     pathGen(x, y, board) {
-        if (this.isSente) {
+        if (this.isSelf) {
             return this.__pathGen(x, y, board, (y, a)=>{return y-a});
         } else {
             return this.__pathGen(x, y, board, (y, a)=>{return y+a});
@@ -77,35 +81,32 @@ class Koma {
 }
 
 class Fu extends Koma {
-    constructor(isSente) {
-        super("FU", false, true, isSente);
+    constructor(isSelf) {
+        super("FU", false, true, isSelf);
     }
 
     createNari() {
-        return new To(this.isSente);
+        return new To(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        if ((board[x][advance(y, 1)].isEmpty_
-        || board[x][y].isSente != board[x][advance(y, 1)].isSente)
-        && !board[x][advance(y, 1)].isWall) {
+        if (board[x][advance(y, 1)].isEmpty_
+        || isEnemy({ x: x, y: y }, { x: x, y: advance(y, 1) }, board)) {
             yield { xTo: x, yTo: advance(y, 1) };
         }
     }
 
     *dropGen(board) {
         for (var x = 1; x <= 9; x++) {
-            /* 2歩チェック */
-            if (this.isSente && board[x].some(e => {return e.symbol == "FU" && e.isSente;})) {
+            if (this.isSelf && board[x].some(e => {.esymbol == "FU" && e.isSelf})) {
                 continue;
-            } else if (!this.isSente && board[x].some(e => {return e.symbol == "FU" && !e.isSente;})) {
+            } else if (!this.isSelf && board[x].some(e => {e.symbol == "FU" && !e.isSelf})) {
                 continue;
             }
 
             for (var y = 1; y <= 9; y++) {
                 if (board[x][y].isEmpty_) {
-                    /* 再奥チェック */
-                    if (this.isSente && y == 1 || !this.isSente && y == 9) {
+                    if (this.isSelf && y == 1 || !this.isSelf && y == 9) {
                         continue;
                     } else {
                         yield { xTo: x, yTo: y };
@@ -117,19 +118,19 @@ class Fu extends Koma {
 }
 
 class Ky extends Koma {
-    constructor(isSente) {
-        super("KY", false, true, isSente);
+    constructor(isSelf) {
+        super("KY", false, true, isSelf);
     }
 
     createNari() {
-        return new Ny(this.isSente);
+        return new Ny(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
         for (var yTo = advance(y, 1); 1 <= yTo && yTo <= 9; yTo = advance(yTo, 1)) {
             if (board[x][yTo].isEmpty_) {
                 yield { xTo: x, yTo: yTo };
-            } else if (board[x][y].isSente != board[x][yTo].isSente && !board[x][yTo].isWall) {
+            } else if(isEnemy({ x: x, y: y }, { x: x, y: yTo }, board)) {
                 yield { xTo: x, yTo: yTo };
                 break;
             } else {
@@ -142,7 +143,7 @@ class Ky extends Koma {
         for (var x = 1; x <= 9; x++) {
             for (var y = 1; y <= 9; y++) {
                 if (board[x][y].isEmpty_) {
-                    if (this.isSente && y == 1 || !this.isSente && y == 9) {
+                    if (this.isSelf && y == 1 || !this.isSelf && y == 9) {
                         continue;
                     } else {
                         yield { xTo: x, yTo: y };
@@ -154,24 +155,22 @@ class Ky extends Koma {
 }
 
 class Ke extends Koma {
-    constructor(isSente) {
-        super("KE", false, true, isSente);
+    constructor(isSelf) {
+        super("KE", false, true, isSelf);
     }
 
     createNari() {
-        return new Nk(this.isSente);
+        return new Nk(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
-        if ((board[x - 1][advance(y, 2)].isEmpty_
-        || board[x - 1][advance(y, 2)].isSente != isSelfSente)
-        && !board[x - 1][advance(y, 2)].isWall) {
+        var self = board[x][y].isSelf;
+        if (board[x - 1][advance(y, 2)].isEmpty_
+        || isEnemy({ x: x , y: y }, { x: x - 1, y: advance(y, 2) }, board)) {
             yield { xTo: x - 1, yTo: advance(y, 2) };
         }
         if ((board[x + 1][advance(y, 2)].isEmpty_
-        || board[x + 1][advance(y, 2)].isSente != isSelfSente)
-        && !board[x + 1][advance(y, 2)].isWall) {
+        || isEnemy({ x: x , y: y }, { x: x - 1, y: advance(y, 2) }, board))) {
             yield { xTo: x + 1, yTo: advance(y, 2) };
         }
     }
@@ -180,7 +179,7 @@ class Ke extends Koma {
         for (var x = 1; x <= 9; x++) {
             for (var y = 1; y <= 9; y++) {
                 if (board[x][y].isEmpty_) {
-                    if (this.isSente && y <= 2 || !this.isSente && y >= 8) {
+                    if (this.isSelf && y <= 2 || !this.isSelf && y >= 8) {
                         continue;
                     } else {
                         yield { xTo: x, yTo: y };
@@ -192,38 +191,38 @@ class Ke extends Koma {
 }
 
 class Gi extends Koma {
-    constructor(isSente) {
-        super("GI", false, true, isSente);
+    constructor(isSelf) {
+        super("GI", false, true, isSelf);
     }
 
     createNari() {
-        return new Ng(this.isSente);
+        return new Ng(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
+        var self = board[x][y].isSelf;
         if ((board[x - 1][advance(y, 1)].isEmpty_
-        || board[x - 1][advance(y, 1)].isSente != isSelfSente)
+        || board[x - 1][advance(y, 1)].isSelf != self)
         && !board[x - 1][advance(y, 1)].isWall) {
             yield { xTo: x - 1, yTo: advance(y, 1) };
         }
         if ((board[x][advance(y, 1)].isEmpty_
-        || board[x][advance(y, 1)].isSente != isSelfSente)
+        || board[x][advance(y, 1)].isSelf != self)
         && !board[x][advance(y, 1)].isWall) {
             yield { xTo: x, yTo: advance(y, 1) };
         }
         if ((board[x + 1][advance(y, 1)].isEmpty_
-        || board[x + 1][advance(y, 1)].isSente != isSelfSente)
+        || board[x + 1][advance(y, 1)].isSelf != self)
         && !board[x + 1][advance(y, 1)].isWall) {
             yield { xTo: x + 1, yTo: advance(y, 1) };
         }
         if ((board[x - 1][advance(y, -1)].isEmpty_
-        || board[x - 1][advance(y, -1)].isSente != isSelfSente)
+        || board[x - 1][advance(y, -1)].isSelf != self)
         && !board[x - 1][advance(y, -1)].isWall) {
             yield { xTo: x - 1, yTo: advance(y, -1) };
         }
         if ((board[x + 1][advance(y, -1)].isEmpty_
-        || board[x + 1][advance(y, -1)].isSente != isSelfSente)
+        || board[x + 1][advance(y, -1)].isSelf != self)
         && !board[x + 1][advance(y, -1)].isWall) {
             yield { xTo: x + 1, yTo: advance(y, -1) };
         }
@@ -231,39 +230,39 @@ class Gi extends Koma {
 }
 
 class Ki extends Koma {
-    constructor(isSente, symbol) {
-        super(symbol, false, false, isSente);
+    constructor(isSelf, symbol) {
+        super(symbol, false, false, isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
+        var self = board[x][y].isSelf;
         if ((board[x - 1][advance(y, 1)].isEmpty_
-        || board[x - 1][advance(y, 1)].isSente != isSelfSente)
+        || board[x - 1][advance(y, 1)].isSelf != self)
         && !board[x - 1][advance(y, 1)].isWall) {
             yield { xTo: x - 1, yTo: advance(y, 1) };
         }
         if ((board[x][advance(y, 1)].isEmpty_
-        || board[x][advance(y, 1)].isSente != isSelfSente)
+        || board[x][advance(y, 1)].isSelf != self)
         && !board[x][advance(y, 1)].isWall) {
             yield { xTo: x, yTo: advance(y, 1) };
         }
         if ((board[x][advance(y, -1)].isEmpty_
-        || board[x][advance(y, -1)].isSente != isSelfSente)
+        || board[x][advance(y, -1)].isSelf != self)
         && !board[x][advance(y, -1)].isWall) {
             yield { xTo: x, yTo: advance(y, -1) };
         }
         if ((board[x + 1][advance(y, 1)].isEmpty_
-        || board[x + 1][advance(y, 1)].isSente != isSelfSente)
+        || board[x + 1][advance(y, 1)].isSelf != self)
         && !board[x + 1][advance(y, 1)].isWall) {
             yield { xTo: x + 1, yTo: advance(y, 1) };
         }
         if ((board[x - 1][y].isEmpty_
-        || board[x - 1][y].isSente != isSelfSente)
+        || board[x - 1][y].isSelf != self)
         && !board[x - 1][y].isWall) {
             yield { xTo: x - 1, yTo: y };
         }
         if ((board[x + 1][y].isEmpty_
-        || board[x + 1][y].isSente != isSelfSente)
+        || board[x + 1][y].isSelf != self)
         && !board[x + 1][y].isWall) {
             yield { xTo: x + 1, yTo: y };
         }
@@ -271,20 +270,20 @@ class Ki extends Koma {
 }
 
 class Ka extends Koma {
-    constructor(isSente) {
-        super("KA", false, true, isSente);
+    constructor(isSelf) {
+        super("KA", false, true, isSelf);
     }
 
     createNari() {
-        return new Um(this.isSente);
+        return new Um(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
+        var self = board[x][y].isSelf;
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -294,7 +293,7 @@ class Ka extends Koma {
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -304,7 +303,7 @@ class Ka extends Koma {
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -314,7 +313,7 @@ class Ka extends Koma {
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -325,20 +324,20 @@ class Ka extends Koma {
 }
 
 class Hi extends Koma {
-    constructor(isSente) {
-        super("HI", false, true, isSente);
+    constructor(isSelf) {
+        super("HI", false, true, isSelf);
     }
 
     createNari() {
-        return new Ry(this.isSente);
+        return new Ry(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
+        var self = board[x][y].isSelf;
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
                 yield { xTo: x, yTo: yTo };
-            } else if (board[x][yTo].isSente != isSelfSente && !board[x][yTo].isWall) {
+            } else if (board[x][yTo].isSelf != self && !board[x][yTo].isWall) {
                 yield { xTo: x, yTo: yTo };
                 break;
             } else {
@@ -348,7 +347,7 @@ class Hi extends Koma {
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo].isEmpty_) {
                 yield { xTo: x, yTo: yTo };
-            } else if (board[x][yTo].isSente != isSelfSente && !board[x][yTo].isWall) {
+            } else if (board[x][yTo].isSelf != self && !board[x][yTo].isWall) {
                 yield { xTo: x, yTo: yTo };
                 break;
             } else {
@@ -358,7 +357,7 @@ class Hi extends Koma {
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y].isEmpty_) {
                 yield { xTo: xTo, yTo: y };
-            } else if (board[xTo][y].isSente != isSelfSente && !board[xTo][y].isWall) {
+            } else if (board[xTo][y].isSelf != self && !board[xTo][y].isWall) {
                 yield { xTo: xTo, yTo: y };
                 break;
             } else {
@@ -368,7 +367,7 @@ class Hi extends Koma {
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y].isEmpty_) {
                 yield { xTo: xTo, yTo: y };
-            } else if (board[xTo][y].isSente != isSelfSente && !board[xTo][y].isWall) {
+            } else if (board[xTo][y].isSelf != self && !board[xTo][y].isWall) {
                 yield { xTo: xTo, yTo: y };
                 break;
             } else {
@@ -379,49 +378,49 @@ class Hi extends Koma {
 }
 
 class Ou extends Koma {
-    constructor(isSente) {
-        super("OU", false, false, isSente);
+    constructor(isSelf) {
+        super("OU", false, false, isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
+        var self = board[x][y].isSelf;
         if ((board[x - 1][y + 1].isEmpty_
-        || board[x - 1][y + 1].isSente != isSelfSente)
+        || board[x - 1][y + 1].isSelf != self)
         && !board[x - 1][y + 1].isWall) {
             yield { xTo: x - 1, yTo: y + 1 };
         }
         if ((board[x + 1][y + 1].isEmpty_
-        || board[x + 1][y + 1].isSente != isSelfSente)
+        || board[x + 1][y + 1].isSelf != self)
         && !board[x + 1][y + 1].isWall) {
             yield { xTo: x + 1, yTo: y + 1 };
         }
         if ((board[x - 1][y - 1].isEmpty_
-        || board[x - 1][y - 1].isSente != isSelfSente)
+        || board[x - 1][y - 1].isSelf != self)
         && !board[x - 1][y - 1].isWall) {
             yield { xTo: x - 1, yTo: y - 1 };
         }
         if ((board[x][y - 1].isEmpty_
-        || board[x][y - 1].isSente != isSelfSente)
+        || board[x][y - 1].isSelf != self)
         && !board[x][y - 1].isWall) {
             yield { xTo: x, yTo: y - 1 };
         }
         if ((board[x][y + 1].isEmpty_
-        || board[x][y + 1].isSente != isSelfSente)
+        || board[x][y + 1].isSelf != self)
         && !board[x][y + 1].isWall) {
             yield { xTo: x, yTo: y + 1 };
         }
         if ((board[x + 1][y - 1].isEmpty_
-        || board[x + 1][y - 1].isSente != isSelfSente)
+        || board[x + 1][y - 1].isSelf != self)
         && !board[x + 1][y - 1].isWall) {
             yield { xTo: x + 1, yTo: y - 1 };
         }
         if ((board[x - 1][y].isEmpty_
-        || board[x - 1][y].isSente != isSelfSente)
+        || board[x - 1][y].isSelf != self)
         && !board[x - 1][y].isWall) {
             yield { xTo: x - 1, yTo: y };
         }
         if ((board[x + 1][y].isEmpty_
-        || board[x + 1][y].isSente != isSelfSente)
+        || board[x + 1][y].isSelf != self)
         && !board[x + 1][y].isWall) {
             yield { xTo: x + 1, yTo: y };
         }
@@ -429,64 +428,64 @@ class Ou extends Koma {
 }
 
 class To extends Ki {
-    constructor(isSente) {
-        super(isSente, "TO");
+    constructor(isSelf) {
+        super(isSelf, "TO");
         this.isNari_ = true;
     }
 
     createNarazu() {
-        return new Fu(this.isSente);
+        return new Fu(this.isSelf);
     }
 }
 
 class Ny extends Ki {
-    constructor(isSente) {
-        super(isSente, "NY");
+    constructor(isSelf) {
+        super(isSelf, "NY");
         this.isNari_ = true;
     }
 
     createNarazu() {
-        return new Ky(this.isSente);
+        return new Ky(this.isSelf);
     }
 }
 
 class Nk extends Ki {
-    constructor(isSente) {
-        super(isSente, "NK");
+    constructor(isSelf) {
+        super(isSelf, "NK");
         this.isNari_ = true;
     }
 
     createNarazu() {
-        return new Ke(this.isSente);
+        return new Ke(this.isSelf);
     }
 }
 
 class Ng extends Ki {
-    constructor(isSente) {
-        super(isSente, "NG");
+    constructor(isSelf) {
+        super(isSelf, "NG");
         this.isNari_ = true;
     }
 
     createNarazu() {
-        return new Gi(this.isSente);
+        return new Gi(this.isSelf);
     }
 }
 
 class Um extends Koma {
-    constructor(isSente) {
-        super("UM", true, false, isSente);
+    constructor(isSelf) {
+        super("UM", true, false, isSelf);
     }
 
     createNarazu() {
-        return new Ka(this.isSente);
+        return new Ka(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
+        var self = board[x][y].isSelf;
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -496,7 +495,7 @@ class Um extends Koma {
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -506,7 +505,7 @@ class Um extends Koma {
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -516,7 +515,7 @@ class Um extends Koma {
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield { xTo: xTo, yTo: yTo };
-            } else if (board[xTo][yTo].isSente != isSelfSente && !board[xTo][yTo].isWall) {
+            } else if (board[xTo][yTo].isSelf != self && !board[xTo][yTo].isWall) {
                 yield { xTo: xTo, yTo: yTo };
                 break;
             } else {
@@ -524,22 +523,22 @@ class Um extends Koma {
             }
         }
         if ((board[x][y - 1].isEmpty_
-        || board[x][y - 1].isSente != isSelfSente)
+        || board[x][y - 1].isSelf != self)
         && !board[x][y - 1].isWall) {
             yield { xTo: x, yTo: y - 1 };
         }
         if ((board[x][y + 1].isEmpty_
-        || board[x][y + 1].isSente != isSelfSente)
+        || board[x][y + 1].isSelf != self)
         && !board[x][y + 1].isWall) {
             yield { xTo: x, yTo: y + 1 };
         }
         if ((board[x - 1][y].isEmpty_
-        || board[x - 1][y].isSente != isSelfSente)
+        || board[x - 1][y].isSelf != self)
         && !board[x - 1][y].isWall) {
             yield { xTo: x - 1, yTo: y };
         }
         if ((board[x + 1][y].isEmpty_
-        || board[x - 1][y].isSente != isSelfSente)
+        || board[x - 1][y].isSelf != self)
         && !board[x - 1][y].isWall) {
             yield { xTo: x + 1, yTo: y };
         }
@@ -547,20 +546,20 @@ class Um extends Koma {
 }
 
 class Ry extends Koma {
-    constructor(isSente) {
-        super("RY", true, false, isSente);
+    constructor(isSelf) {
+        super("RY", true, false, isSelf);
     }
 
     createNarazu() {
-        return new Hi(this.isSente);
+        return new Hi(this.isSelf);
     }
     
     *__pathGen(x, y, board, advance) {
-        var isSelfSente = board[x][y].isSente;
+        var self = board[x][y].isSelf;
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
                 yield { xTo: x, yTo: yTo };
-            } else if (board[x][yTo].isSente != isSelfSente && !board[x][yTo].isWall) {
+            } else if (board[x][yTo].isSelf != self && !board[x][yTo].isWall) {
                 yield { xTo: x, yTo: yTo };
                 break;
             } else {
@@ -570,7 +569,7 @@ class Ry extends Koma {
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo].isEmpty_) {
                 yield { xTo: x, yTo: yTo };
-            } else if (board[x][yTo].isSente != isSelfSente && !board[x][yTo].isWall) {
+            } else if (board[x][yTo].isSelf != self && !board[x][yTo].isWall) {
                 yield { xTo: x, yTo: yTo };
                 break;
             } else {
@@ -580,7 +579,7 @@ class Ry extends Koma {
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y].isEmpty_) {
                 yield { xTo: xTo, yTo: y };
-            } else if (board[xTo][y].isSente != isSelfSente && !board[xTo][y].isWall) {
+            } else if (board[xTo][y].isSelf != self && !board[xTo][y].isWall) {
                 yield { xTo: xTo, yTo: y };
                 break;
             } else {
@@ -590,7 +589,7 @@ class Ry extends Koma {
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y].isEmpty_) {
                 yield { xTo: xTo, yTo: y };
-            } else if (board[xTo][y].isSente != isSelfSente && !board[xTo][y].isWall) {
+            } else if (board[xTo][y].isSelf != self && !board[xTo][y].isWall) {
                 yield { xTo: xTo, yTo: y };
                 break;
             } else {
@@ -598,22 +597,22 @@ class Ry extends Koma {
             }
         }
         if ((board[x - 1][y - 1].isEmpty_
-        || board[x - 1][y - 1].isSente != isSelfSente)
+        || board[x - 1][y - 1].isSelf != self)
         && !board[x - 1][y - 1].isWall) {
             yield { xTo: x - 1, yTo: y - 1 };
         }
         if ((board[x + 1][y - 1].isEmpty_
-        || board[x + 1][y - 1].isSente != isSelfSente)
+        || board[x + 1][y - 1].isSelf != self)
         && !board[x + 1][y - 1].isWall) {
             yield { xTo: x + 1, yTo: y - 1 };
         }
         if ((board[x - 1][y + 1].isEmpty_
-        || board[x - 1][y + 1].isSente != isSelfSente)
+        || board[x - 1][y + 1].isSelf != self)
         && !board[x - 1][y + 1].isWall) {
             yield { xTo: x - 1, yTo: y + 1 };
         }
         if ((board[x + 1][y + 1].isEmpty_
-        || board[x + 1][y + 1].isSente != isSelfSente)
+        || board[x + 1][y + 1].isSelf != self)
         && !board[x + 1][y + 1].isWall) {
             yield { xTo: x + 1, yTo: y + 1 };
         }
