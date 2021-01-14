@@ -5,8 +5,8 @@ class ShogiBoard {
         this.board_ = [];
         this.tegoma_ = [];
         this.ou_ = [];
-        this.ou_[SENTE] = new Sq(5, 9);
-        this.ou_[GOTE] = new Sq(5, 1);
+        this.ou_[SENTE] = sq(5, 9);
+        this.ou_[GOTE] = sq(5, 1);
         /** 持将棋判定用のカウンターを用意 */
     
         for (var x = 0; x <= 10; x++) {
@@ -160,6 +160,7 @@ class ShogiBoard {
 
     /**
      * 指定した座標に指定した駒が利いているかを調べるメソッド
+     * @param {Sq} target 駒の利きを調べたいマス
      * @param {Array} checkList 探索する駒のリスト
      * @param {Boolean} checkTurn 探索する駒の手盤
      * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
@@ -176,19 +177,19 @@ class ShogiBoard {
             }
             /** 壁か，調べたい手盤ではない駒にたどり着いた場合はbreak */
             if (killer.isWall || (killer.isSente != checkTurn)) {
-                break;
+                return null;
             }
-            /** 引数で与えられたチェックリストに存在する駒の場合はカウンタをインクリメント */
+            /** 引数で与えられたチェックリストに存在する駒の場合座標をreturn */
             for (var check of checkList) {
                 if (killer.symbol == check) {
-                    return new Sq(x, y);
+                    return sq(x, y);
                 }
             }
+            /** チェックリストにない駒にたどり着いた場合はreturn */
             if (killer.isKoma) {
-                break;
+                return null;
             }
         }
-        return null;
     }
 }
 
@@ -204,4 +205,8 @@ class Sq {
     eq(other) {
         return this.x == other.x && this.y == other.y;
     }
+}
+
+function sq(x, y) {
+    return new Sq(x, y);
 }
