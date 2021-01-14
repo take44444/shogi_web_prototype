@@ -139,7 +139,11 @@ function showTegoma() {
  * @param {Number} y 盤における段
  */
 function showPath(x, y) {
-    for (var path of shogiBoard.board[x][y].pathGen(x, y, shogiBoard.board)) {
+    for (var path of selectedKoma.pathGen(x, y, shogiBoard.board)) {
+        /** その場所に動かした時，自分の王様に利きがないかを調べる */
+        if (!shogiBoard.canMove(sq(x, y), path, selectedKoma)) {
+            continue;
+        }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
@@ -149,10 +153,13 @@ function showPath(x, y) {
 
 /**
  * 与えられた駒を現在打つことができるマスを明るく表示する関数
- * @param {Koma} koma 駒
  */
-function showDrop(koma) {
-    for (var path of koma.dropGen(shogiBoard.board)) {
+function showDrop() {
+    for (var path of selectedKoma.dropGen(shogiBoard.board)) {
+        /** その場所に動かした時，自分の王様に利きがないかを調べる */
+        if (!shogiBoard.canMove(sq(0, 0), path, selectedKoma)) {
+            continue;
+        }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
@@ -228,7 +235,7 @@ function selectTegoma(koma) {
 
     showMask();
 
-    showDrop(selectedKoma);
+    showDrop();
 }
 
 /**

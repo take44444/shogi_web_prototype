@@ -71,6 +71,24 @@ class ShogiBoard {
         return this.tegoma_;
     }
 
+    sandbox() {
+        let sandbox = new ShogiBoard();
+        sandbox.turn_ = this.turn_;
+        sandbox.ou_[SENTE] = this.ou_[SENTE].sandbox();
+        sandbox.ou_[GOTE] = this.ou_[GOTE].sandbox();
+        for (var x = 1; x <= 9; x++) {
+            for (var y = 1; y <= 9; y++) {
+                sandbox.board_[x][y] = this.board_[x][y];
+            }
+        }
+        for (var turn = 0; turn <= 1; turn++) {
+            for (var koma in this.tegoma_[turn]) {
+                sandbox.tegoma_[turn][koma].num = this.tegoma_[turn][koma].num;
+            }
+        }
+        return sandbox;
+    }
+
     rotateTurn() {
         this.turn_ = !this.turn_;
     }
@@ -79,7 +97,7 @@ class ShogiBoard {
         if (from.x != 0) {
             this.board_[from.x][from.y] = new Empty();
         } else {
-            this.tegoma[+this.turn_][afterKoma.symbol].num--;
+            this.tegoma_[+this.turn_][afterKoma.symbol].num--;
         }
         if (!this.board_[to.x][to.y].isEmpty) {
             if (this.board_[to.x][to.y].isNari) {
@@ -94,7 +112,7 @@ class ShogiBoard {
             this.ou_[+afterKoma.isSente].x = to.x;
             this.ou_[+afterKoma.isSente].y = to.y;
         } else {
-            console.log(this.checkOute(to, afterKoma));
+            this.isLookedAt(this.ou_[+!afterKoma.isSente], afterKoma.isSente);
         }
 
         // 棋譜を保存
@@ -104,58 +122,10 @@ class ShogiBoard {
         this.csaData_.push(csaMove);
     }
 
-    /**
-     * 王手をかけている駒を調べるメソッド
-     * @param {Dictionary} lastMove 最後に指した手
-     * @param {Koma} koma 動かした駒
-     * @param {Array} this.board_ 現在の盤面
-     * @return {Array} 王手をかけている駒のマスのリスト
-     */
-    checkOute(lastMove, koma) {
-        let ret = [];
-        var ou = this.ou_[+!koma.isSente];
-
-        /** 直前に指した駒による王手 */
-        for (var path of koma.pathGen(lastMove.x, lastMove.y, this.board_)) {
-            if (path.eq(ou)) {
-                ret.push(lastMove);
-                break;
-            }
-        }
-
-        function pushSet(sqArray, sqElement) {
-            if (sqElement != null
-            && !sqArray.some(e=>{return sqElement.eq(e);})) {
-                sqArray.push(sqElement);
-            }
-        }
-
-        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
-            , (x, i)=>{return x-i;}, (y, i)=>{return y-i;}));
-        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
-            , (x, i)=>{return x+i;}, (y, i)=>{return y-i;}));
-        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
-            , (x, i)=>{return x-i;}, (y, i)=>{return y+i;}));
-        pushSet(ret, this.isLookingAt(ou, ["KA", "UM"], koma.isSente
-            , (x, i)=>{return x+i;}, (y, i)=>{return y+i;}));
-
-        pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], koma.isSente
-            , (x, i)=>{return x-i;}, (y, i)=>{return y;}));
-        pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], koma.isSente
-            , (x, i)=>{return x+i;}, (y, i)=>{return y;}));
-
-        if (koma.isSente) {
-            pushSet(ret, this.isLookingAt(ou, ["HI", "RY", "KY"], true
-                , (x, i)=>{return x;}, (y, i)=>{return y+i;}));
-            pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], true
-                , (x, i)=>{return x;}, (y, i)=>{return y-i;}));
-        } else {
-            pushSet(ret, this.isLookingAt(ou, ["HI", "RY", "KY"], false
-                , (x, i)=>{return x;}, (y, i)=>{return y-i;}));
-            pushSet(ret, this.isLookingAt(ou, ["HI", "RY"], false
-                , (x, i)=>{return x;}, (y, i)=>{return y+i;}));
-        }
-        return ret;
+    canMove(from, to, afterKoma) {
+        let sandbox = this.sandbox();
+        sandbox.move(from, to, afterKoma);
+        return !sandbox.isLookedAt(sandbox.ou_[+afterKoma.isSente], !afterKoma.isSente);
     }
 
     /**
@@ -165,9 +135,9 @@ class ShogiBoard {
      * @param {Boolean} checkTurn 探索する駒の手盤
      * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
      * @param {Function} updateY 探索時にyの値を更新するための関数オブジェクト
-     * @return {Dictionary} 暗殺者のマス
+     * @return {Boolean} 利いているか
      */
-    isLookingAt(target, checkList, checkTurn, updateX, updateY) {
+    isLookedAtBy(target, checkList, checkTurn, updateX, updateY) {
         for (var dif = 1; ; dif++) {
             var x = updateX(target.x, dif);
             var y = updateY(target.y, dif);
@@ -177,29 +147,73 @@ class ShogiBoard {
             }
             /** 壁か，調べたい手盤ではない駒にたどり着いた場合はbreak */
             if (killer.isWall || (killer.isSente != checkTurn)) {
-                return null;
+                return false;
             }
             /** 引数で与えられたチェックリストに存在する駒の場合座標をreturn */
             for (var check of checkList) {
                 if (killer.symbol == check) {
-                    return sq(x, y);
+                    return true;
                 }
             }
             /** チェックリストにない駒にたどり着いた場合はreturn */
             if (killer.isKoma) {
-                return null;
+                return false;
             }
         }
     }
 
+    /**
+     * 指定されたマスに，敵駒からの利きがあるかを調べる関数
+     * @param {Sq} target 駒の利きを調べたいマス
+     * @param {Boolean} checkTurn 探索する駒の手盤
+     */
     isLookedAt(target, checkTurn) {
         /** 桂馬は，唯一の飛び駒なので，単独で処理する． */
-        for (var path of new KE(!checkTurn).pathGen(target.x, target.y, this.board_)) {
+        for (var path of new Ke(!checkTurn).pathGen(target.x, target.y, this.board_)) {
             if (this.board_[path.x][path.y].isSente == checkTurn
             && this.board_[path.x][path.y].symbol == "KE") {
                 return true;
             }
         }
+
+        /** 隣接マスからの利きを調べる */
+        for (var path of new Ou(!checkTurn).pathGen(target.x, target.y, this.board_)) {
+            var killer = this.board_[path.x][path.y];
+            for (var killerPath of killer.pathGen(path.x, path.y, this.board_)) {
+                if (killerPath.eq(target)) {
+                    return true;
+                }
+            }
+        }
+
+        /** 離れたマスからの利きを調べる */
+        var ret = false;
+        ret ||= this.isLookedAtBy(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x-i;}, (y, i)=>{return y-i;});
+        ret ||= this.isLookedAtBy(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x+i;}, (y, i)=>{return y-i;});
+        ret ||= this.isLookedAtBy(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x-i;}, (y, i)=>{return y+i;});
+        ret ||= this.isLookedAtBy(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x+i;}, (y, i)=>{return y+i;});
+
+        ret ||= this.isLookedAtBy(target, ["HI", "RY"], checkTurn
+            , (x, i)=>{return x-i;}, (y, i)=>{return y;});
+        ret ||= this.isLookedAtBy(target, ["HI", "RY"], checkTurn
+            , (x, i)=>{return x+i;}, (y, i)=>{return y;});
+
+        if (checkTurn) {
+            ret ||= this.isLookedAtBy(target, ["HI", "RY", "KY"], true
+                , (x, i)=>{return x;}, (y, i)=>{return y+i;});
+            ret ||= this.isLookedAtBy(target, ["HI", "RY"], true
+                , (x, i)=>{return x;}, (y, i)=>{return y-i;});
+        } else {
+            ret ||= this.isLookedAtBy(target, ["HI", "RY", "KY"], false
+                , (x, i)=>{return x;}, (y, i)=>{return y-i;});
+            ret ||= this.isLookedAtBy(target, ["HI", "RY"], false
+                , (x, i)=>{return x;}, (y, i)=>{return y+i;});
+        }
+        return ret;
     }
 }
 
@@ -214,6 +228,10 @@ class Sq {
 
     eq(other) {
         return this.x == other.x && this.y == other.y;
+    }
+
+    sandbox() {
+        return new Sq(this.x, this.y);
     }
 }
 
