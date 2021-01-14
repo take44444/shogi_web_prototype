@@ -73,7 +73,7 @@ class Koma {
         for (var x = 1; x <= 9; x++) {
             for (var y = 1; y <= 9; y++) {
                 if (board[x][y].isEmpty_) {
-                    yield { xTo: x, yTo: y };
+                    yield new Sq(x, y);
                 }
             }
         }
@@ -90,10 +90,9 @@ class Fu extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        console.log("FU");
         if (board[x][advance(y, 1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: advance(y, 1) }, board)) {
-            yield { xTo: x, yTo: advance(y, 1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, advance(y, 1)), board)) {
+            yield new Sq(x, advance(y, 1));
         }
     }
 
@@ -110,7 +109,7 @@ class Fu extends Koma {
                     if (this.isSente && y == 1 || !this.isSente && y == 9) {
                         continue;
                     } else {
-                        yield { xTo: x, yTo: y };
+                        yield new Sq(x, y);
                     }
                 }
             }
@@ -130,9 +129,9 @@ class Ky extends Koma {
     *__pathGen(x, y, board, advance) {
         for (var yTo = advance(y, 1); 1 <= yTo && yTo <= 9; yTo = advance(yTo, 1)) {
             if (board[x][yTo].isEmpty_) {
-                yield { xTo: x, yTo: yTo };
-            } else if(Koma.isEnemy({ x: x, y: y }, { x: x, y: yTo }, board)) {
-                yield { xTo: x, yTo: yTo };
+                yield new Sq(x, yTo);
+            } else if(Koma.isEnemy(new Sq(x, y), new Sq(x, yTo), board)) {
+                yield new Sq(x, yTo);
                 break;
             } else {
                 break;
@@ -147,7 +146,7 @@ class Ky extends Koma {
                     if (this.isSente && y == 1 || !this.isSente && y == 9) {
                         continue;
                     } else {
-                        yield { xTo: x, yTo: y };
+                        yield new Sq(x, y);
                     }
                 }
             }
@@ -166,12 +165,12 @@ class Ke extends Koma {
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][advance(y, 2)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 2) }, board)) {
-            yield { xTo: x - 1, yTo: advance(y, 2) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, advance(y, 2)), board)) {
+            yield new Sq(x - 1, advance(y, 2));
         }
         if ((board[x + 1][advance(y, 2)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 2) }, board))) {
-            yield { xTo: x + 1, yTo: advance(y, 2) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, advance(y, 2)), board))) {
+            yield new Sq(x + 1, advance(y, 2));
         }
     }
 
@@ -182,7 +181,7 @@ class Ke extends Koma {
                     if (this.isSente && y <= 2 || !this.isSente && y >= 8) {
                         continue;
                     } else {
-                        yield { xTo: x, yTo: y };
+                        yield new Sq(x, y);
                     }
                 }
             }
@@ -201,24 +200,24 @@ class Gi extends Koma {
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 1) }, board)) {
-            yield { xTo: x - 1, yTo: advance(y, 1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, advance(y, 1)), board)) {
+            yield new Sq(x - 1, advance(y, 1));
         }
         if (board[x][advance(y, 1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: advance(y, 1) }, board)) {
-            yield { xTo: x, yTo: advance(y, 1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, advance(y, 1)), board)) {
+            yield new Sq(x, advance(y, 1));
         }
         if (board[x + 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: advance(y, 1) }, board)) {
-            yield { xTo: x + 1, yTo: advance(y, 1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, advance(y, 1)), board)) {
+            yield new Sq(x + 1, advance(y, 1));
         }
         if (board[x - 1][advance(y, -1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, -1) }, board)) {
-            yield { xTo: x - 1, yTo: advance(y, -1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, advance(y, -1)), board)) {
+            yield new Sq(x - 1, advance(y, -1));
         }
         if (board[x + 1][advance(y, -1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: advance(y, -1) }, board)) {
-            yield { xTo: x + 1, yTo: advance(y, -1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, advance(y, -1)), board)) {
+            yield new Sq(x + 1, advance(y, -1));
         }
     }
 }
@@ -230,28 +229,28 @@ class Ki extends Koma {
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: advance(y, 1) }, board)) {
-            yield { xTo: x - 1, yTo: advance(y, 1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, advance(y, 1)), board)) {
+            yield new Sq(x - 1, advance(y, 1));
         }
         if (board[x][advance(y, 1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: advance(y, 1) }, board)) {
-            yield { xTo: x, yTo: advance(y, 1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, advance(y, 1)), board)) {
+            yield new Sq(x, advance(y, 1));
         }
         if (board[x][advance(y, -1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: advance(y, -1) }, board)) {
-            yield { xTo: x, yTo: advance(y, -1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, advance(y, -1)), board)) {
+            yield new Sq(x, advance(y, -1));
         }
         if (board[x + 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: advance(y, 1) }, board)) {
-            yield { xTo: x + 1, yTo: advance(y, 1) };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, advance(y, 1)), board)) {
+            yield new Sq(x + 1, advance(y, 1));
         }
         if (board[x - 1][y].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y }, board)) {
-            yield { xTo: x - 1, yTo: y };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, y), board)) {
+            yield new Sq(x - 1, y);
         }
         if (board[x + 1][y].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: y }, board)) {
-            yield { xTo: x + 1, yTo: y };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, y), board)) {
+            yield new Sq(x + 1, y);
         }
     }
 }
@@ -268,9 +267,9 @@ class Ka extends Koma {
     *__pathGen(x, y, board, advance) {
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
@@ -278,9 +277,9 @@ class Ka extends Koma {
         }
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
@@ -288,9 +287,9 @@ class Ka extends Koma {
         }
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
@@ -298,9 +297,9 @@ class Ka extends Koma {
         }
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
@@ -321,9 +320,9 @@ class Hi extends Koma {
     *__pathGen(x, y, board, advance) {
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
-                yield { xTo: x, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: x, y: yTo }, board)) {
-                yield { xTo: x, yTo: yTo };
+                yield new Sq(x, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(x, yTo), board)) {
+                yield new Sq(x, yTo);
                 break;
             } else {
                 break;
@@ -331,9 +330,9 @@ class Hi extends Koma {
         }
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo].isEmpty_) {
-                yield { xTo: x, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: x, y: yTo }, board)) {
-                yield { xTo: x, yTo: yTo };
+                yield new Sq(x, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(x, yTo), board)) {
+                yield new Sq(x, yTo);
                 break;
             } else {
                 break;
@@ -341,9 +340,9 @@ class Hi extends Koma {
         }
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y].isEmpty_) {
-                yield { xTo: xTo, yTo: y };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: y }, board)) {
-                yield { xTo: xTo, yTo: y };
+                yield new Sq(xTo, y);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, y), board)) {
+                yield new Sq(xTo, y);
                 break;
             } else {
                 break;
@@ -351,9 +350,9 @@ class Hi extends Koma {
         }
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y].isEmpty_) {
-                yield { xTo: xTo, yTo: y };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: y }, board)) {
-                yield { xTo: xTo, yTo: y };
+                yield new Sq(xTo, y);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, y), board)) {
+                yield new Sq(xTo, y);
                 break;
             } else {
                 break;
@@ -369,36 +368,36 @@ class Ou extends Koma {
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][y + 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y + 1 }, board)) {
-            yield { xTo: x - 1, yTo: y + 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, y + 1), board)) {
+            yield new Sq(x - 1, y + 1);
         }
         if (board[x + 1][y + 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: y + 1 }, board)) {
-            yield { xTo: x + 1, yTo: y + 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, y + 1), board)) {
+            yield new Sq(x + 1, y + 1);
         }
         if (board[x - 1][y - 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y - 1 }, board)) {
-            yield { xTo: x - 1, yTo: y - 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, y - 1), board)) {
+            yield new Sq(x - 1, y - 1);
         }
         if (board[x][y - 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: y - 1 }, board)) {
-            yield { xTo: x, yTo: y - 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, y - 1), board)) {
+            yield new Sq(x, y - 1);
         }
         if (board[x][y + 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: y + 1 }, board)) {
-            yield { xTo: x, yTo: y + 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, y + 1), board)) {
+            yield new Sq(x, y + 1);
         }
         if (board[x + 1][y - 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: y - 1 }, board)) {
-            yield { xTo: x + 1, yTo: y - 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, y - 1), board)) {
+            yield new Sq(x + 1, y - 1);
         }
         if (board[x - 1][y].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y }, board)) {
-            yield { xTo: x - 1, yTo: y };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, y), board)) {
+            yield new Sq(x - 1, y);
         }
         if (board[x + 1][y].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: y }, board)) {
-            yield { xTo: x + 1, yTo: y };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, y), board)) {
+            yield new Sq(x + 1, y);
         }
     }
 }
@@ -459,9 +458,9 @@ class Um extends Koma {
     *__pathGen(x, y, board, advance) {
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
@@ -469,9 +468,9 @@ class Um extends Koma {
         }
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
@@ -479,9 +478,9 @@ class Um extends Koma {
         }
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
@@ -489,29 +488,29 @@ class Um extends Koma {
         }
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
-                yield { xTo: xTo, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: yTo }, board)) {
-                yield { xTo: xTo, yTo: yTo };
+                yield new Sq(xTo, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, yTo), board)) {
+                yield new Sq(xTo, yTo);
                 break;
             } else {
                 break;
             }
         }
         if (board[x][y - 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: y - 1 }, board)) {
-            yield { xTo: x, yTo: y - 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, y - 1), board)) {
+            yield new Sq(x, y - 1);
         }
         if (board[x][y + 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x, y: y + 1 }, board)) {
-            yield { xTo: x, yTo: y + 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x, y + 1), board)) {
+            yield new Sq(x, y + 1);
         }
         if (board[x - 1][y].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y }, board)) {
-            yield { xTo: x - 1, yTo: y };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, y), board)) {
+            yield new Sq(x - 1, y);
         }
         if (board[x + 1][y].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: y }, board)) {
-            yield { xTo: x + 1, yTo: y };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, y), board)) {
+            yield new Sq(x + 1, y);
         }
     }
 }
@@ -528,9 +527,9 @@ class Ry extends Koma {
     *__pathGen(x, y, board, advance) {
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
-                yield { xTo: x, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: x, y: yTo }, board)) {
-                yield { xTo: x, yTo: yTo };
+                yield new Sq(x, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(x, yTo), board)) {
+                yield new Sq(x, yTo);
                 break;
             } else {
                 break;
@@ -538,9 +537,9 @@ class Ry extends Koma {
         }
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo].isEmpty_) {
-                yield { xTo: x, yTo: yTo };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: x, y: yTo }, board)) {
-                yield { xTo: x, yTo: yTo };
+                yield new Sq(x, yTo);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(x, yTo), board)) {
+                yield new Sq(x, yTo);
                 break;
             } else {
                 break;
@@ -548,9 +547,9 @@ class Ry extends Koma {
         }
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y].isEmpty_) {
-                yield { xTo: xTo, yTo: y };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: y }, board)) {
-                yield { xTo: xTo, yTo: y };
+                yield new Sq(xTo, y);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, y), board)) {
+                yield new Sq(xTo, y);
                 break;
             } else {
                 break;
@@ -558,29 +557,29 @@ class Ry extends Koma {
         }
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y].isEmpty_) {
-                yield { xTo: xTo, yTo: y };
-            } else if (Koma.isEnemy({ x: x, y: y }, { x: xTo, y: y }, board)) {
-                yield { xTo: xTo, yTo: y };
+                yield new Sq(xTo, y);
+            } else if (Koma.isEnemy(new Sq(x, y), new Sq(xTo, y), board)) {
+                yield new Sq(xTo, y);
                 break;
             } else {
                 break;
             }
         }
         if (board[x - 1][y - 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y - 1 }, board)) {
-            yield { xTo: x - 1, yTo: y - 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, y - 1), board)) {
+            yield new Sq(x - 1, y - 1);
         }
         if (board[x + 1][y - 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: y - 1 }, board)) {
-            yield { xTo: x + 1, yTo: y - 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, y - 1), board)) {
+            yield new Sq(x + 1, y - 1);
         }
         if (board[x - 1][y + 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x - 1, y: y + 1 }, board)) {
-            yield { xTo: x - 1, yTo: y + 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x - 1, y + 1), board)) {
+            yield new Sq(x - 1, y + 1);
         }
         if (board[x + 1][y + 1].isEmpty_
-        || Koma.isEnemy({ x: x, y: y }, { x: x + 1, y: y + 1 }, board)) {
-            yield { xTo: x + 1, yTo: y + 1 };
+        || Koma.isEnemy(new Sq(x, y), new Sq(x + 1, y + 1), board)) {
+            yield new Sq(x + 1, y + 1);
         }
     }
 }
