@@ -117,7 +117,7 @@ class ShogiBoard {
 
         /** 直前に指した駒による王手 */
         for (var path of koma.pathGen(lastMove.x, lastMove.y, this.board_)) {
-            if (eq(path, ou)) {
+            if (path.eq(ou)) {
                 ret.push(lastMove);
                 break;
             }
