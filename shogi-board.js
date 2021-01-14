@@ -26,7 +26,7 @@ class ShogiBoard {
             this.tegoma_[turn]["KY"] = { koma: new Ky(turn == SENTE), num: 0 };
             this.tegoma_[turn]["KE"] = { koma: new Ke(turn == SENTE), num: 0 };
             this.tegoma_[turn]["GI"] = { koma: new Gi(turn == SENTE), num: 0 };
-            this.tegoma_[turn]["KI"] = { koma: new Ki(turn == SENTE, "KI"), num: 0 };
+            this.tegoma_[turn]["KI"] = { koma: new Ki(turn == SENTE), num: 0 };
             this.tegoma_[turn]["HI"] = { koma: new Hi(turn == SENTE), num: 0 };
             this.tegoma_[turn]["KA"] = { koma: new Ka(turn == SENTE), num: 0 };
         }
@@ -34,9 +34,9 @@ class ShogiBoard {
         this.board_[1][1] = new Ky(false);
         this.board_[2][1] = new Ke(false);
         this.board_[3][1] = new Gi(false);
-        this.board_[4][1] = new Ki(false, "KI");
+        this.board_[4][1] = new Ki(false);
         this.board_[5][1] = new Ou(false);
-        this.board_[6][1] = new Ki(false, "KI");
+        this.board_[6][1] = new Ki(false);
         this.board_[7][1] = new Gi(false);
         this.board_[8][1] = new Ke(false);
         this.board_[9][1] = new Ky(false);
@@ -45,9 +45,9 @@ class ShogiBoard {
         this.board_[1][9] = new Ky(true);
         this.board_[2][9] = new Ke(true);
         this.board_[3][9] = new Gi(true);
-        this.board_[4][9] = new Ki(true, "KI");
+        this.board_[4][9] = new Ki(true);
         this.board_[5][9] = new Ou(true);
-        this.board_[6][9] = new Ki(true, "KI");
+        this.board_[6][9] = new Ki(true);
         this.board_[7][9] = new Gi(true);
         this.board_[8][9] = new Ke(true);
         this.board_[9][9] = new Ky(true);
@@ -188,6 +188,16 @@ class ShogiBoard {
             /** チェックリストにない駒にたどり着いた場合はreturn */
             if (killer.isKoma) {
                 return null;
+            }
+        }
+    }
+
+    isLookedAt(target, checkTurn) {
+        /** 桂馬は，唯一の飛び駒なので，単独で処理する． */
+        for (var path of new KE(!checkTurn).pathGen(target.x, target.y, this.board_)) {
+            if (this.board_[path.x][path.y].isSente == checkTurn
+            && this.board_[path.x][path.y].symbol == "KE") {
+                return true;
             }
         }
     }
