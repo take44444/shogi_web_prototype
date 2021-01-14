@@ -304,7 +304,7 @@ function hideNariWindow() {
  */
 window.onload = function () {
     fromSq = sq(0, 0);
-    toSq = sq(0, 0)
+    toSq = sq(0, 0);
     shogiBoard = new ShogiBoard(true);
 
     gameState = SELECTING;
