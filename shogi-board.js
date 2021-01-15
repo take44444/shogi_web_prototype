@@ -275,6 +275,10 @@ class ShogiBoard {
         return ret;
     }
 
+    /**
+     * 詰み判定を行うメソッド
+     * @param {Boolean} checkTurn 王手をかけている手番
+     */
     isTumi(checkTurn) {
         var target = this.ou_[+!checkTurn];
         var ou = this.board_[target.x][target.y];
@@ -434,6 +438,7 @@ class ShogiBoard {
      * 指定されたマスに，利いている駒のマスを取得するメソッド
      * @param {Sq} target 駒の利きを調べたいマス
      * @param {Boolean} checkTurn 探索する駒の手盤
+     * @return {Array} 駒のマス
      */
     killer(target, checkTurn) {
         let ret = [];
@@ -486,13 +491,13 @@ class ShogiBoard {
     }
 
     /**
-     * 指定した座標に指定した駒が遠くから利いているかを調べるメソッド
+     * 指定した座標に指定した駒が遠くから利いている駒のマスを取得するメソッド
      * @param {Sq} target 駒の利きを調べたいマス
      * @param {Array} checkList 探索する駒のリスト
      * @param {Boolean} checkTurn 探索する駒の手盤
      * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
      * @param {Function} updateY 探索時にyの値を更新するための関数オブジェクト
-     * @return {Boolean} 利いているか
+     * @return {Array} 駒のマス
      */
     killerSub(target, checkList, checkTurn, updateX, updateY) {
         for (var dif = 1; ; dif++) {
