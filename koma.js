@@ -6,7 +6,13 @@
 class Koma {
     constructor(isSente) {
         this.isSente = isSente;
+        this.isNari_ = false;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = false;
         this.init();
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     /**
@@ -14,12 +20,6 @@ class Koma {
      */
     init() {
         this.symbol_ = "";
-        this.isNari_ = false;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
-        this.isKoma_ = false;
-        this.img_ = "";
     }
 
     get symbol() {
@@ -93,12 +93,8 @@ class Fu extends Koma {
 
     init() {
         this.symbol_ = "FU";
-        this.isNari_ = false;
         this.canNari_ = true;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -140,12 +136,8 @@ class Ky extends Koma {
 
     init() {
         this.symbol_ = "KY";
-        this.isNari_ = false;
         this.canNari_ = true;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -187,12 +179,8 @@ class Ke extends Koma {
 
     init() {
         this.symbol_ = "KE";
-        this.isNari_ = false;
         this.canNari_ = true;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -232,12 +220,8 @@ class Gi extends Koma {
 
     init() {
         this.symbol_ = "GI";
-        this.isNari_ = false;
         this.canNari_ = true;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -318,12 +302,8 @@ class Ka extends Koma {
 
     init() {
         this.symbol_ = "KA";
-        this.isNari_ = false;
         this.canNari_ = true;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -381,12 +361,8 @@ class Hi extends Koma {
 
     init() {
         this.symbol_ = "HI";
-        this.isNari_ = false;
         this.canNari_ = true;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -444,12 +420,7 @@ class Ou extends Koma {
 
     init() {
         this.symbol_ = "OU";
-        this.isNari_ = false;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
     
     *__pathGen(x, y, board, advance) {
@@ -496,11 +467,7 @@ class To extends Ki {
     init() {
         this.symbol_ = "TO";
         this.isNari_ = true;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -516,11 +483,7 @@ class Ny extends Ki {
     init() {
         this.symbol_ = "NY";
         this.isNari_ = true;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -536,11 +499,7 @@ class Nk extends Ki {
     init() {
         this.symbol_ = "NK";
         this.isNari_ = true;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -556,11 +515,7 @@ class Ng extends Ki {
     init() {
         this.symbol_ = "NG";
         this.isNari_ = true;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -576,11 +531,7 @@ class Um extends Koma {
     init() {
         this.symbol_ = "UM";
         this.isNari_ = true;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -655,11 +606,7 @@ class Ry extends Koma {
     init() {
         this.symbol_ = "RY";
         this.isNari_ = true;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -733,12 +680,7 @@ class Empty extends Koma {
 
     init() {
         this.symbol_ = "";
-        this.isNari_ = false;
-        this.canNari_ = false;
-        this.isWall_ = false;
         this.isEmpty_ = true;
-        this.isKoma_ = false;
-        this.img_ = "";
     }
 }
 
@@ -749,11 +691,6 @@ class Wall extends Koma {
 
     init() {
         this.symbol_ = "";
-        this.isNari_ = false;
-        this.canNari_ = false;
         this.isWall_ = true;
-        this.isEmpty_ = false;
-        this.isKoma_ = false;
-        this.img_ = "";
     }
 }
