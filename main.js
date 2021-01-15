@@ -1,5 +1,7 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
+let shogiBoard;
+
 let fromSq;
 let toSq;
 
@@ -19,8 +21,6 @@ const BOARD_LEFT = 196;
 const BOARD_TOP = 19;
 const SQUARE_WIDTH = 52;
 const SQUARE_HEIGHT = 61;
-
-let shogiBoard;
 
 /**
  * 自分の陣地ないか否かをBooleanで返す関数
