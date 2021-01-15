@@ -1,5 +1,7 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 
+let shogiBoard;
+
 let fromSq;
 let toSq;
 
@@ -19,8 +21,6 @@ const BOARD_LEFT = 196;
 const BOARD_TOP = 19;
 const SQUARE_WIDTH = 52;
 const SQUARE_HEIGHT = 61;
-
-let shogiBoard;
 
 /**
  * 自分の陣地ないか否かをBooleanで返す関数
@@ -135,11 +135,17 @@ function showTegoma() {
 
 /**
  * 与えられたマスにある駒が現在移動することができるマスを明るく表示する関数
- * @param {Number} x 盤における筋
- * @param {Number} y 盤における段
  */
-function showPath(x, y) {
-    for (var path of shogiBoard.board[x][y].pathGen(x, y, shogiBoard.board)) {
+function showPath() {
+    for (var path of selectedKoma.pathGen(fromSq.x, fromSq.y, shogiBoard.board)) {
+        /** その場所に動かした時，自分の王様に利きがないかを調べる */
+        if (canNari(selectedKoma, fromSq.x, fromSq.y) || canNari(selectedKoma, path.x, path.y)) {
+            if (!shogiBoard.canMove(fromSq, path, selectedKoma.createNari())) {
+                continue;
+            }
+        } else if (!shogiBoard.canMove(fromSq, path, selectedKoma)) {
+            continue;
+        }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
@@ -149,10 +155,13 @@ function showPath(x, y) {
 
 /**
  * 与えられた駒を現在打つことができるマスを明るく表示する関数
- * @param {Koma} koma 駒
  */
-function showDrop(koma) {
-    for (var path of koma.dropGen(shogiBoard.board)) {
+function showDrop() {
+    for (var path of selectedKoma.dropGen(shogiBoard.board)) {
+        /** その場所に動かした時，自分の王様に利きがないかを調べる */
+        if (!shogiBoard.canMove(sq(0, 0), path, selectedKoma)) {
+            continue;
+        }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
@@ -196,7 +205,7 @@ function selectKomaToMove(x, y) {
 
     showMask();
 
-    showPath(x, y);
+    showPath();
 }
 
 /**
@@ -228,7 +237,7 @@ function selectTegoma(koma) {
 
     showMask();
 
-    showDrop(selectedKoma);
+    showDrop();
 }
 
 /**

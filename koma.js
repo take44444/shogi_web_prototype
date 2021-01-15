@@ -4,15 +4,22 @@
  * @constructor
  */
 class Koma {
-    constructor(symbol, isNari, canNari, isSente) {
-        this.symbol_ = symbol;
-        this.isNari_ = isNari;
-        this.canNari_ = canNari;
+    constructor(isSente) {
         this.isSente = isSente;
+        this.init();
+    }
+
+    /**
+     * パラメータ初期化メソッド
+     */
+    init() {
+        this.symbol_ = "";
+        this.isNari_ = false;
+        this.canNari_ = false;
         this.isWall_ = false;
         this.isEmpty_ = false;
-        this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
+        this.isKoma_ = false;
+        this.img_ = "";
     }
 
     get symbol() {
@@ -43,8 +50,8 @@ class Koma {
         return this.img_;
     }
 
-    static isEnemy(from, to, board) {
-        return board[from.x][from.y].isSente != board[to.x][to.y].isSente && !board[to.x][to.y].isWall;
+    isEnemy(cmp, board) {
+        return this.isSente != board[cmp.x][cmp.y].isSente && !board[cmp.x][cmp.y].isWall;
     }
 
     /**
@@ -62,7 +69,6 @@ class Koma {
     }
 
     *__pathGen(x, y, board, advance) {
-        yield false;
     }
 
     /**
@@ -82,7 +88,17 @@ class Koma {
 
 class Fu extends Koma {
     constructor(isSente) {
-        super("FU", false, true, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "FU";
+        this.isNari_ = false;
+        this.canNari_ = true;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -91,7 +107,7 @@ class Fu extends Koma {
     
     *__pathGen(x, y, board, advance) {
         if (board[x][advance(y, 1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, advance(y, 1)), board)) {
+        || this.isEnemy(sq(x, advance(y, 1)), board)) {
             yield sq(x, advance(y, 1));
         }
     }
@@ -119,7 +135,17 @@ class Fu extends Koma {
 
 class Ky extends Koma {
     constructor(isSente) {
-        super("KY", false, true, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "KY";
+        this.isNari_ = false;
+        this.canNari_ = true;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -130,7 +156,7 @@ class Ky extends Koma {
         for (var yTo = advance(y, 1); 1 <= yTo && yTo <= 9; yTo = advance(yTo, 1)) {
             if (board[x][yTo].isEmpty_) {
                 yield sq(x, yTo);
-            } else if(Koma.isEnemy(sq(x, y), sq(x, yTo), board)) {
+            } else if(this.isEnemy(sq(x, yTo), board)) {
                 yield sq(x, yTo);
                 break;
             } else {
@@ -156,7 +182,17 @@ class Ky extends Koma {
 
 class Ke extends Koma {
     constructor(isSente) {
-        super("KE", false, true, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "KE";
+        this.isNari_ = false;
+        this.canNari_ = true;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -165,11 +201,11 @@ class Ke extends Koma {
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][advance(y, 2)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, advance(y, 2)), board)) {
+        || this.isEnemy(sq(x - 1, advance(y, 2)), board)) {
             yield sq(x - 1, advance(y, 2));
         }
         if ((board[x + 1][advance(y, 2)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, advance(y, 2)), board))) {
+        || this.isEnemy(sq(x + 1, advance(y, 2)), board))) {
             yield sq(x + 1, advance(y, 2));
         }
     }
@@ -191,7 +227,17 @@ class Ke extends Koma {
 
 class Gi extends Koma {
     constructor(isSente) {
-        super("GI", false, true, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "GI";
+        this.isNari_ = false;
+        this.canNari_ = true;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -200,56 +246,66 @@ class Gi extends Koma {
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, advance(y, 1)), board)) {
+        || this.isEnemy(sq(x - 1, advance(y, 1)), board)) {
             yield sq(x - 1, advance(y, 1));
         }
         if (board[x][advance(y, 1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, advance(y, 1)), board)) {
+        || this.isEnemy(sq(x, advance(y, 1)), board)) {
             yield sq(x, advance(y, 1));
         }
         if (board[x + 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, advance(y, 1)), board)) {
+        || this.isEnemy(sq(x + 1, advance(y, 1)), board)) {
             yield sq(x + 1, advance(y, 1));
         }
         if (board[x - 1][advance(y, -1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, advance(y, -1)), board)) {
+        || this.isEnemy(sq(x - 1, advance(y, -1)), board)) {
             yield sq(x - 1, advance(y, -1));
         }
         if (board[x + 1][advance(y, -1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, advance(y, -1)), board)) {
+        || this.isEnemy(sq(x + 1, advance(y, -1)), board)) {
             yield sq(x + 1, advance(y, -1));
         }
     }
 }
 
 class Ki extends Koma {
-    constructor(isSente, symbol) {
-        super(symbol, false, false, isSente);
+    constructor(isSente) {
+        super(isSente);
     }
-    
+
+    init() {
+        this.symbol_ = "KI";
+        this.isNari_ = false;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
+    }
+
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, advance(y, 1)), board)) {
+        || this.isEnemy(sq(x - 1, advance(y, 1)), board)) {
             yield sq(x - 1, advance(y, 1));
         }
         if (board[x][advance(y, 1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, advance(y, 1)), board)) {
+        || this.isEnemy(sq(x, advance(y, 1)), board)) {
             yield sq(x, advance(y, 1));
         }
         if (board[x][advance(y, -1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, advance(y, -1)), board)) {
+        || this.isEnemy(sq(x, advance(y, -1)), board)) {
             yield sq(x, advance(y, -1));
         }
         if (board[x + 1][advance(y, 1)].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, advance(y, 1)), board)) {
+        || this.isEnemy(sq(x + 1, advance(y, 1)), board)) {
             yield sq(x + 1, advance(y, 1));
         }
         if (board[x - 1][y].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, y), board)) {
+        || this.isEnemy(sq(x - 1, y), board)) {
             yield sq(x - 1, y);
         }
         if (board[x + 1][y].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, y), board)) {
+        || this.isEnemy(sq(x + 1, y), board)) {
             yield sq(x + 1, y);
         }
     }
@@ -257,7 +313,17 @@ class Ki extends Koma {
 
 class Ka extends Koma {
     constructor(isSente) {
-        super("KA", false, true, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "KA";
+        this.isNari_ = false;
+        this.canNari_ = true;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -268,7 +334,7 @@ class Ka extends Koma {
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -278,7 +344,7 @@ class Ka extends Koma {
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -288,7 +354,7 @@ class Ka extends Koma {
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -298,7 +364,7 @@ class Ka extends Koma {
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -310,7 +376,17 @@ class Ka extends Koma {
 
 class Hi extends Koma {
     constructor(isSente) {
-        super("HI", false, true, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "HI";
+        this.isNari_ = false;
+        this.canNari_ = true;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNari() {
@@ -321,7 +397,7 @@ class Hi extends Koma {
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
                 yield sq(x, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(x, yTo), board)) {
+            } else if (this.isEnemy(sq(x, yTo), board)) {
                 yield sq(x, yTo);
                 break;
             } else {
@@ -331,7 +407,7 @@ class Hi extends Koma {
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo].isEmpty_) {
                 yield sq(x, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(x, yTo), board)) {
+            } else if (this.isEnemy(sq(x, yTo), board)) {
                 yield sq(x, yTo);
                 break;
             } else {
@@ -341,7 +417,7 @@ class Hi extends Koma {
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y].isEmpty_) {
                 yield sq(xTo, y);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, y), board)) {
+            } else if (this.isEnemy(sq(xTo, y), board)) {
                 yield sq(xTo, y);
                 break;
             } else {
@@ -351,7 +427,7 @@ class Hi extends Koma {
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y].isEmpty_) {
                 yield sq(xTo, y);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, y), board)) {
+            } else if (this.isEnemy(sq(xTo, y), board)) {
                 yield sq(xTo, y);
                 break;
             } else {
@@ -363,40 +439,50 @@ class Hi extends Koma {
 
 class Ou extends Koma {
     constructor(isSente) {
-        super("OU", false, false, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "OU";
+        this.isNari_ = false;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
     
     *__pathGen(x, y, board, advance) {
         if (board[x - 1][y + 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, y + 1), board)) {
+        || this.isEnemy(sq(x - 1, y + 1), board)) {
             yield sq(x - 1, y + 1);
         }
         if (board[x + 1][y + 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, y + 1), board)) {
+        || this.isEnemy(sq(x + 1, y + 1), board)) {
             yield sq(x + 1, y + 1);
         }
         if (board[x - 1][y - 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, y - 1), board)) {
+        || this.isEnemy(sq(x - 1, y - 1), board)) {
             yield sq(x - 1, y - 1);
         }
         if (board[x][y - 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, y - 1), board)) {
+        || this.isEnemy(sq(x, y - 1), board)) {
             yield sq(x, y - 1);
         }
         if (board[x][y + 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, y + 1), board)) {
+        || this.isEnemy(sq(x, y + 1), board)) {
             yield sq(x, y + 1);
         }
         if (board[x + 1][y - 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, y - 1), board)) {
+        || this.isEnemy(sq(x + 1, y - 1), board)) {
             yield sq(x + 1, y - 1);
         }
         if (board[x - 1][y].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, y), board)) {
+        || this.isEnemy(sq(x - 1, y), board)) {
             yield sq(x - 1, y);
         }
         if (board[x + 1][y].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, y), board)) {
+        || this.isEnemy(sq(x + 1, y), board)) {
             yield sq(x + 1, y);
         }
     }
@@ -404,8 +490,17 @@ class Ou extends Koma {
 
 class To extends Ki {
     constructor(isSente) {
-        super(isSente, "TO");
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "TO";
         this.isNari_ = true;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -415,8 +510,17 @@ class To extends Ki {
 
 class Ny extends Ki {
     constructor(isSente) {
-        super(isSente, "NY");
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "NY";
         this.isNari_ = true;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -426,8 +530,17 @@ class Ny extends Ki {
 
 class Nk extends Ki {
     constructor(isSente) {
-        super(isSente, "NK");
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "NK";
         this.isNari_ = true;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -437,8 +550,17 @@ class Nk extends Ki {
 
 class Ng extends Ki {
     constructor(isSente) {
-        super(isSente, "NG");
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "NG";
         this.isNari_ = true;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -448,7 +570,17 @@ class Ng extends Ki {
 
 class Um extends Koma {
     constructor(isSente) {
-        super("UM", true, false, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "UM";
+        this.isNari_ = true;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -459,7 +591,7 @@ class Um extends Koma {
         for (var xTo = x - 1, yTo = y - 1; xTo >= 1 && yTo >= 1; xTo--, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -469,7 +601,7 @@ class Um extends Koma {
         for (var xTo = x + 1, yTo = y - 1; xTo <= 9 && yTo >= 1; xTo++, yTo--) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -479,7 +611,7 @@ class Um extends Koma {
         for (var xTo = x - 1, yTo = y + 1; xTo >= 1 && yTo <= 9; xTo--, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -489,7 +621,7 @@ class Um extends Koma {
         for (var xTo = x + 1, yTo = y + 1; xTo <= 9 && yTo <= 9; xTo++, yTo++) {
             if (board[xTo][yTo].isEmpty_) {
                 yield sq(xTo, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, yTo), board)) {
+            } else if (this.isEnemy(sq(xTo, yTo), board)) {
                 yield sq(xTo, yTo);
                 break;
             } else {
@@ -497,19 +629,19 @@ class Um extends Koma {
             }
         }
         if (board[x][y - 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, y - 1), board)) {
+        || this.isEnemy(sq(x, y - 1), board)) {
             yield sq(x, y - 1);
         }
         if (board[x][y + 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x, y + 1), board)) {
+        || this.isEnemy(sq(x, y + 1), board)) {
             yield sq(x, y + 1);
         }
         if (board[x - 1][y].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, y), board)) {
+        || this.isEnemy(sq(x - 1, y), board)) {
             yield sq(x - 1, y);
         }
         if (board[x + 1][y].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, y), board)) {
+        || this.isEnemy(sq(x + 1, y), board)) {
             yield sq(x + 1, y);
         }
     }
@@ -517,7 +649,17 @@ class Um extends Koma {
 
 class Ry extends Koma {
     constructor(isSente) {
-        super("RY", true, false, isSente);
+        super(isSente);
+    }
+
+    init() {
+        this.symbol_ = "RY";
+        this.isNari_ = true;
+        this.canNari_ = false;
+        this.isWall_ = false;
+        this.isEmpty_ = false;
+        this.isKoma_ = true;
+        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     createNarazu() {
@@ -528,7 +670,7 @@ class Ry extends Koma {
         for (var yTo = y - 1; yTo >= 1; yTo--) {
             if (board[x][yTo].isEmpty_) {
                 yield sq(x, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(x, yTo), board)) {
+            } else if (this.isEnemy(sq(x, yTo), board)) {
                 yield sq(x, yTo);
                 break;
             } else {
@@ -538,7 +680,7 @@ class Ry extends Koma {
         for (var yTo = y + 1; yTo <= 9; yTo++) {
             if (board[x][yTo].isEmpty_) {
                 yield sq(x, yTo);
-            } else if (Koma.isEnemy(sq(x, y), sq(x, yTo), board)) {
+            } else if (this.isEnemy(sq(x, yTo), board)) {
                 yield sq(x, yTo);
                 break;
             } else {
@@ -548,7 +690,7 @@ class Ry extends Koma {
         for (var xTo = x - 1; xTo >= 1; xTo--) {
             if (board[xTo][y].isEmpty_) {
                 yield sq(xTo, y);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, y), board)) {
+            } else if (this.isEnemy(sq(xTo, y), board)) {
                 yield sq(xTo, y);
                 break;
             } else {
@@ -558,7 +700,7 @@ class Ry extends Koma {
         for (var xTo = x + 1; xTo <= 9; xTo++) {
             if (board[xTo][y].isEmpty_) {
                 yield sq(xTo, y);
-            } else if (Koma.isEnemy(sq(x, y), sq(xTo, y), board)) {
+            } else if (this.isEnemy(sq(xTo, y), board)) {
                 yield sq(xTo, y);
                 break;
             } else {
@@ -566,19 +708,19 @@ class Ry extends Koma {
             }
         }
         if (board[x - 1][y - 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, y - 1), board)) {
+        || this.isEnemy(sq(x - 1, y - 1), board)) {
             yield sq(x - 1, y - 1);
         }
         if (board[x + 1][y - 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, y - 1), board)) {
+        || this.isEnemy(sq(x + 1, y - 1), board)) {
             yield sq(x + 1, y - 1);
         }
         if (board[x - 1][y + 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x - 1, y + 1), board)) {
+        || this.isEnemy(sq(x - 1, y + 1), board)) {
             yield sq(x - 1, y + 1);
         }
         if (board[x + 1][y + 1].isEmpty_
-        || Koma.isEnemy(sq(x, y), sq(x + 1, y + 1), board)) {
+        || this.isEnemy(sq(x + 1, y + 1), board)) {
             yield sq(x + 1, y + 1);
         }
     }
@@ -586,18 +728,32 @@ class Ry extends Koma {
 
 class Empty extends Koma {
     constructor() {
-        super("", false, false, false);
-        this.img_ = "";
+        super(false);
+    }
+
+    init() {
+        this.symbol_ = "";
+        this.isNari_ = false;
+        this.canNari_ = false;
+        this.isWall_ = false;
         this.isEmpty_ = true;
         this.isKoma_ = false;
+        this.img_ = "";
     }
 }
 
 class Wall extends Koma {
     constructor() {
-        super("", false, false, false);
-        this.img_ = "";
+        super(false);
+    }
+
+    init() {
+        this.symbol_ = "";
+        this.isNari_ = false;
+        this.canNari_ = false;
         this.isWall_ = true;
+        this.isEmpty_ = false;
         this.isKoma_ = false;
-    }    
+        this.img_ = "";
+    }
 }
