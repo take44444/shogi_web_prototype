@@ -135,13 +135,15 @@ function showTegoma() {
 
 /**
  * 与えられたマスにある駒が現在移動することができるマスを明るく表示する関数
- * @param {Number} x 盤における筋
- * @param {Number} y 盤における段
  */
-function showPath(x, y) {
-    for (var path of selectedKoma.pathGen(x, y, shogiBoard.board)) {
+function showPath() {
+    for (var path of selectedKoma.pathGen(fromSq.x, fromSq.y, shogiBoard.board)) {
         /** その場所に動かした時，自分の王様に利きがないかを調べる */
-        if (!shogiBoard.canMove(sq(x, y), path, selectedKoma)) {
+        if (canNari(selectedKoma, fromSq.x, fromSq.y) || canNari(selectedKoma, path.x, path.y)) {
+            if (!shogiBoard.canMove(fromSq, path, selectedKoma.createNari())) {
+                continue;
+            }
+        } else if (!shogiBoard.canMove(fromSq, path, selectedKoma)) {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
@@ -203,7 +205,7 @@ function selectKomaToMove(x, y) {
 
     showMask();
 
-    showPath(x, y);
+    showPath();
 }
 
 /**
