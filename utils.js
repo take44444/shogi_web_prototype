@@ -80,7 +80,7 @@ class Sq {
         return this.x == other.x && this.y == other.y;
     }
 
-    sandbox() {
+    clone() {
         return new Sq(this.x, this.y);
     }
 }

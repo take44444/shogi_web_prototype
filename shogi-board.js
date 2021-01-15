@@ -1,16 +1,22 @@
 class ShogiBoard {
     constructor() {
+        /** 手番を先手番で初期化 */
         this.turn_ = true;
+        /** 棋譜 */
         this.csaData_ = [];
+        /** 盤面 */
         this.board_ = [];
+        /** 手駒 */
         this.tegoma_ = [];
+        /** TODO: 王の位置 */
         this.ou_ = [];
         this.ou_[SENTE] = sq(5, 9);
         this.ou_[GOTE] = sq(5, 1);
-        /** 駒座標保持用 */
+        /** TODO: 駒座標保持用 */
         // this.positions_ = new KomaPositions();
-        /** 持将棋判定用のカウンターを用意 */
-    
+        /** TODO: 持将棋判定用のカウンターを用意 */
+
+        /** 壁と空マスで盤面を初期化 */
         for (var x = 0; x <= 10; x++) {
             this.board_[x] = [];
             for (var y = 0; y <= 10; y++) {
@@ -21,7 +27,8 @@ class ShogiBoard {
                 }
             }
         }
-    
+
+        /** 全ての手駒の数を0で初期化 */
         for (var turn = 0; turn <= 1; turn++) {
             this.tegoma_[turn] = {};
             this.tegoma_[turn]["FU"] = { koma: new Fu(turn == SENTE), num: 0 };
@@ -32,7 +39,8 @@ class ShogiBoard {
             this.tegoma_[turn]["HI"] = { koma: new Hi(turn == SENTE), num: 0 };
             this.tegoma_[turn]["KA"] = { koma: new Ka(turn == SENTE), num: 0 };
         }
-    
+
+        /** 平手時の初期盤面配置 */
         this.board_[1][1] = new Ky(false);
         this.board_[2][1] = new Ke(false);
         this.board_[3][1] = new Gi(false);
@@ -73,11 +81,15 @@ class ShogiBoard {
         return this.tegoma_;
     }
 
+    /**
+     * 反則手判定のために使用するテスト環境を作るメソッド
+     * @return {ShogiBoard} テスト環境（ほぼクローン）
+     */
     sandbox() {
         let sandbox = new ShogiBoard();
         sandbox.turn_ = this.turn_;
-        sandbox.ou_[SENTE] = this.ou_[SENTE].sandbox();
-        sandbox.ou_[GOTE] = this.ou_[GOTE].sandbox();
+        sandbox.ou_[SENTE] = this.ou_[SENTE].clone();
+        sandbox.ou_[GOTE] = this.ou_[GOTE].clone();
         for (var x = 1; x <= 9; x++) {
             for (var y = 1; y <= 9; y++) {
                 sandbox.board_[x][y] = this.board_[x][y];
@@ -91,50 +103,84 @@ class ShogiBoard {
         return sandbox;
     }
 
+    /**
+     * 手番を変更するメソッド
+     */
     rotateTurn() {
         this.turn_ = !this.turn_;
     }
 
-    move(from, to, afterKoma) {
+    /**
+     * 手を指すためのメソッド
+     * @param {Sq} from 移動元
+     * @param {Sq} to 移動先
+     * @param {Koma} koma 駒
+     */
+    move(from, to, koma) {
         if (from.x != 0) {
+            /** 盤上の駒を動かした場合は移動元のマスを空にする */
             this.board_[from.x][from.y] = new Empty();
         } else {
-            this.tegoma_[+this.turn_][afterKoma.symbol].num--;
+            /** 手駒から打った場合は手駒の数を減らす */
+            this.tegoma_[+this.turn_][koma.symbol].num--;
         }
+        /** 移動先のマスに敵の駒がある場合 */
         if (!this.board_[to.x][to.y].isEmpty) {
             if (this.board_[to.x][to.y].isNari) {
+                /** 取る駒が，成っている駒の場合 */
                 this.tegoma_[+this.turn_][this.board_[to.x][to.y].createNarazu().symbol].num++;
             } else {
+                /** 取る駒が，成ってない駒の場合 */
                 this.tegoma_[+this.turn_][this.board_[to.x][to.y].symbol].num++;
             }
         }
-        this.board_[to.x][to.y] = afterKoma;
+        /** 移動先のマスに駒を設置 */
+        this.board_[to.x][to.y] = koma;
 
-        if (afterKoma.symbol == "OU") {
-            this.ou_[+afterKoma.isSente].x = to.x;
-            this.ou_[+afterKoma.isSente].y = to.y;
+        if (koma.symbol == "OU") {
+            /** TODO: 動かした駒が王の時は，王座標を更新する */
+            this.ou_[+koma.isSente].x = to.x;
+            this.ou_[+koma.isSente].y = to.y;
         } else {
-            if (this.isOute(afterKoma.isSente)) {
+            /** 王以外を動かした場合は，王手の可能性がある */
+            if (this.isOute(koma.isSente)) {
+                /** 王手の時 */
                 console.log("oute!");
-                if (this.isTumi(afterKoma.isSente)) {
+                if (this.isTumi(koma.isSente)) {
+                    /** 詰みの時 */
                     console.log("tumi!");
                 }
             }
         }
 
-        // 棋譜を保存
+        /** 棋譜を保存 */
         var csaMove;
+        /** CSA形式に従う */
         if (this.turn_ == SENTE) { csaMove = "+"; } else { csaMove = "-"; }
-        csaMove = csaMove + from.x + from.y + afterKoma.symbol;
+        csaMove = csaMove + from.x + from.y + koma.symbol;
         this.csaData_.push(csaMove);
     }
 
-    canMove(from, to, afterKoma) {
+    /**
+     * 駒を指定通りに動かすことができるかを調べるメソッド
+     * @param {Sq} from 移動元
+     * @param {Sq} to 移動先
+     * @param {Koma} koma 駒
+     * @return {Boolean} 動かせるか
+     */
+    canMove(from, to, koma) {
+        /** テスト環境を用意 */
         let sandbox = this.sandbox();
-        sandbox.move(from, to, afterKoma);
-        return !sandbox.isLookedAt(sandbox.ou_[+afterKoma.isSente], !afterKoma.isSente);
+        /** テスト環境上で指す */
+        sandbox.move(from, to, koma);
+        /** テスト環境上で指した後に自玉に王手がかかっている場合はその手は指せない */
+        return !sandbox.isOute(!koma.isSente);
     }
 
+    /**
+     * 王手かを調べるメソッド
+     * @param {Boolean} checkTurn 王手をかけているかを調べたい手番
+     */
     isOute(checkTurn) {
         return this.isLookedAt(this.ou_[+!checkTurn], checkTurn);
     }
