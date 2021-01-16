@@ -86,11 +86,15 @@ class Koma {
     *dropGen(board) {
         for (var x = 1; x <= 9; x++) {
             for (var y = 1; y <= 9; y++) {
-                if (board[x][y].isEmpty_) {
+                if (this.canDrop(board, point(x, y))) {
                     yield point(x, y);
                 }
             }
         }
+    }
+
+    canDrop(board, p){
+        return board[p.x][p.y].isEmpty_;
     }
 }
 
@@ -132,6 +136,12 @@ class Fu extends Koma {
             }
         }
     }
+
+    canDrop(board, p){
+        return super.canDrop(board, p) &&
+            !board[x].some(e=>{return e instanceof Fu && e.isSente == this.isSente;}) &&
+            !(this.isSente && y == 1 || !this.isSente && y == 9);
+    }
 }
 
 class Ky extends Koma {
@@ -159,18 +169,9 @@ class Ky extends Koma {
         }
     }
 
-    *dropGen(board) {
-        for (var x = 1; x <= 9; x++) {
-            for (var y = 1; y <= 9; y++) {
-                if (board[x][y].isEmpty_) {
-                    if (this.isSente && y == 1 || !this.isSente && y == 9) {
-                        continue;
-                    } else {
-                        yield point(x, y);
-                    }
-                }
-            }
-        }
+    canDrop(board, p){
+        return super.canDrop(board, p) &&
+            !(this.isSente && p.y == 1 || !this.isSente && p.y == 9);
     }
 }
 
@@ -197,18 +198,9 @@ class Ke extends Koma {
         }
     }
 
-    *dropGen(board) {
-        for (var x = 1; x <= 9; x++) {
-            for (var y = 1; y <= 9; y++) {
-                if (board[x][y].isEmpty_) {
-                    if (this.isSente && y <= 2 || !this.isSente && y >= 8) {
-                        continue;
-                    } else {
-                        yield point(x, y);
-                    }
-                }
-            }
-        }
+    canDrop(board, p){
+        return super.canDrop(board, p) &&
+            !(this.isSente && p.y <= 2 || !this.isSente && p.y >= 8);
     }
 }
 
