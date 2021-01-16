@@ -5,7 +5,7 @@ class ShogiBoard {
         /** 手番を先手番で初期化 */
         this.turn_ = true;
         /** 棋譜 */
-        this.csaData_ = [];
+        this.kifu_ = new Kifu();
         /** 盤面 */
         this.board_ = [];
         /** 手駒 */
@@ -137,6 +137,9 @@ class ShogiBoard {
         /** 移動先のマスに駒を設置 */
         this.board_[to.x][to.y] = koma;
 
+        /** 千日手判定 */
+        this.kifu_.update(from, to, koma, this.board_, this.tegoma_);
+
         if (koma.symbol == "OU") {
             /** TODO: 動かした駒が王の時は，王座標を更新する */
             this.ou_[+koma.isSente].x = to.x;
@@ -152,13 +155,6 @@ class ShogiBoard {
                 }
             }
         }
-
-        /** 棋譜を保存 */
-        var csaMove;
-        /** CSA形式に従う */
-        if (this.turn_ == SENTE) { csaMove = "+"; } else { csaMove = "-"; }
-        csaMove = csaMove + from.x + from.y + koma.symbol;
-        this.csaData_.push(csaMove);
     }
 
     /**

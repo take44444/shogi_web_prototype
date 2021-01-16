@@ -12,6 +12,9 @@ class Koma {
         this.isEmpty_ = false;
         this.isKoma_ = false;
         this.init();
+        if (!this.isSente) {
+            this.sfen_ = this.sfen_.toLowerCase();
+        }
         this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
@@ -20,10 +23,15 @@ class Koma {
      */
     init() {
         this.symbol_ = "";
+        this.sfen_ = "";
     }
 
     get symbol() {
         return this.symbol_;
+    }
+
+    get sfen() {
+        return this.sfen_;
     }
 
     get isNari() {
@@ -89,6 +97,7 @@ class Koma {
 class Fu extends Koma {
     init() {
         this.symbol_ = "FU";
+        this.sfen_ = "P";
         this.canNari_ = true;
         this.isKoma_ = true;
     }
@@ -128,6 +137,7 @@ class Fu extends Koma {
 class Ky extends Koma {
     init() {
         this.symbol_ = "KY";
+        this.sfen_ = "L";
         this.canNari_ = true;
         this.isKoma_ = true;
     }
@@ -167,6 +177,7 @@ class Ky extends Koma {
 class Ke extends Koma {
     init() {
         this.symbol_ = "KE";
+        this.sfen_ = "N";
         this.canNari_ = true;
         this.isKoma_ = true;
     }
@@ -204,6 +215,7 @@ class Ke extends Koma {
 class Gi extends Koma {
     init() {
         this.symbol_ = "GI";
+        this.sfen_ = "S";
         this.canNari_ = true;
         this.isKoma_ = true;
     }
@@ -239,12 +251,8 @@ class Gi extends Koma {
 class Ki extends Koma {
     init() {
         this.symbol_ = "KI";
-        this.isNari_ = false;
-        this.canNari_ = false;
-        this.isWall_ = false;
-        this.isEmpty_ = false;
+        this.sfen_ = "G";
         this.isKoma_ = true;
-        this.img_ = `url(img/${this.symbol_}_${this.isSente?"pos":"neg"}.png)`;
     }
 
     *__pathGen(x, y, board, advance) {
@@ -278,6 +286,7 @@ class Ki extends Koma {
 class Ka extends Koma {
     init() {
         this.symbol_ = "KA";
+        this.sfen_ = "B";
         this.canNari_ = true;
         this.isKoma_ = true;
     }
@@ -333,6 +342,7 @@ class Ka extends Koma {
 class Hi extends Koma {
     init() {
         this.symbol_ = "HI";
+        this.sfen_ = "R";
         this.canNari_ = true;
         this.isKoma_ = true;
     }
@@ -388,6 +398,7 @@ class Hi extends Koma {
 class Ou extends Koma {
     init() {
         this.symbol_ = "OU";
+        this.sfen_ = "K";
         this.isKoma_ = true;
     }
     
@@ -430,6 +441,7 @@ class Ou extends Koma {
 class To extends Ki {
     init() {
         this.symbol_ = "TO";
+        this.sfen_ = "+P";
         this.isNari_ = true;
         this.isKoma_ = true;
     }
@@ -442,6 +454,7 @@ class To extends Ki {
 class Ny extends Ki {
     init() {
         this.symbol_ = "NY";
+        this.sfen_ = "+L";
         this.isNari_ = true;
         this.isKoma_ = true;
     }
@@ -454,6 +467,7 @@ class Ny extends Ki {
 class Nk extends Ki {
     init() {
         this.symbol_ = "NK";
+        this.sfen_ = "+N";
         this.isNari_ = true;
         this.isKoma_ = true;
     }
@@ -466,6 +480,7 @@ class Nk extends Ki {
 class Ng extends Ki {
     init() {
         this.symbol_ = "NG";
+        this.sfen_ = "+S";
         this.isNari_ = true;
         this.isKoma_ = true;
     }
@@ -478,6 +493,7 @@ class Ng extends Ki {
 class Um extends Koma {
     init() {
         this.symbol_ = "UM";
+        this.sfen_ = "+B";
         this.isNari_ = true;
         this.isKoma_ = true;
     }
@@ -549,6 +565,7 @@ class Um extends Koma {
 class Ry extends Koma {
     init() {
         this.symbol_ = "RY";
+        this.sfen_ = "+R";
         this.isNari_ = true;
         this.isKoma_ = true;
     }
@@ -624,6 +641,7 @@ class Empty extends Koma {
 
     init() {
         this.symbol_ = "";
+        this.sfen_ = "";
         this.isEmpty_ = true;
     }
 }
@@ -635,6 +653,7 @@ class Wall extends Koma {
 
     init() {
         this.symbol_ = "";
+        this.sfen_ = "";
         this.isWall_ = true;
     }
 }
