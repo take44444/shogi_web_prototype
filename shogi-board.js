@@ -372,7 +372,7 @@ class ShogiBoard {
                         case MODE.POINT:
                             return point(x, y);
                         default:
-                            return false;
+                            return true;
                     }
                 }
             }
