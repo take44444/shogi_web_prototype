@@ -96,7 +96,7 @@ class ShogiBoard {
             }
         }
         for (var turn = 0; turn <= 1; turn++) {
-            for (var koma of this.tegoma_[turn].keys()) {
+            for (var koma in this.tegoma_[turn]) {
                 sandbox.tegoma_[turn][koma].num = this.tegoma_[turn][koma].num;
             }
         }
@@ -138,7 +138,9 @@ class ShogiBoard {
         this.board_[to.x][to.y] = koma;
 
         /** 千日手判定 */
-        this.kifu_.update(from, to, koma, this.board_, this.tegoma_);
+        if (this.kifu_.update(from, to, koma, this.board_, this.tegoma_)) {
+            console.log("sennichite");
+        }
 
         if (koma.symbol == "OU") {
             /** TODO: 動かした駒が王の時は，王座標を更新する */

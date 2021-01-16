@@ -3,7 +3,7 @@ class Kifu {
         this.moves = 1;
         /** 対局者情報や初期盤面など */
         this.csaData = [""];
-        this.sfenData = {};
+        this.sfenData = new Map();
     }
 
     /**
@@ -22,7 +22,6 @@ class Kifu {
         csaMove += `${from.x}${from.y}${to.x}${to.y}${koma.symbol}`;
         this.csaData.push(csaMove);
         var key = Kifu.sfen(board, tegoma, !koma.isSente);
-        console.log(key);
         if (!(key in this.sfenData)) {
             this.sfenData[key] = 0;
         }
