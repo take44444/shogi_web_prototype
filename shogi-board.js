@@ -10,10 +10,8 @@ class ShogiBoard {
         this.tegoma_ = [];
         /** TODO: 王の位置 */
         this.ou_ = [];
-        this.ou_[SENTE] = sq(5, 9);
-        this.ou_[GOTE] = sq(5, 1);
-        /** TODO: 駒座標保持用 */
-        // this.positions_ = new KomaPositions();
+        this.ou_[SENTE] = point(5, 9);
+        this.ou_[GOTE] = point(5, 1);
         /** TODO: 持将棋判定用のカウンターを用意 */
 
         /** 壁と空マスで盤面を初期化 */
@@ -112,8 +110,8 @@ class ShogiBoard {
 
     /**
      * 手を指すためのメソッド
-     * @param {Sq} from 移動元
-     * @param {Sq} to 移動先
+     * @param {Point} from 移動元
+     * @param {Point} to 移動先
      * @param {Koma} koma 駒
      */
     move(from, to, koma) {
@@ -163,8 +161,8 @@ class ShogiBoard {
 
     /**
      * 駒を指定通りに動かすことができるかを調べるメソッド
-     * @param {Sq} from 移動元
-     * @param {Sq} to 移動先
+     * @param {Point} from 移動元
+     * @param {Point} to 移動先
      * @param {Koma} koma 駒
      * @return {Boolean} 動かせるか
      */
@@ -187,7 +185,7 @@ class ShogiBoard {
 
     /**
      * 指定した座標に指定した駒が遠くから利いているかを調べるメソッド
-     * @param {Sq} target 駒の利きを調べたいマス
+     * @param {Point} target 駒の利きを調べたいマス
      * @param {Array} checkList 探索する駒のリスト
      * @param {Boolean} checkTurn 探索する駒の手盤
      * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
@@ -223,7 +221,7 @@ class ShogiBoard {
 
     /**
      * 指定されたマスに，敵駒からの利きがあるかを調べる関数
-     * @param {Sq} target 駒の利きを調べたいマス
+     * @param {Point} target 駒の利きを調べたいマス
      * @param {Boolean} checkTurn 探索する駒の手盤
      */
     isLookedAt(target, checkTurn) {
@@ -296,7 +294,6 @@ class ShogiBoard {
         for (var path of new Ke(!checkTurn).pathGen(target.x, target.y, this.board_)) {
             if (this.board_[path.x][path.y].isSente == checkTurn
             && this.board_[path.x][path.y].symbol == "KE") {
-                console.log("KE", path);
                 guardIterList.push([path]);
             }
         }
@@ -397,15 +394,15 @@ class ShogiBoard {
                 }
             }
             /** 盤上の駒を移動させて防ぐことができるか */
-            for (var guardSq of this.killer(guardPath, !checkTurn)) {
-                var guard = this.board_[guardSq.x][guardSq.y];
+            for (var guardPoint of this.killer(guardPath, !checkTurn)) {
+                var guard = this.board_[guardPoint.x][guardPoint.y];
                 /** その場所に動かした時，自分の王様に利きがないかを調べる */
-                if (canNari(guard, guardSq.x, guardSq.y)
+                if (canNari(guard, guardPoint.x, guardPoint.y)
                 || canNari(guard, guardPath.x, guardPath.y)) {
-                    if (this.canMove(guardSq, guardPath, guard.createNari())) {
+                    if (this.canMove(guardPoint, guardPath, guard.createNari())) {
                         return false;
                     }
-                } else if (this.canMove(guardSq, guardPath, guard)) {
+                } else if (this.canMove(guardPoint, guardPath, guard)) {
                     return false;
                 }
             }
@@ -415,7 +412,7 @@ class ShogiBoard {
 
     /**
      * 指定した駒の利きを防ぐマスのジェネレータ
-     * @param {Sq} target 利きを調べるマス
+     * @param {Point} target 利きを調べるマス
      * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
      * @param {Function} updateY 探索時にyの値を更新するための関数オブジェクト
      * @return {Boolean} 利いているか
@@ -425,7 +422,7 @@ class ShogiBoard {
             var x = updateX(target.x, dif);
             var y = updateY(target.y, dif);
             var killer = this.board_[x][y];
-            yield sq(x, y);
+            yield point(x, y);
             if (killer.isEmpty) {
                 continue;
             } else {
@@ -436,7 +433,7 @@ class ShogiBoard {
 
     /**
      * 指定されたマスに，利いている駒のマスを取得するメソッド
-     * @param {Sq} target 駒の利きを調べたいマス
+     * @param {Point} target 駒の利きを調べたいマス
      * @param {Boolean} checkTurn 探索する駒の手盤
      * @return {Array} 駒のマス
      */
@@ -492,7 +489,7 @@ class ShogiBoard {
 
     /**
      * 指定した座標に指定した駒が遠くから利いている駒のマスを取得するメソッド
-     * @param {Sq} target 駒の利きを調べたいマス
+     * @param {Point} target 駒の利きを調べたいマス
      * @param {Array} checkList 探索する駒のリスト
      * @param {Boolean} checkTurn 探索する駒の手盤
      * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
@@ -518,7 +515,7 @@ class ShogiBoard {
             /** 引数で与えられたチェックリストに存在する駒の場合 */
             for (var check of checkList) {
                 if (killer.symbol == check) {
-                    return [sq(x, y)];
+                    return [point(x, y)];
                 }
             }
             /** チェックリストにない駒にたどり着いた場合 */

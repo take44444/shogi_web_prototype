@@ -2,8 +2,8 @@
 
 let shogiBoard;
 
-let fromSq;
-let toSq;
+let fromPoint;
+let toPoint;
 
 let selectedKoma;
 let gameState;
@@ -137,13 +137,13 @@ function showTegoma() {
  * 与えられたマスにある駒が現在移動することができるマスを明るく表示する関数
  */
 function showPath() {
-    for (var path of selectedKoma.pathGen(fromSq.x, fromSq.y, shogiBoard.board)) {
+    for (var path of selectedKoma.pathGen(fromPoint.x, fromPoint.y, shogiBoard.board)) {
         /** その場所に動かした時，自分の王様に利きがないかを調べる */
-        if (canNari(selectedKoma, fromSq.x, fromSq.y) || canNari(selectedKoma, path.x, path.y)) {
-            if (!shogiBoard.canMove(fromSq, path, selectedKoma.createNari())) {
+        if (canNari(selectedKoma, fromPoint.x, fromPoint.y) || canNari(selectedKoma, path.x, path.y)) {
+            if (!shogiBoard.canMove(fromPoint, path, selectedKoma.createNari())) {
                 continue;
             }
-        } else if (!shogiBoard.canMove(fromSq, path, selectedKoma)) {
+        } else if (!shogiBoard.canMove(fromPoint, path, selectedKoma)) {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
@@ -159,7 +159,7 @@ function showPath() {
 function showDrop() {
     for (var path of selectedKoma.dropGen(shogiBoard.board)) {
         /** その場所に動かした時，自分の王様に利きがないかを調べる */
-        if (!shogiBoard.canMove(sq(0, 0), path, selectedKoma)) {
+        if (!shogiBoard.canMove(point(0, 0), path, selectedKoma)) {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
@@ -177,7 +177,7 @@ function showDrop() {
 function selectKomaToMove(x, y) {
     gameState = BOARD_SELECTED;
     selectedKoma = shogiBoard.board[x][y];
-    fromSq = sq(x, y);
+    fromPoint = point(x, y);
 
     for (var xLocal = 1; xLocal <= 9; xLocal++) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
@@ -215,7 +215,7 @@ function selectKomaToMove(x, y) {
 function selectTegoma(koma) {
     gameState = KOMADAI_SELECTED;
     selectedKoma = koma;
-    fromSq = sq(0, 0);
+    fromPoint = point(0, 0);
 
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
@@ -246,26 +246,26 @@ function selectTegoma(koma) {
  * @param {Number} y 選択した，設置可能な空白マスの段
  */
 function selectSquare(x, y) {
-    toSq = sq(x, y);
+    toPoint = point(x, y);
     if (gameState == BOARD_SELECTED) {
-        if (canNari(selectedKoma, x, y) || canNari(selectedKoma, fromSq.x, fromSq.y)) {
+        if (canNari(selectedKoma, x, y) || canNari(selectedKoma, fromPoint.x, fromPoint.y)) {
             if ((selectedKoma.symbol == "KE" && selectedKoma.isSente && y <= 2)
             || (selectedKoma.symbol == "KY" && selectedKoma.isSente && y == 1)
             || (selectedKoma.symbol == "FU" && selectedKoma.isSente && y == 1)
             || (selectedKoma.symbol == "KE" && !selectedKoma.isSente && y >= 8)
             || (selectedKoma.symbol == "KY" && !selectedKoma.isSente && y == 9)
             || (selectedKoma.symbol == "FU" && !selectedKoma.isSente && y == 9)) {
-                shogiBoard.move(fromSq, toSq, selectedKoma.createNari());
+                shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
                 rotateTurn();
             } else {
                 showNariWindow(x, y);
             }
         } else {
-            shogiBoard.move(fromSq, toSq, selectedKoma);
+            shogiBoard.move(fromPoint, toPoint, selectedKoma);
             rotateTurn();
         }
     } else if (gameState == KOMADAI_SELECTED) {
-        shogiBoard.move(fromSq, toSq, selectedKoma);
+        shogiBoard.move(fromPoint, toPoint, selectedKoma);
         rotateTurn();
     }
 }
@@ -285,7 +285,7 @@ function showNariWindow(x, y) {
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = selectedKoma.createNari().img;
     nari.onclick = function() {
-        shogiBoard.move(fromSq, toSq, selectedKoma.createNari());
+        shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
         hideNariWindow();
         rotateTurn();
     };
@@ -293,7 +293,7 @@ function showNariWindow(x, y) {
     var narazu = document.getElementById("NARAZU");
     narazu.style.backgroundImage = selectedKoma.img;
     narazu.onclick = function() {
-        shogiBoard.move(fromSq, toSq, selectedKoma);
+        shogiBoard.move(fromPoint, toPoint, selectedKoma);
         hideNariWindow();
         rotateTurn();
     };
@@ -312,8 +312,8 @@ function hideNariWindow() {
  * DOMが構築された後に発生するイベントのハンドラ
  */
 window.onload = function () {
-    fromSq = sq(0, 0);
-    toSq = sq(0, 0);
+    fromPoint = point(0, 0);
+    toPoint = point(0, 0);
     shogiBoard = new ShogiBoard(true);
 
     gameState = SELECTING;
