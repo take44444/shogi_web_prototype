@@ -1,3 +1,5 @@
+const MODE = { BOOL: 0, POINT: 1, ITERATOR: 2 };
+
 class ShogiBoard {
     constructor() {
         /** 手番を先手番で初期化 */
@@ -185,97 +187,7 @@ class ShogiBoard {
      * @param {Boolean} checkTurn 王手をかけているかを調べたい手番
      */
     isOute(checkTurn) {
-        return this.isLookedAt(this.ou_[+!checkTurn], checkTurn);
-    }
-
-    /**
-     * 指定した座標に指定した駒が遠くから利いているかを調べるメソッド
-     * @param {Point} target 駒の利きを調べたいマス
-     * @param {Array} checkList 探索する駒のリスト
-     * @param {Boolean} checkTurn 探索する駒の手盤
-     * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
-     * @param {Function} updateY 探索時にyの値を更新するための関数オブジェクト
-     * @return {Boolean} 利いているか
-     */
-    isLookedAtSub(target, checkList, checkTurn, updateX, updateY) {
-        for (var dif = 1; ; dif++) {
-            var x = updateX(target.x, dif);
-            var y = updateY(target.y, dif);
-            var killer = this.board_[x][y];
-            if (killer.isEmpty) {
-                continue;
-            }
-            /** 壁か，調べたい手盤ではない駒にたどり着いた場合はfalse */
-            if (killer.isWall || (killer.isSente != checkTurn)) {
-                return false;
-            }
-            /** 隣接ゴマからの利きの場合はfalse */
-            if (dif == 1) {
-                return false;
-            }
-            /** 引数で与えられたチェックリストに存在する駒の場合座標をtrue */
-            for (var check of checkList) {
-                if (killer.symbol == check) {
-                    return true;
-                }
-            }
-            /** チェックリストにない駒にたどり着いた場合はfalse */
-            return false;
-        }
-    }
-
-    /**
-     * 指定されたマスに，敵駒からの利きがあるかを調べる関数
-     * @param {Point} target 駒の利きを調べたいマス
-     * @param {Boolean} checkTurn 探索する駒の手盤
-     */
-    isLookedAt(target, checkTurn) {
-        /** 桂馬は，唯一の飛び駒なので，単独で処理する． */
-        for (var path of new Ke(!checkTurn).pathGen(target.x, target.y, this.board_)) {
-            if (this.board_[path.x][path.y].isSente == checkTurn
-            && this.board_[path.x][path.y].symbol == "KE") {
-                return true;
-            }
-        }
-
-        /** 隣接マスからの利きを調べる */
-        for (var path of new Ou(!checkTurn).pathGen(target.x, target.y, this.board_)) {
-            var killer = this.board_[path.x][path.y];
-            for (var killerPath of killer.pathGen(path.x, path.y, this.board_)) {
-                if (killerPath.eq(target)) {
-                    return true;
-                }
-            }
-        }
-
-        /** 離れたマスからの利きを調べる */
-        var ret = false;
-        ret ||= this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x-i;}, (y, i)=>{return y-i;});
-        ret ||= this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x+i;}, (y, i)=>{return y-i;});
-        ret ||= this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x-i;}, (y, i)=>{return y+i;});
-        ret ||= this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x+i;}, (y, i)=>{return y+i;});
-
-        ret ||= this.isLookedAtSub(target, ["HI", "RY"], checkTurn
-            , (x, i)=>{return x-i;}, (y, i)=>{return y;});
-        ret ||= this.isLookedAtSub(target, ["HI", "RY"], checkTurn
-            , (x, i)=>{return x+i;}, (y, i)=>{return y;});
-
-        if (checkTurn) {
-            ret ||= this.isLookedAtSub(target, ["HI", "RY", "KY"], true
-                , (x, i)=>{return x;}, (y, i)=>{return y+i;});
-            ret ||= this.isLookedAtSub(target, ["HI", "RY"], true
-                , (x, i)=>{return x;}, (y, i)=>{return y-i;});
-        } else {
-            ret ||= this.isLookedAtSub(target, ["HI", "RY", "KY"], false
-                , (x, i)=>{return x;}, (y, i)=>{return y-i;});
-            ret ||= this.isLookedAtSub(target, ["HI", "RY"], false
-                , (x, i)=>{return x;}, (y, i)=>{return y+i;});
-        }
-        return ret;
+        return this.searchKiller(this.ou_[+!checkTurn], checkTurn, MODE.BOOL);
     }
 
     /**
@@ -289,99 +201,15 @@ class ShogiBoard {
             /** 利きがない移動先がある場合は詰みではない */
             var tmp = this.board_[path.x][path.y];
             this.board_[path.x][path.y] = new Ou(!checkTurn);
-            if (!this.isLookedAt(path, checkTurn)) {
+            if (!this.searchKiller(path, checkTurn, MODE.BOOL)) {
                 this.board_[path.x][path.y] = tmp;
                 return false;
             }
             this.board_[path.x][path.y] = tmp;
         }
 
-        var guardIterList = [];
-        /** 桂馬は，唯一の飛び駒なので，単独で処理する． */
-        for (var path of new Ke(!checkTurn).pathGen(target.x, target.y, this.board_)) {
-            if (this.board_[path.x][path.y].isSente == checkTurn
-            && this.board_[path.x][path.y].symbol == "KE") {
-                guardIterList.push([path]);
-            }
-        }
+        var guardIterList = this.searchKiller(target, checkTurn, MODE.ITERATOR);
 
-        /** 隣接マスからの利きを調べる */
-        for (var path of new Ou(!checkTurn).pathGen(target.x, target.y, this.board_)) {
-            var killer = this.board_[path.x][path.y];
-            for (var killerPath of killer.pathGen(path.x, path.y, this.board_)) {
-                if (killerPath.eq(target)) {
-                    guardIterList.push([path]);
-                    break;
-                }
-            }
-        }
-
-        /** 離れたマスからの利きを調べる */
-        if (this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-        , (x, i)=>{return x-i;}, (y, i)=>{return y-i;})) {
-            guardIterList.push(
-                this.guardOuGen(target, (x, i)=>{return x-i;}, (y, i)=>{return y-i;})
-            );
-        }
-        if (this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-        , (x, i)=>{return x+i;}, (y, i)=>{return y-i;})) {
-            guardIterList.push(
-                this.guardOuGen(target, (x, i)=>{return x+i;}, (y, i)=>{return y-i;})
-            );
-        }
-        if (this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-        , (x, i)=>{return x-i;}, (y, i)=>{return y+i;})) {
-            guardIterList.push(
-                this.guardOuGen(target, (x, i)=>{return x-i;}, (y, i)=>{return y+i;})
-            );
-        }
-        if (this.isLookedAtSub(target, ["KA", "UM"], checkTurn
-        , (x, i)=>{return x+i;}, (y, i)=>{return y+i;})) {
-            guardIterList.push(
-                this.guardOuGen(target, (x, i)=>{return x+i;}, (y, i)=>{return y+i;})
-            );
-        }
-
-        if (this.isLookedAtSub(target, ["HI", "RY"], checkTurn
-        , (x, i)=>{return x-i;}, (y, i)=>{return y;})) {
-            guardIterList.push(
-                this.guardOuGen(target, (x, i)=>{return x-i;}, (y, i)=>{return y;})
-            );
-        }
-        if (this.isLookedAtSub(target, ["HI", "RY"], checkTurn
-        , (x, i)=>{return x+i;}, (y, i)=>{return y;})) {
-            guardIterList.push(
-                this.guardOuGen(target, (x, i)=>{return x+i;}, (y, i)=>{return y;})
-            );
-        }
-
-        if (checkTurn) {
-            if (this.isLookedAtSub(target, ["HI", "RY", "KY"], true
-            , (x, i)=>{return x;}, (y, i)=>{return y+i;})) {
-                guardIterList.push(
-                    this.guardOuGen(target, (x, i)=>{return x;}, (y, i)=>{return y+i;})
-                );
-            }
-            if (this.isLookedAtSub(target, ["HI", "RY"], true
-            , (x, i)=>{return x;}, (y, i)=>{return y-i;})) {
-                guardIterList.push(
-                    this.guardOuGen(target, (x, i)=>{return x;}, (y, i)=>{return y-i;})
-                );
-            }
-        } else {
-            if (this.isLookedAtSub(target, ["HI", "RY", "KY"], false
-            , (x, i)=>{return x;}, (y, i)=>{return y-i;})) {
-                guardIterList.push(
-                    this.guardOuGen(target, (x, i)=>{return x;}, (y, i)=>{return y-i;})
-                );
-            }
-            if (this.isLookedAtSub(target, ["HI", "RY"], false
-            , (x, i)=>{return x;}, (y, i)=>{return y+i;})) {
-                guardIterList.push(
-                    this.guardOuGen(target, (x, i)=>{return x;}, (y, i)=>{return y+i;})
-                );
-            }
-        }
         /** 両王手なら詰み */
         if (guardIterList.length >= 2) {
             return true;
@@ -401,7 +229,7 @@ class ShogiBoard {
                 }
             }
             /** 盤上の駒を移動させて防ぐことができるか */
-            for (var guardPoint of this.killer(guardPath, !checkTurn)) {
+            for (var guardPoint of this.searchKiller(guardPath, !checkTurn, MODE.POINT)) {
                 var guard = this.board_[guardPoint.x][guardPoint.y];
                 /** その場所に動かした時，自分の王様に利きがないかを調べる */
                 if (canNari(guard, guardPoint.x, guardPoint.y)
@@ -417,40 +245,28 @@ class ShogiBoard {
         return true;
     }
 
-    /**
-     * 指定した駒の利きを防ぐマスのジェネレータ
-     * @param {Point} target 利きを調べるマス
-     * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
-     * @param {Function} updateY 探索時にyの値を更新するための関数オブジェクト
-     * @return {Boolean} 利いているか
-     */
-    *guardOuGen(target, updateX, updateY) {
-        for (var dif = 1; ; dif++) {
-            var x = updateX(target.x, dif);
-            var y = updateY(target.y, dif);
-            var killer = this.board_[x][y];
-            yield point(x, y);
-            if (killer.isEmpty) {
-                continue;
-            } else {
-                break;
-            }
+    searchKiller(target, checkTurn, mode=MODE.BOOL) {
+        let ret;
+        if (mode == MODE.BOOL) {
+            ret = false;
+        } else {
+            ret = [];
         }
-    }
 
-    /**
-     * 指定されたマスに，利いている駒のマスを取得するメソッド
-     * @param {Point} target 駒の利きを調べたいマス
-     * @param {Boolean} checkTurn 探索する駒の手盤
-     * @return {Array} 駒のマス
-     */
-    killer(target, checkTurn) {
-        let ret = [];
         /** 桂馬は，唯一の飛び駒なので，単独で処理する． */
         for (var path of new Ke(!checkTurn).pathGen(target.x, target.y, this.board_)) {
             if (this.board_[path.x][path.y].isSente == checkTurn
             && this.board_[path.x][path.y].symbol == "KE") {
-                ret.push(path);
+                switch (mode) {
+                    case MODE.ITERATOR:
+                        ret.push([path]);
+                        break;
+                    case MODE.POINT:
+                        ret.push(path);
+                        break;
+                    default:
+                        return true;
+                }
             }
         }
 
@@ -459,74 +275,118 @@ class ShogiBoard {
             var killer = this.board_[path.x][path.y];
             for (var killerPath of killer.pathGen(path.x, path.y, this.board_)) {
                 if (killerPath.eq(target)) {
-                    ret.push(path);
-                    break;
+                    switch (mode) {
+                        case MODE.ITERATOR:
+                            ret.push([path]);
+                            break;
+                        case MODE.POINT:
+                            ret.push(path);
+                            break;
+                        default:
+                            return true;
+                    }
                 }
             }
         }
 
-        /** 離れたマスからの利きを調べる */
-        ret = ret.concat(this.killerSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x-i;}, (y, i)=>{return y-i;}));
-        ret = ret.concat(this.killerSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x+i;}, (y, i)=>{return y-i;}));
-        ret = ret.concat(this.killerSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x-i;}, (y, i)=>{return y+i;}));
-        ret = ret.concat(this.killerSub(target, ["KA", "UM"], checkTurn
-            , (x, i)=>{return x+i;}, (y, i)=>{return y+i;}));
+        function accumulate(acc, result) {
+            if (mode == MODE.BOOL) {
+                return acc || result;
+            } else {
+                !!result && acc.push(result);
+                return acc;
+            }
+        }
 
-        ret = ret.concat(this.killerSub(target, ["HI", "RY"], checkTurn
-            , (x, i)=>{return x-i;}, (y, i)=>{return y;}));
-        ret = ret.concat(this.killerSub(target, ["HI", "RY"], checkTurn
-            , (x, i)=>{return x+i;}, (y, i)=>{return y;}));
+        /** 離れたマスからの利きを調べる */
+        ret = accumulate(ret, this.searchKillerSub(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x-i;}, (y, i)=>{return y-i;}, mode));
+        ret = accumulate(ret, this.searchKillerSub(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x+i;}, (y, i)=>{return y-i;}, mode));
+        ret = accumulate(ret, this.searchKillerSub(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x-i;}, (y, i)=>{return y+i;}, mode));
+        ret = accumulate(ret, this.searchKillerSub(target, ["KA", "UM"], checkTurn
+            , (x, i)=>{return x+i;}, (y, i)=>{return y+i;}, mode));
+
+        ret = accumulate(ret, this.searchKillerSub(target, ["HI", "RY"], checkTurn
+            , (x, i)=>{return x-i;}, (y, i)=>{return y;}, mode));
+        ret = accumulate(ret, this.searchKillerSub(target, ["HI", "RY"], checkTurn
+            , (x, i)=>{return x+i;}, (y, i)=>{return y;}, mode));
 
         if (checkTurn) {
-            ret = ret.concat(this.killerSub(target, ["HI", "RY", "KY"], true
-                , (x, i)=>{return x;}, (y, i)=>{return y+i;}));
-            ret = ret.concat(this.killerSub(target, ["HI", "RY"], true
-                , (x, i)=>{return x;}, (y, i)=>{return y-i;}));
+            ret = accumulate(ret, this.searchKillerSub(target, ["HI", "RY", "KY"], true
+                , (x, i)=>{return x;}, (y, i)=>{return y+i;}, mode));
+            ret = accumulate(ret, this.searchKillerSub(target, ["HI", "RY"], true
+                , (x, i)=>{return x;}, (y, i)=>{return y-i;}, mode));
         } else {
-            ret = ret.concat(this.killerSub(target, ["HI", "RY", "KY"], false
-                , (x, i)=>{return x;}, (y, i)=>{return y-i;}));
-            ret = ret.concat(this.killerSub(target, ["HI", "RY"], false
-                , (x, i)=>{return x;}, (y, i)=>{return y+i;}));
+            ret = accumulate(ret, this.searchKillerSub(target, ["HI", "RY", "KY"], false
+                , (x, i)=>{return x;}, (y, i)=>{return y-i;}, mode));
+            ret = accumulate(ret, this.searchKillerSub(target, ["HI", "RY"], false
+                , (x, i)=>{return x;}, (y, i)=>{return y+i;}, mode));
         }
         return ret;
     }
 
-    /**
-     * 指定した座標に指定した駒が遠くから利いている駒のマスを取得するメソッド
-     * @param {Point} target 駒の利きを調べたいマス
-     * @param {Array} checkList 探索する駒のリスト
-     * @param {Boolean} checkTurn 探索する駒の手盤
-     * @param {Function} updateX 探索時にxの値を更新するための関数オブジェクト
-     * @param {Function} updateY 探索時にyの値を更新するための関数オブジェクト
-     * @return {Array} 駒のマス
-     */
-    killerSub(target, checkList, checkTurn, updateX, updateY) {
+    searchKillerSub(target, checkList, checkTurn, updateX, updateY
+    , mode=MODE.BOOL) {
+        let iter = [];
+        search:
         for (var dif = 1; ; dif++) {
             var x = updateX(target.x, dif);
             var y = updateY(target.y, dif);
             var killer = this.board_[x][y];
+            if (mode == MODE.ITERATOR) {
+                iter.push(point(x, y));
+            }
             if (killer.isEmpty) {
                 continue;
             }
             /** 壁か，調べたい手盤ではない駒にたどり着いた場合 */
             if (killer.isWall || (killer.isSente != checkTurn)) {
-                return [];
+                switch (mode) {
+                    case MODE.ITERATOR:
+                        return null;
+                    case MODE.POINT:
+                        return null;
+                    default:
+                        return false;
+                }
             }
             /** 隣接ゴマからの利きの場合 */
             if (dif == 1) {
-                return [];
+                switch (mode) {
+                    case MODE.ITERATOR:
+                        return null;
+                    case MODE.POINT:
+                        return null;
+                    default:
+                        return false;
+                }
             }
             /** 引数で与えられたチェックリストに存在する駒の場合 */
             for (var check of checkList) {
                 if (killer.symbol == check) {
-                    return [point(x, y)];
+                    switch (mode) {
+                        case MODE.ITERATOR:
+                            break search;
+                        case MODE.POINT:
+                            return point(x, y);
+                        default:
+                            return false;
+                    }
                 }
             }
             /** チェックリストにない駒にたどり着いた場合 */
-            return [];
+            switch (mode) {
+                case MODE.ITERATOR:
+                    return null;
+                case MODE.POINT:
+                    return null;
+                default:
+                    return false;
+            }
         }
+        /** ITERATORモードのみ */
+        return iter;
     }
 }
