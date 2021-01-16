@@ -172,7 +172,12 @@ class ShogiBoard {
         /** テスト環境上で指す */
         sandbox.move(from, to, koma);
         /** テスト環境上で指した後に自玉に王手がかかっている場合はその手は指せない */
-        return !sandbox.isOute(!koma.isSente);
+        let ret = !sandbox.isOute(!koma.isSente);
+        if (ret) {
+            ret &&= !(from.x == 0 && koma.symbol == "FU"
+                && sandbox.isOute(koma.isSente) && sandbox.isTumi(koma.isSente));
+        }
+        return ret;
     }
 
     /**
@@ -280,13 +285,15 @@ class ShogiBoard {
     isTumi(checkTurn) {
         var target = this.ou_[+!checkTurn];
         var ou = this.board_[target.x][target.y];
-        var ouCanMove = false;
         for (var path of ou.pathGen(target.x, target.y, this.board_)) {
             /** 利きがない移動先がある場合は詰みではない */
+            var tmp = this.board_[path.x][path.y];
+            this.board_[path.x][path.y] = new Ou(!checkTurn);
             if (!this.isLookedAt(path, checkTurn)) {
+                this.board_[path.x][path.y] = tmp;
                 return false;
             }
-            ouCanMove = true;
+            this.board_[path.x][path.y] = tmp;
         }
 
         var guardIterList = [];
@@ -375,8 +382,8 @@ class ShogiBoard {
                 );
             }
         }
-        /** 王の移動先がなく，両王手なら詰み */
-        if (!ouCanMove && guardIterList.length >= 2) {
+        /** 両王手なら詰み */
+        if (guardIterList.length >= 2) {
             return true;
         }
         /** 王手を回避することができるか */
