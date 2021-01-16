@@ -1,4 +1,5 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
+let sounds = {};
 
 let shogiBoard;
 
@@ -75,6 +76,7 @@ function hideMask() {
  * 手番を変更する関数
  */
 function rotateTurn() {
+    sounds["komaoto"].play();
     shogiBoard.rotateTurn();
     hideMask();
     showBoard();
@@ -312,6 +314,8 @@ function hideNariWindow() {
  * DOMが構築された後に発生するイベントのハンドラ
  */
 window.onload = function () {
+    sounds["komaoto"] = document.getElementById("komaoto");
+
     fromPoint = point(0, 0);
     toPoint = point(0, 0);
     shogiBoard = new ShogiBoard(true);
