@@ -87,9 +87,8 @@ function showBoard() {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
             var square = document.getElementById(`s${x}${y}`);
-            square.style.backgroundImage = shogiBoard.board[x][y].img;
-
             if (!shogiBoard.board[x][y].isEmpty) {
+                square.style.backgroundImage = shogiBoard.board[x][y].img;
                 (function () {
                     var xLocal = x, yLocal = y;
                     square.onclick = function () {
@@ -99,6 +98,7 @@ function showBoard() {
                     };
                 })();
             } else {
+                square.style.backgroundImage = "";
                 square.onclick = "";
             }
         }

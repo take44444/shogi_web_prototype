@@ -87,10 +87,6 @@ class Koma {
 }
 
 class Fu extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "FU";
         this.canNari_ = true;
@@ -130,10 +126,6 @@ class Fu extends Koma {
 }
 
 class Ky extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "KY";
         this.canNari_ = true;
@@ -173,10 +165,6 @@ class Ky extends Koma {
 }
 
 class Ke extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "KE";
         this.canNari_ = true;
@@ -214,10 +202,6 @@ class Ke extends Koma {
 }
 
 class Gi extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "GI";
         this.canNari_ = true;
@@ -253,10 +237,6 @@ class Gi extends Koma {
 }
 
 class Ki extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "KI";
         this.isNari_ = false;
@@ -296,10 +276,6 @@ class Ki extends Koma {
 }
 
 class Ka extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "KA";
         this.canNari_ = true;
@@ -355,10 +331,6 @@ class Ka extends Koma {
 }
 
 class Hi extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "HI";
         this.canNari_ = true;
@@ -414,10 +386,6 @@ class Hi extends Koma {
 }
 
 class Ou extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "OU";
         this.isKoma_ = true;
@@ -460,10 +428,6 @@ class Ou extends Koma {
 }
 
 class To extends Ki {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "TO";
         this.isNari_ = true;
@@ -476,10 +440,6 @@ class To extends Ki {
 }
 
 class Ny extends Ki {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "NY";
         this.isNari_ = true;
@@ -492,10 +452,6 @@ class Ny extends Ki {
 }
 
 class Nk extends Ki {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "NK";
         this.isNari_ = true;
@@ -508,10 +464,6 @@ class Nk extends Ki {
 }
 
 class Ng extends Ki {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "NG";
         this.isNari_ = true;
@@ -524,10 +476,6 @@ class Ng extends Ki {
 }
 
 class Um extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "UM";
         this.isNari_ = true;
@@ -599,10 +547,6 @@ class Um extends Koma {
 }
 
 class Ry extends Koma {
-    constructor(isSente) {
-        super(isSente);
-    }
-
     init() {
         this.symbol_ = "RY";
         this.isNari_ = true;
