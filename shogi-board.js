@@ -30,7 +30,7 @@ class ShogiBoard {
 
         /** 全ての手駒の数を0で初期化 */
         for (var turn = 0; turn <= 1; turn++) {
-            this.tegoma_[turn] = {};
+            this.tegoma_[turn] = new Map();
             this.tegoma_[turn]["FU"] = { koma: new Fu(turn == SENTE), num: 0 };
             this.tegoma_[turn]["KY"] = { koma: new Ky(turn == SENTE), num: 0 };
             this.tegoma_[turn]["KE"] = { koma: new Ke(turn == SENTE), num: 0 };
@@ -96,7 +96,7 @@ class ShogiBoard {
             }
         }
         for (var turn = 0; turn <= 1; turn++) {
-            for (var koma in this.tegoma_[turn]) {
+            for (var koma of this.tegoma_[turn].keys()) {
                 sandbox.tegoma_[turn][koma].num = this.tegoma_[turn][koma].num;
             }
         }
@@ -214,12 +214,8 @@ class ShogiBoard {
         for (var guardPath of guardIterList[0]) {
             /** 手駒を用いて防ぐことができるか */
             if (this.board_[guardPath.x][guardPath.y].isEmpty) {
-                for (var koma in this.tegoma_[+!checkTurn]) {
-                    if ((this.tegoma_[+!checkTurn][koma].num > 0)
-                    && !((koma == "FU" && guardPath.y == (checkTurn?9:1))
-                    || (koma == "KY" && guardPath.y == (checkTurn?9:1))
-                    || (koma == "KE" && guardPath.y >= 8 && checkTurn)
-                    || (koma == "KE" && guardPath.y <= 2 && !checkTurn))) {
+                for (var koma of this.tegoma_[+!checkTurn].values()) {
+                    if (koma.num > 0 && koma.canDrop(this.board_, guardPath)) {
                         return false;
                     }
                 }
