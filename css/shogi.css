@@ -21,7 +21,7 @@ body {
 }
 #board {
     border-collapse:collapse;
-    border:3px solid #000;
+    border:3px solid rgb(100, 30, 0);
     position: absolute;
     left: 11px;
     top: 11px;
@@ -30,7 +30,7 @@ body {
     opacity: 1.0;
 }
 #board td {
-    border: 2px solid #000;
+    border: 2px solid rgb(100, 30, 0);
     width: 52px;
     height: 57px;
     background-position: center center;
@@ -40,7 +40,7 @@ body {
 #board_mask {
     visibility: hidden;
     border-collapse:collapse;
-    border:3px solid #000; 
+    border:3px solid rgb(100, 30, 0); 
     position: absolute;
     left: 11px;
     top: 11px;
@@ -49,7 +49,7 @@ body {
     opacity: 1.0;
 }
 #board_mask td {
-    border: 2px solid #000;
+    border: 2px solid rgb(100, 30, 0);
     width: 52px;
     height: 57px;
     background-position: center center;
