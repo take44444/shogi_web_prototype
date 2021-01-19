@@ -58,6 +58,7 @@ body {
     /* background-size: 8vh 9vh; */
 }
 #komadai_gote {
+    border: 8px solid rgb(59, 0, 0); 
     width: 175px;
     height: 200px;
     position: absolute;
@@ -117,6 +118,7 @@ body {
     /* background-size: 47px 55px; */
 }
 #komadai_sente {
+    border: 8px solid rgb(59, 0, 0); 
     width: 175px;
     height: 200px;
     position: absolute;
