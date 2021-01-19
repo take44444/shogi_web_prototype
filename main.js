@@ -18,11 +18,6 @@ const NARI_SELECTING = 3;
 const SENTE = 1;
 const GOTE = 0;
 
-const BOARD_LEFT = 196;
-const BOARD_TOP = 19;
-const SQUARE_WIDTH = 52;
-const SQUARE_HEIGHT = 61;
-
 /**
  * 自分の陣地ないか否かをBooleanで返す関数
  * @param {Number} x 盤における筋
@@ -281,8 +276,8 @@ function showNariWindow(x, y) {
     gameState = NARI_SELECTING;
 
     var nariWindow = document.getElementById("nari_window");
-    nariWindow.style.left = `${BOARD_LEFT + SQUARE_WIDTH * (9 - x) - SQUARE_WIDTH/2}px`;
-    nariWindow.style.top = `${BOARD_TOP + SQUARE_HEIGHT * (y - 1)}px`;
+    nariWindow.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-x} - 7.5vh / 2)`;
+    nariWindow.style.top = `calc(12.8vh + 8.27vh * ${y-1})`;
 
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = selectedKoma.createNari().img;

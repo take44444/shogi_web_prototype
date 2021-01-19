@@ -3,76 +3,77 @@ body {
     background-size: 504.7px 387.1px;
     background-image: url(../img/bg.png);
 }
-#shogi {
-    position: relative;
-    left: 50px;
-    top: 50px;
-}
 /* @media screen and (orientation: landscape) {} */
-#honkaya {
+.board {
+    border-collapse:collapse;
+    table-layout: fixed;
+    border: 0px solid;
     position: absolute;
-    left: 185px;
-    top: 10px;
-    width: 490px;
-    height: 575px;
-    background-size: 490px 575px;
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+    width: 70vh;
+    height: 77vh;
+}
+#board {
+    background-size: 70vh 77vh;
     background-image: url(../img/ban.png);
     opacity: 1.0;
 }
-#board {
-    border-collapse:collapse;
-    border:3px solid rgb(100, 30, 0);
-    position: absolute;
-    left: 11px;
-    top: 11px;
-    width: 468px;
-    height: 513px;
-    opacity: 1.0;
-}
 #board td {
-    border: 2px solid rgb(100, 30, 0);
-    width: 52px;
-    height: 57px;
+    border: 0.2vh solid rgb(100, 30, 0);
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 47px 55px;
+    background-size: 6.5vh 7.3vh;
+}
+.board .lrside {
+    width: 1.3vh;
+    background-color: rgb(100, 30, 0);
+    opacity: 0.4;
+}
+.board .udside {
+    height: 1.3vh;
+    background-color: rgb(100, 30, 0);
+    opacity: 0.4;
+}
+.komadai {
+    border-collapse:collapse;
+    table-layout: fixed;
+    border: 0px solid;
+    width: 25vh;
+    height: 27.4vh;
+    opacity: 1.0;
+}
+.komadai .lrside {
+    width: 1.3vh;
+    background-color: rgb(59, 0, 0);
+}
+.komadai .udside {
+    height: 1.3vh;
+    background-color: rgb(59, 0, 0);
 }
 #board_mask {
     visibility: hidden;
-    border-collapse:collapse;
-    border:3px solid rgb(100, 30, 0); 
-    position: absolute;
-    left: 11px;
-    top: 11px;
-    width: 468px;
-    height: 513px;
     opacity: 1.0;
 }
 #board_mask td {
-    border: 2px solid rgb(100, 30, 0);
-    width: 52px;
-    height: 57px;
+    border: 0.2vh solid rgb(100, 30, 0);
     background-position: center center;
     background-repeat: no-repeat;
     background-color: #000;
-    /* background-size: 8vh 9vh; */
 }
-#komadai_gote {
-    border: 8px solid rgb(59, 0, 0); 
-    width: 175px;
-    height: 200px;
-    position: absolute;
-    left: 2px;
-    top: 10px;
-    background-size: cover;
-    background-image: url("../img/komadai_neg.png");
-}
-#komadai_gote td {
-    width: 52px;
-    height: 57px;
+.komadai td {
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 47px 55px;
+    background-size: 6.5vh 7.3vh;
+}
+#komadai_gote {
+    position: absolute;
+    left: calc(50vw - 35vh - 14vh);
+    top: 25vh;
+    transform: translate(-50%, -50%);
+    background-size: cover;
+    background-image: url("../img/komadai_neg.png");
 }
 #komadai_gote td[data-num="0"] {
     visibility: hidden;
@@ -102,37 +103,18 @@ body {
 }
 #komadai_gote_mask {
     visibility: hidden;
-    width: 175px;
-    height: 200px;
     position: absolute;
-    left: 2px;
-    top: 10px;
-    background-size: 200px 200px;
-    background-repeat: repeat;
-}
-#komadai_gote_mask td {
-    width: 52px;
-    height: 57px;
-    background-position: center center;
-    background-repeat: no-repeat;
-    /* background-size: 47px 55px; */
+    left: calc(50vw - 35vh - 14vh);
+    top: 25vh;
+    transform: translate(-50%, -50%);
 }
 #komadai_sente {
-    border: 8px solid rgb(59, 0, 0); 
-    width: 175px;
-    height: 200px;
     position: absolute;
-    left: 683px;
-    top: 385px;
+    left: calc(50vw + 35vh + 14vh);
+    top: 75vh;
+    transform: translate(-50%, -50%);
     background-size: cover;
     background-image: url("../img/komadai_pos.png");
-}
-#komadai_sente td {
-    width: 52px;
-    height: 57px;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 47px 55px;
 }
 #komadai_sente td[data-num="0"] {
     visibility: hidden;
@@ -162,20 +144,10 @@ body {
 }
 #komadai_sente_mask {
     visibility: hidden;
-    width: 175px;
-    height: 200px;
     position: absolute;
-    left: 683px;
-    top: 385px;
-    background-size: 200px 200px;
-    background-repeat: repeat;
-}
-#komadai_sente_mask td {
-    width: 52px;
-    height: 57px;
-    background-position: center center;
-    background-repeat: no-repeat;
-    /* background-size: 47px 55px; */
+    left: calc(50vw + 35vh + 14vh);
+    top: 75vh;
+    transform: translate(-50%, -50%);
 }
 #SHI {
     background-image: url(../img/HI_pos.png);
@@ -220,17 +192,18 @@ body {
     background-image: url(../img/FU_neg.png);
 }
 #nari_window {
-    width: 104px;
-    height: 57px;
-    position: absolute;
     visibility: hidden;
+    border-collapse:collapse;
+    table-layout: fixed;
+    border: 0px solid;
+    width: 15vh;
+    height: 8.27vh;
+    position: absolute;
 }
 #nari_window td {
-    width: 52px;
-    height: 57px;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 47px 55px;
+    background-size: 6.5vh 7.3vh;
 }
 #NARI {
     background-color: coral;
