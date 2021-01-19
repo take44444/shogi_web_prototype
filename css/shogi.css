@@ -225,7 +225,7 @@ body {
 
 #kifu_table thead {
     display: block;
-    font-size: small;
+    font-size: 1.8vh;
     color: rgb(197, 213, 226);
 }
 
@@ -233,7 +233,7 @@ body {
     display: block;
     border-collapse: collapse;
     height: 22vh;
-    font-size: small;
+    font-size: 1.8vh;
     color: rgb(197, 213, 226);
     overflow-x: hidden;
     overflow-y: scroll;
@@ -247,7 +247,7 @@ body {
 }
 
 #kifu_tbody .even {
-    background-color: rgb(44, 44, 44);
+    background-color: rgb(37, 37, 37);
 }
 
 #kifu_table th {
