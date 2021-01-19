@@ -199,11 +199,14 @@ class ShogiBoard {
             /** 利きがない移動先がある場合は詰みではない */
             var tmp = this.board_[path.x][path.y];
             this.board_[path.x][path.y] = new Ou(!checkTurn);
+            this.board_[target.x][target.y] = new Empty();
             if (!this.searchKiller(path, checkTurn, MODE.BOOL)) {
                 this.board_[path.x][path.y] = tmp;
+                this.board_[target.x][target.y] = new Ou(!checkTurn);
                 return false;
             }
             this.board_[path.x][path.y] = tmp;
+            this.board_[target.x][target.y] = new Ou(!checkTurn);
         }
 
         var guardIterList = this.searchKiller(target, checkTurn, MODE.ITERATOR);
@@ -213,11 +216,13 @@ class ShogiBoard {
             return true;
         }
         /** 王手を回避することができるか */
+        var tegoma = this.tegoma_[+!checkTurn];
         for (var guardPath of guardIterList[0]) {
             /** 手駒を用いて防ぐことができるか */
             if (this.board_[guardPath.x][guardPath.y].isEmpty) {
-                for (var koma of this.tegoma_[+!checkTurn].values()) {
-                    if (koma.num > 0 && koma.canDrop(this.board_, guardPath)) {
+                for (var key in tegoma) {
+                    if (tegoma[key].num > 0 &&
+                    tegoma[key].koma.canDrop(this.board_, guardPath)) {
                         return false;
                     }
                 }

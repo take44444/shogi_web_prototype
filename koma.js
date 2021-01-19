@@ -119,9 +119,7 @@ class Fu extends Koma {
 
     *dropGen(board) {
         for (var x = 1; x <= 9; x++) {
-            if (this.isSente && board[x].some(e=>{return e.symbol == "FU" && e.isSente;})) {
-                continue;
-            } else if (!this.isSente && board[x].some(e=>{return e.symbol == "FU" && !e.isSente;})) {
+            if (board[x].some(e=>{return e.symbol == "FU" && e.isSente == this.isSente;})) {
                 continue;
             }
 
@@ -139,8 +137,9 @@ class Fu extends Koma {
 
     canDrop(board, p){
         return super.canDrop(board, p) &&
-            !board[x].some(e=>{return e instanceof Fu && e.isSente == this.isSente;}) &&
-            !(this.isSente && y == 1 || !this.isSente && y == 9);
+            !board[p.x].some(
+                e=>{return e instanceof Fu && e.isSente == this.isSente;}
+            ) && !(this.isSente && p.y == 1 || !this.isSente && p.y == 9);
     }
 }
 
@@ -188,13 +187,15 @@ class Ke extends Koma {
     }
     
     *__pathGen(x, y, board, advance) {
-        if (board[x - 1][advance(y, 2)].isEmpty_
-        || this.isEnemy(point(x - 1, advance(y, 2)), board)) {
-            yield point(x - 1, advance(y, 2));
-        }
-        if ((board[x + 1][advance(y, 2)].isEmpty_
-        || this.isEnemy(point(x + 1, advance(y, 2)), board))) {
-            yield point(x + 1, advance(y, 2));
+        if (advance(y, 2) >= 1 && advance(y, 2) <= 9) {
+            if (board[x - 1][advance(y, 2)].isEmpty_
+            || this.isEnemy(point(x - 1, advance(y, 2)), board)) {
+                yield point(x - 1, advance(y, 2));
+            }
+            if ((board[x + 1][advance(y, 2)].isEmpty_
+            || this.isEnemy(point(x + 1, advance(y, 2)), board))) {
+                yield point(x + 1, advance(y, 2));
+            }
         }
     }
 

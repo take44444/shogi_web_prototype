@@ -35,7 +35,7 @@ body {
     height: 57px;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 42px 50px;
+    background-size: 47px 55px;
 }
 #board_mask {
     visibility: hidden;
@@ -71,7 +71,7 @@ body {
     height: 57px;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 42px 50px;
+    background-size: 47px 55px;
 }
 #komadai_gote td[data-num="0"] {
     visibility: hidden;
@@ -114,7 +114,7 @@ body {
     height: 57px;
     background-position: center center;
     background-repeat: no-repeat;
-    /* background-size: 42px 50px; */
+    /* background-size: 47px 55px; */
 }
 #komadai_sente {
     width: 175px;
@@ -130,7 +130,7 @@ body {
     height: 57px;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 42px 50px;
+    background-size: 47px 55px;
 }
 #komadai_sente td[data-num="0"] {
     visibility: hidden;
@@ -173,7 +173,7 @@ body {
     height: 57px;
     background-position: center center;
     background-repeat: no-repeat;
-    /* background-size: 42px 50px; */
+    /* background-size: 47px 55px; */
 }
 #SHI {
     background-image: url(../img/HI_pos.png);
@@ -228,7 +228,7 @@ body {
     height: 57px;
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 42px 50px;
+    background-size: 47px 55px;
 }
 #NARI {
     background-color: coral;
