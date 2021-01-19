@@ -211,3 +211,43 @@ body {
 #NARAZU {
     background-color: cornflowerblue;
 }
+
+#kifu_table {
+    border-collapse: separate;
+    border: 1vh solid rgb(10, 10, 10);
+    border-radius: 2vh;
+    background-color: rgb(27, 27, 27);
+    width: 20vh;
+    position: absolute;
+    left: calc(50vw + 37.5vh);
+    top: 13vh;
+}
+
+#kifu_table thead {
+    display: block;
+    font-size: small;
+    color: rgb(197, 213, 226);
+}
+
+#kifu_tbody {
+    display: block;
+    border-collapse: collapse;
+    height: 22vh;
+    font-size: small;
+    color: rgb(197, 213, 226);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 100;
+}
+
+#kifu_table td {
+    text-align: center;
+    vertical-align: middle;
+    width: 15vh;
+}
+
+#kifu_table th {
+    text-align: center;
+    vertical-align: middle;
+    width: 5vh;
+}

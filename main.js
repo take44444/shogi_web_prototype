@@ -77,6 +77,22 @@ function rotateTurn() {
     showBoard();
 }
 
+function updateKifuTable(moves, csaData) {
+    var move = csaData[moves];
+    var tbody = document.getElementById('kifu_tbody');
+    var newRow = tbody.insertRow();
+
+    var newCell = newRow.insertCell();
+    newCell.outerHTML = `<th>${moves}</th>`;
+
+    newCell = newRow.insertCell();
+    newText = document.createTextNode(move);
+    newCell.appendChild(newText);
+
+    var tr = tbody.getElementsByTagName('tr')[moves - 1];
+    tbody.scrollTop = tr.offsetTop;
+}
+
 /**
  * 手番の駒を動かすことができる盤を表示する関数
  */
@@ -257,16 +273,19 @@ function selectSquare(x, y) {
             || (selectedKoma.symbol == "KY" && !selectedKoma.isSente && y == 9)
             || (selectedKoma.symbol == "FU" && !selectedKoma.isSente && y == 9)) {
                 shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
+                updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
                 rotateTurn();
             } else {
                 showNariWindow(x, y);
             }
         } else {
             shogiBoard.move(fromPoint, toPoint, selectedKoma);
+            updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
             rotateTurn();
         }
     } else if (gameState == KOMADAI_SELECTED) {
         shogiBoard.move(fromPoint, toPoint, selectedKoma);
+        updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         rotateTurn();
     }
 }
@@ -287,6 +306,7 @@ function showNariWindow(x, y) {
     nari.style.backgroundImage = selectedKoma.createNari().img;
     nari.onclick = function() {
         shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
+        updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         hideNariWindow();
         rotateTurn();
     };
@@ -295,6 +315,7 @@ function showNariWindow(x, y) {
     narazu.style.backgroundImage = selectedKoma.img;
     narazu.onclick = function() {
         shogiBoard.move(fromPoint, toPoint, selectedKoma);
+        updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         hideNariWindow();
         rotateTurn();
     };

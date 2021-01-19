@@ -4,6 +4,7 @@ class ShogiBoard {
     constructor() {
         /** 手番を先手番で初期化 */
         this.turn_ = true;
+        this.moves_ = 0;
         /** 棋譜 */
         this.kifu_ = new Kifu();
         /** 盤面 */
@@ -77,8 +78,16 @@ class ShogiBoard {
         return this.turn_;
     }
 
+    get moves() {
+        return this.moves_;
+    }
+
     get tegoma() {
         return this.tegoma_;
+    }
+
+    get kifu() {
+        return this.kifu_;
     }
 
     /**
@@ -136,6 +145,8 @@ class ShogiBoard {
         }
         /** 移動先のマスに駒を設置 */
         this.board_[to.x][to.y] = koma;
+
+        this.moves_++;
 
         /** 千日手判定 */
         if (this.kifu_.update(from, to, koma, this.board_, this.tegoma_)) {
