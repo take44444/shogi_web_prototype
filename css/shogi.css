@@ -65,7 +65,7 @@ body {
     left: 2px;
     top: 10px;
     background-size: cover;
-    background-image: url("../img/komadai.png");
+    background-image: url("../img/komadai_neg.png");
 }
 #komadai_gote td {
     width: 52px;
@@ -125,7 +125,7 @@ body {
     left: 683px;
     top: 385px;
     background-size: cover;
-    background-image: url("../img/komadai.png");
+    background-image: url("../img/komadai_pos.png");
 }
 #komadai_sente td {
     width: 52px;
