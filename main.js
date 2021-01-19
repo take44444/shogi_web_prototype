@@ -146,7 +146,9 @@ function showPath() {
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
-        msquare.onclick = new Function(`selectSquare(${path.x}, ${path.y})`);
+        msquare.onclick =new Function(
+            `if(gameState==BOARD_SELECTED){selectSquare(${path.x}, ${path.y});}`
+        );
     }
 }
 
@@ -162,7 +164,9 @@ function showDrop() {
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
-        msquare.onclick = new Function(`selectSquare(${path.x}, ${path.y})`);
+        msquare.onclick =new Function(
+            `if(gameState==KOMADAI_SELECTED){selectSquare(${path.x}, ${path.y});}`
+        );
     }
 }
 
