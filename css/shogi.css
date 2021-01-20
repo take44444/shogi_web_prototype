@@ -266,7 +266,7 @@ body {
     width: 15vh;
     height: 15vh;
     animation: anim 0.6s steps(6);
-    opacity: 0.4;
+    opacity: 0.9;
 }
   
 /* Both animations are used the same keyframes */
