@@ -255,3 +255,22 @@ body {
     vertical-align: middle;
     width: 5vh;
 }
+
+#koma_effect {
+    position: absolute;
+}
+
+.effect {
+    background: url(../img/effect.png) no-repeat;
+    background-size: 50vh 10vh;
+    width: 10vh;
+    height: 10vh;
+    animation: anim 0.3s steps(4);
+}
+  
+/* Both animations are used the same keyframes */
+@keyframes anim {
+    to {
+        background-position: -40vh 0;
+    }
+}

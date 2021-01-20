@@ -67,6 +67,14 @@ function hideMask() {
     document.getElementById("komadai_gote_mask").style.visibility = "hidden";
 }
 
+function playKomaEffect() {
+    var effect = document.getElementById("koma_effect");
+    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 1.25vh)`;
+    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 0.87vh)`;
+    effect.style.visibility = "visible";
+    effect.classList.add("effect");
+}
+
 /**
  * 手番を変更する関数
  */
@@ -157,7 +165,7 @@ function showPath() {
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
         msquare.onclick =new Function(
-            `if(gameState==BOARD_SELECTED){selectSquare(${path.x}, ${path.y});}`
+            `selectSquare(${path.x}, ${path.y})`
         );
     }
 }
@@ -175,7 +183,7 @@ function showDrop() {
         msquare.style.opacity = "0.0";
         // msquare.style.backgroundImage = "";
         msquare.onclick =new Function(
-            `if(gameState==KOMADAI_SELECTED){selectSquare(${path.x}, ${path.y});}`
+            `selectSquare(${path.x}, ${path.y})`
         );
     }
 }
@@ -257,8 +265,8 @@ function selectTegoma(koma) {
  * @param {Number} y 選択した，設置可能な空白マスの段
  */
 function selectSquare(x, y) {
-    toPoint = point(x, y);
     if (gameState == BOARD_SELECTED) {
+        toPoint = point(x, y);
         if (canNari(selectedKoma, x, y) || canNari(selectedKoma, fromPoint.x, fromPoint.y)) {
             if ((selectedKoma.symbol == "KE" && selectedKoma.isSente && y <= 2)
             || (selectedKoma.symbol == "KY" && selectedKoma.isSente && y == 1)
@@ -268,9 +276,10 @@ function selectSquare(x, y) {
             || (selectedKoma.symbol == "FU" && !selectedKoma.isSente && y == 9)) {
                 shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
                 updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
+                playKomaEffect();
                 rotateTurn();
             } else {
-                showNariWindow(x, y);
+                showNariWindow();
             }
         } else {
             shogiBoard.move(fromPoint, toPoint, selectedKoma);
@@ -278,6 +287,7 @@ function selectSquare(x, y) {
             rotateTurn();
         }
     } else if (gameState == KOMADAI_SELECTED) {
+        toPoint = point(x, y);
         shogiBoard.move(fromPoint, toPoint, selectedKoma);
         updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         rotateTurn();
@@ -286,15 +296,13 @@ function selectSquare(x, y) {
 
 /**
  * 成るか成らないかを選択するためのウィンドウを表示する関数
- * @param {Number} x 選択した駒の移動先のマスの筋
- * @param {Number} y 選択した駒の移動先のマスの段
  */
-function showNariWindow(x, y) {
+function showNariWindow() {
     gameState = NARI_SELECTING;
 
     var nariWindow = document.getElementById("nari_window");
-    nariWindow.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-x} - 7.5vh / 2)`;
-    nariWindow.style.top = `calc(12.8vh + 8.27vh * ${y-1})`;
+    nariWindow.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 7.5vh / 2)`;
+    nariWindow.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1})`;
 
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = selectedKoma.createNari().img;
@@ -302,6 +310,7 @@ function showNariWindow(x, y) {
         shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
         updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         hideNariWindow();
+        playKomaEffect();
         rotateTurn();
     };
 
@@ -335,6 +344,13 @@ window.onload = function () {
     shogiBoard = new ShogiBoard(true);
 
     gameState = SELECTING;
+
+    var effect = document.getElementById("koma_effect");
+    effect.addEventListener("animationend", function() {
+        var self = document.getElementById("koma_effect");
+        self.classList.remove("effect");
+        self.style.visibility = "hidden";
+    });
 
     showBoard();
 }
