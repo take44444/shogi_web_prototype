@@ -9,6 +9,8 @@ let toPoint;
 let selectedKoma;
 let gameState;
 
+let capFlg = false;
+
 const SELECTING = 0;
 const BOARD_SELECTED = 1;
 const KOMADAI_SELECTED = 2;
@@ -69,8 +71,8 @@ function hideMask() {
 
 function playKomaEffect() {
     var effect = document.getElementById("koma_effect");
-    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 1.25vh)`;
-    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 0.865vh)`;
+    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 3.75vh)`;
+    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
     effect.style.visibility = "visible";
     effect.classList.add("effect");
 }
@@ -80,6 +82,7 @@ function playKomaEffect() {
  */
 function rotateTurn() {
     sounds["komaoto"].play();
+    capFlg && playKomaEffect();
     shogiBoard.rotateTurn();
     hideMask();
     showBoard();
@@ -267,6 +270,7 @@ function selectTegoma(koma) {
 function selectSquare(x, y) {
     if (gameState == BOARD_SELECTED) {
         toPoint = point(x, y);
+        capFlg = shogiBoard.board[x][y].isKoma;
         if (canNari(selectedKoma, x, y) || canNari(selectedKoma, fromPoint.x, fromPoint.y)) {
             if ((selectedKoma.symbol == "KE" && selectedKoma.isSente && y <= 2)
             || (selectedKoma.symbol == "KY" && selectedKoma.isSente && y == 1)
@@ -276,7 +280,6 @@ function selectSquare(x, y) {
             || (selectedKoma.symbol == "FU" && !selectedKoma.isSente && y == 9)) {
                 shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
                 updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
-                playKomaEffect();
                 rotateTurn();
             } else {
                 showNariWindow();
@@ -310,7 +313,6 @@ function showNariWindow() {
         shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
         updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         hideNariWindow();
-        playKomaEffect();
         rotateTurn();
     };
 

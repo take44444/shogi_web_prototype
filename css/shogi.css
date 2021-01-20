@@ -261,16 +261,17 @@ body {
 }
 
 .effect {
-    background: url(../img/effect.png) no-repeat;
-    background-size: 50vh 10vh;
-    width: 10vh;
-    height: 10vh;
-    animation: anim 0.3s steps(4);
+    background: url(../img/captured_effect.png) no-repeat;
+    background-size: 105vh 15vh;
+    width: 15vh;
+    height: 15vh;
+    animation: anim 0.6s steps(6);
+    opacity: 0.4;
 }
   
 /* Both animations are used the same keyframes */
 @keyframes anim {
     to {
-        background-position: -40vh 0;
+        background-position: -90vh 0;
     }
 }
