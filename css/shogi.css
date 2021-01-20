@@ -256,7 +256,18 @@ body {
     width: 5vh;
 }
 
-#koma_effect {
+#kill {
+    visibility: hidden;
+    position: absolute;
+    width: 30vh;
+    height: 30vh;
+    /* background-color: #000;
+    background-blend-mode: color-dodge; */
+    mix-blend-mode: screen;
+    transform:rotateZ(45deg);
+    z-index: 200;
+}
+/* #koma_effect {
     position: absolute;
 }
 
@@ -267,11 +278,11 @@ body {
     height: 15vh;
     animation: anim 0.6s steps(6);
     opacity: 0.9;
-}
+} */
   
 /* Both animations are used the same keyframes */
-@keyframes anim {
+/* @keyframes anim {
     to {
         background-position: -90vh 0;
     }
-}
+} */

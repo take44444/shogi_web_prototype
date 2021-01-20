@@ -1,5 +1,6 @@
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 let sounds = {};
+let effects = {};
 
 let shogiBoard;
 
@@ -70,11 +71,11 @@ function hideMask() {
 }
 
 function playKomaEffect() {
-    var effect = document.getElementById("koma_effect");
-    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 3.75vh)`;
-    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
+    var effect = effects["kill"];
+    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 11.25vh)`;
+    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 10.865vh)`;
     effect.style.visibility = "visible";
-    effect.classList.add("effect");
+    effect.play();
 }
 
 /**
@@ -341,6 +342,7 @@ function hideNariWindow() {
  */
 window.onload = function () {
     sounds["komaoto"] = document.getElementById("komaoto");
+    effects["kill"] = document.getElementById("kill");
 
     fromPoint = point(0, 0);
     toPoint = point(0, 0);
@@ -348,11 +350,8 @@ window.onload = function () {
 
     gameState = SELECTING;
 
-    var effect = document.getElementById("koma_effect");
-    effect.addEventListener("animationend", function() {
-        var self = document.getElementById("koma_effect");
-        self.classList.remove("effect");
-        self.style.visibility = "hidden";
+    effects["kill"].addEventListener('ended', (event) => {
+        effects["kill"].style.visibility = "hidden";
     });
 
     showBoard();
