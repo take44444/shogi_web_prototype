@@ -83,6 +83,7 @@ function playKomaEffect() {
 function rotateTurn() {
     sounds["komaoto"].play();
     capFlg && playKomaEffect();
+    capFlg = false;
     shogiBoard.rotateTurn();
     hideMask();
     showBoard();
