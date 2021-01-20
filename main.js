@@ -70,7 +70,7 @@ function hideMask() {
 function playKomaEffect() {
     var effect = document.getElementById("koma_effect");
     effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 1.25vh)`;
-    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 0.87vh)`;
+    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 0.865vh)`;
     effect.style.visibility = "visible";
     effect.classList.add("effect");
 }
