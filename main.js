@@ -3,6 +3,7 @@ let sounds = {};
 let effects = {};
 
 let shogiBoard;
+let boardState;
 
 let fromPoint;
 let toPoint;
@@ -18,6 +19,7 @@ const BOARD_SELECTED = 1;
 const KOMADAI_SELECTED = 2;
 const SELECTED = 2;
 const NARI_SELECTING = 3;
+const FIN = 4;
 
 const SENTE = 1;
 const GOTE = 0;
@@ -101,6 +103,15 @@ function setBg(element, color, opacity) {
     element.style.boxShadow = `0 0 3vh ${color}`;
 }
 
+function playBoardEffect() {
+    var effect;
+    if (boardState == BOARD_STATE.TUMI) {
+        effect = effects["tumi"];
+        effect.style.visibility = "visible";
+        effect.play();
+    }
+}
+
 /**
  * 手番を変更する関数
  */
@@ -115,6 +126,7 @@ function rotateTurn() {
     if (!capFlg && !nariFlg) {
         playNormalEffect();
     }
+    playBoardEffect();
     capFlg = false;
     nariFlg = false;
     shogiBoard.rotateTurn();
@@ -309,20 +321,20 @@ function selectSquare(x, y) {
             || (selectedKoma.symbol == "KY" && !selectedKoma.isSente && y == 9)
             || (selectedKoma.symbol == "FU" && !selectedKoma.isSente && y == 9)) {
                 nariFlg = true;
-                shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
+                boardState = shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
                 updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
                 rotateTurn();
             } else {
                 showNariWindow();
             }
         } else {
-            shogiBoard.move(fromPoint, toPoint, selectedKoma);
+            boardState = shogiBoard.move(fromPoint, toPoint, selectedKoma);
             updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
             rotateTurn();
         }
     } else if (gameState == KOMADAI_SELECTED) {
         toPoint = point(x, y);
-        shogiBoard.move(fromPoint, toPoint, selectedKoma);
+        boardState = shogiBoard.move(fromPoint, toPoint, selectedKoma);
         updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         rotateTurn();
     }
@@ -342,7 +354,7 @@ function showNariWindow() {
     nari.style.backgroundImage = selectedKoma.createNari().img;
     nari.onclick = function() {
         nariFlg = true;
-        shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
+        boardState = shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
         updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         hideNariWindow();
         rotateTurn();
@@ -351,7 +363,7 @@ function showNariWindow() {
     var narazu = document.getElementById("NARAZU");
     narazu.style.backgroundImage = selectedKoma.img;
     narazu.onclick = function() {
-        shogiBoard.move(fromPoint, toPoint, selectedKoma);
+        boardState = shogiBoard.move(fromPoint, toPoint, selectedKoma);
         updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         hideNariWindow();
         rotateTurn();
@@ -375,8 +387,7 @@ window.onload = function () {
     effects["kill"] = document.getElementById("kill_effect");
     effects["nari"] = document.getElementById("nari_effect");
     effects["normal"] = document.getElementById("normal_effect");
-
-    // document.getElementById("board_bg").play();
+    effects["tumi"] = document.getElementById("tumi_effect");
 
     fromPoint = point(0, 0);
     toPoint = point(0, 0);
@@ -392,6 +403,9 @@ window.onload = function () {
     });
     effects["normal"].addEventListener('ended', (event) => {
         effects["normal"].style.visibility = "hidden";
+    });
+    effects["tumi"].addEventListener('ended', (event) => {
+        effects["tumi"].style.visibility = "hidden";
     });
 
     showBoard();

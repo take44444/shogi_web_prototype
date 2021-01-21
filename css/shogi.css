@@ -15,15 +15,6 @@ body {
     width: 70vh;
     height: 77vh;
 }
-/* #board_bg {
-    object-fit: fill;
-    position: absolute;
-    left: 50vw;
-    top: 50vh;
-    transform: translate(-50%, -50%);
-    width: 70vh;
-    height: 77vh;
-} */
 #board {
     background-size: 70vh 77vh;
     background-image: url(../img/ban.png);
@@ -291,4 +282,15 @@ body {
     height: 15vh;
     mix-blend-mode: screen;
     z-index: 200;
+}
+
+.board_effect {
+    visibility: hidden;
+    position: absolute;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    opacity: 0.9;
+    z-index: 300;
 }

@@ -1,4 +1,5 @@
 const MODE = { BOOL: 0, POINT: 1, ITERATOR: 2 };
+const BOARD_STATE = { NOTHING: 0, OUTE: 1, TUMI: 2, SENNICHITE: 3 };
 
 class ShogiBoard {
     constructor() {
@@ -126,6 +127,7 @@ class ShogiBoard {
      * @param {Koma} koma 駒
      */
     move(from, to, koma) {
+        let ret = BOARD_STATE.NOTHING;
         if (from.x != 0) {
             /** 盤上の駒を動かした場合は移動元のマスを空にする */
             this.board_[from.x][from.y] = new Empty();
@@ -150,7 +152,7 @@ class ShogiBoard {
 
         /** 千日手判定 */
         if (this.kifu_.update(from, to, koma, this.board_, this.tegoma_)) {
-            console.log("sennichite");
+            ret = BOARD_STATE.SENNICHITE;
         }
 
         if (koma.symbol == "OU") {
@@ -161,13 +163,14 @@ class ShogiBoard {
             /** 王以外を動かした場合は，王手の可能性がある */
             if (this.isOute(koma.isSente)) {
                 /** 王手の時 */
-                console.log("oute!");
+                ret = BOARD_STATE.OUTE;
                 if (this.isTumi(koma.isSente)) {
                     /** 詰みの時 */
-                    console.log("tumi!");
+                    ret = BOARD_STATE.TUMI;
                 }
             }
         }
+        return ret;
     }
 
     /**
