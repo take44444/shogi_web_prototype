@@ -95,6 +95,12 @@ function playNormalEffect() {
     effect.play();
 }
 
+function setBg(element, color, opacity) {
+    element.style.opacity = opacity;
+    element.style.backgroundColor = color;
+    element.style.boxShadow = `0 0 3vh ${color}`;
+}
+
 /**
  * 手番を変更する関数
  */
@@ -193,7 +199,7 @@ function showPath() {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
-        msquare.style.opacity = "0.85";
+        setBg(msquare, "#fb0", 0.85);
         msquare.onclick =new Function(
             `selectSquare(${path.x}, ${path.y})`
         );
@@ -210,7 +216,7 @@ function showDrop() {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
-        msquare.style.opacity = "0.85";
+        setBg(msquare, "#fb0", 0.85);
         msquare.onclick =new Function(
             `selectSquare(${path.x}, ${path.y})`
         );
@@ -231,11 +237,9 @@ function selectKomaToMove(x, y) {
         for (var yLocal = 1; yLocal <= 9; yLocal++) {
             var msquare = document.getElementById(`ms${xLocal}${yLocal}`);
             if (xLocal == x && yLocal == y) {
-                // msquare.style.backgroundImage = shogiBoard.board[x][y].img;
-                msquare.style.opacity = "0.4";
+                setBg(msquare, "#fb0", 0.4);
             } else {
-                // msquare.style.backgroundImage = "";
-                msquare.style.opacity = "0.0";
+                setBg(msquare, "#000", 0.3);
             }
             msquare.onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
@@ -268,7 +272,7 @@ function selectTegoma(koma) {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
             var msquare = document.getElementById(`ms${x}${y}`);
-            msquare.style.opacity = "0.0";
+            setBg(msquare, "#000", 0.3);
             msquare.onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };

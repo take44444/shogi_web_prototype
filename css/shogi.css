@@ -69,8 +69,6 @@ body {
     border: 0.2vh solid rgb(100, 30, 0);
     background-position: center center;
     background-repeat: no-repeat;
-    background-color: #fb0;
-    box-shadow: 0 0 3vh #fb0;
 }
 .komadai td {
     background-position: center center;
