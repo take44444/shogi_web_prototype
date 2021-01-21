@@ -11,6 +11,7 @@ let selectedKoma;
 let gameState;
 
 let capFlg = false;
+let nariFlg = false;
 
 const SELECTING = 0;
 const BOARD_SELECTED = 1;
@@ -70,10 +71,18 @@ function hideMask() {
     document.getElementById("komadai_gote_mask").style.visibility = "hidden";
 }
 
-function playKomaEffect() {
+function playKillEffect() {
     var effect = effects["kill"];
-    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 11.25vh)`;
-    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 10.865vh)`;
+    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 6.25vh)`;
+    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 5.865vh)`;
+    effect.style.visibility = "visible";
+    effect.play();
+}
+
+function playNariEffect() {
+    var effect = effects["nari"];
+    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 3.65vh)`;
+    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
     effect.style.visibility = "visible";
     effect.play();
 }
@@ -83,8 +92,10 @@ function playKomaEffect() {
  */
 function rotateTurn() {
     sounds["komaoto"].play();
-    capFlg && playKomaEffect();
+    capFlg && playKillEffect();
+    nariFlg && playNariEffect();
     capFlg = false;
+    nariFlg = false;
     shogiBoard.rotateTurn();
     hideMask();
     showBoard();
@@ -280,6 +291,7 @@ function selectSquare(x, y) {
             || (selectedKoma.symbol == "KE" && !selectedKoma.isSente && y >= 8)
             || (selectedKoma.symbol == "KY" && !selectedKoma.isSente && y == 9)
             || (selectedKoma.symbol == "FU" && !selectedKoma.isSente && y == 9)) {
+                nariFlg = true;
                 shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
                 updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
                 rotateTurn();
@@ -312,6 +324,7 @@ function showNariWindow() {
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = selectedKoma.createNari().img;
     nari.onclick = function() {
+        nariFlg = true;
         shogiBoard.move(fromPoint, toPoint, selectedKoma.createNari());
         updateKifuTable(shogiBoard.moves, shogiBoard.kifu.csaData);
         hideNariWindow();
@@ -342,7 +355,8 @@ function hideNariWindow() {
  */
 window.onload = function () {
     sounds["komaoto"] = document.getElementById("komaoto");
-    effects["kill"] = document.getElementById("kill");
+    effects["kill"] = document.getElementById("kill_effect");
+    effects["nari"] = document.getElementById("nari_effect");
 
     fromPoint = point(0, 0);
     toPoint = point(0, 0);
@@ -352,6 +366,9 @@ window.onload = function () {
 
     effects["kill"].addEventListener('ended', (event) => {
         effects["kill"].style.visibility = "hidden";
+    });
+    effects["nari"].addEventListener('ended', (event) => {
+        effects["nari"].style.visibility = "hidden";
     });
 
     showBoard();

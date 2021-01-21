@@ -256,33 +256,20 @@ body {
     width: 5vh;
 }
 
-#kill {
+#kill_effect {
     visibility: hidden;
     position: absolute;
-    width: 30vh;
-    height: 30vh;
-    /* background-color: #000;
-    background-blend-mode: color-dodge; */
+    width: 20vh;
+    height: 20vh;
     mix-blend-mode: screen;
-    transform:rotateZ(45deg);
     z-index: 200;
 }
-/* #koma_effect {
-    position: absolute;
-}
 
-.effect {
-    background: url(../img/captured_effect.png) no-repeat;
-    background-size: 105vh 15vh;
+#nari_effect {
+    visibility: hidden;
+    position: absolute;
     width: 15vh;
     height: 15vh;
-    animation: anim 0.6s steps(6);
-    opacity: 0.9;
-} */
-  
-/* Both animations are used the same keyframes */
-/* @keyframes anim {
-    to {
-        background-position: -90vh 0;
-    }
-} */
+    mix-blend-mode: screen;
+    z-index: 200;
+}
