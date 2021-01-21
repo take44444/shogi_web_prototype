@@ -15,7 +15,7 @@ body {
     width: 70vh;
     height: 77vh;
 }
-#board_bg {
+/* #board_bg {
     object-fit: fill;
     position: absolute;
     left: 50vw;
@@ -23,10 +23,10 @@ body {
     transform: translate(-50%, -50%);
     width: 70vh;
     height: 77vh;
-}
+} */
 #board {
-    /* background-size: 70vh 77vh; */
-    /* background-image: url(../img/ban.png); */
+    background-size: 70vh 77vh;
+    background-image: url(../img/ban.png);
     opacity: 1.0;
 }
 #board td {
@@ -215,11 +215,11 @@ body {
 }
 #NARI {
     background-color:  coral;
-    box-shadow: 0 0 5vh coral;
+    box-shadow: 0 0 3vh coral;
 }
 #NARAZU {
     background-color: cornflowerblue;
-    box-shadow: 0 0 5vh cornflowerblue;
+    box-shadow: 0 0 3vh cornflowerblue;
 }
 
 #kifu_table {

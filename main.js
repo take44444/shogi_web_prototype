@@ -239,7 +239,7 @@ function selectKomaToMove(x, y) {
             if (xLocal == x && yLocal == y) {
                 setBg(msquare, "#fb0", 0.4);
             } else {
-                setBg(msquare, "#000", 0.3);
+                setBg(msquare, "#641e00", 0.3);
             }
             msquare.onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
@@ -272,7 +272,7 @@ function selectTegoma(koma) {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
             var msquare = document.getElementById(`ms${x}${y}`);
-            setBg(msquare, "#000", 0.3);
+            setBg(msquare, "#641e00", 0.3);
             msquare.onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
