@@ -193,7 +193,9 @@ function showPath() {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
-        msquare.style.opacity = "0.4";
+        msquare.style.opacity = "0.9";
+        msquare.style.backgroundImage
+            = `url(img/path_${shogiBoard.turn?"pos":"neg"}.png)`;
         // msquare.style.backgroundImage = "";
         msquare.onclick =new Function(
             `selectSquare(${path.x}, ${path.y})`
@@ -211,7 +213,9 @@ function showDrop() {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
-        msquare.style.opacity = "0.4";
+        msquare.style.opacity = "0.9";
+        msquare.style.backgroundImage
+            = `url(img/path_${shogiBoard.turn?"pos":"neg"}.png)`;
         // msquare.style.backgroundImage = "";
         msquare.onclick =new Function(
             `selectSquare(${path.x}, ${path.y})`
@@ -234,7 +238,7 @@ function selectKomaToMove(x, y) {
             var msquare = document.getElementById(`ms${xLocal}${yLocal}`);
             if (xLocal == x && yLocal == y) {
                 // msquare.style.backgroundImage = shogiBoard.board[x][y].img;
-                msquare.style.opacity = "0.4";
+                msquare.style.opacity = "0.0";
             } else {
                 // msquare.style.backgroundImage = "";
                 msquare.style.opacity = "0.0";
