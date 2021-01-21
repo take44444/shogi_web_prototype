@@ -87,13 +87,28 @@ function playNariEffect() {
     effect.play();
 }
 
+function playNormalEffect() {
+    var effect = effects["normal"];
+    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 3.65vh)`;
+    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
+    effect.style.visibility = "visible";
+    effect.play();
+}
+
 /**
  * 手番を変更する関数
  */
 function rotateTurn() {
     sounds["komaoto"].play();
-    capFlg && playKillEffect();
-    nariFlg && playNariEffect();
+    if (capFlg) {
+        playKillEffect();
+    }
+    if (nariFlg) {
+        playNariEffect();
+    }
+    if (!capFlg && !nariFlg) {
+        playNormalEffect();
+    }
     capFlg = false;
     nariFlg = false;
     shogiBoard.rotateTurn();
@@ -178,7 +193,7 @@ function showPath() {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
-        msquare.style.opacity = "0.0";
+        msquare.style.opacity = "0.4";
         // msquare.style.backgroundImage = "";
         msquare.onclick =new Function(
             `selectSquare(${path.x}, ${path.y})`
@@ -196,7 +211,7 @@ function showDrop() {
             continue;
         }
         var msquare = document.getElementById(`ms${path.x}${path.y}`);
-        msquare.style.opacity = "0.0";
+        msquare.style.opacity = "0.4";
         // msquare.style.backgroundImage = "";
         msquare.onclick =new Function(
             `selectSquare(${path.x}, ${path.y})`
@@ -219,10 +234,10 @@ function selectKomaToMove(x, y) {
             var msquare = document.getElementById(`ms${xLocal}${yLocal}`);
             if (xLocal == x && yLocal == y) {
                 // msquare.style.backgroundImage = shogiBoard.board[x][y].img;
-                msquare.style.opacity = "0.0";
+                msquare.style.opacity = "0.4";
             } else {
                 // msquare.style.backgroundImage = "";
-                msquare.style.opacity = "0.2";
+                msquare.style.opacity = "0.0";
             }
             msquare.onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
@@ -255,7 +270,7 @@ function selectTegoma(koma) {
     for (var x = 1; x <= 9; x++) {
         for (var y = 1; y <= 9; y++) {
             var msquare = document.getElementById(`ms${x}${y}`);
-            msquare.style.opacity = "0.2";
+            msquare.style.opacity = "0.0";
             msquare.onclick = function () {
                 if (gameState <= SELECTED) { gameState = SELECTING; hideMask(); }
             };
@@ -357,6 +372,9 @@ window.onload = function () {
     sounds["komaoto"] = document.getElementById("komaoto");
     effects["kill"] = document.getElementById("kill_effect");
     effects["nari"] = document.getElementById("nari_effect");
+    effects["normal"] = document.getElementById("normal_effect");
+
+    // document.getElementById("board_bg").play();
 
     fromPoint = point(0, 0);
     toPoint = point(0, 0);
@@ -369,6 +387,9 @@ window.onload = function () {
     });
     effects["nari"].addEventListener('ended', (event) => {
         effects["nari"].style.visibility = "hidden";
+    });
+    effects["normal"].addEventListener('ended', (event) => {
+        effects["normal"].style.visibility = "hidden";
     });
 
     showBoard();

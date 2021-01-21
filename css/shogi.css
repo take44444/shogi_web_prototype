@@ -15,9 +15,18 @@ body {
     width: 70vh;
     height: 77vh;
 }
+#board_bg {
+    object-fit: fill;
+    position: absolute;
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+    width: 70vh;
+    height: 77vh;
+}
 #board {
-    background-size: 70vh 77vh;
-    background-image: url(../img/ban.png);
+    /* background-size: 70vh 77vh; */
+    /* background-image: url(../img/ban.png); */
     opacity: 1.0;
 }
 #board td {
@@ -60,7 +69,7 @@ body {
     border: 0.2vh solid rgb(100, 30, 0);
     background-position: center center;
     background-repeat: no-repeat;
-    background-color: #000;
+    background-color: rgb(0, 183, 255);
 }
 .komadai td {
     background-position: center center;
@@ -266,6 +275,15 @@ body {
 }
 
 #nari_effect {
+    visibility: hidden;
+    position: absolute;
+    width: 15vh;
+    height: 15vh;
+    mix-blend-mode: screen;
+    z-index: 200;
+}
+
+#normal_effect {
     visibility: hidden;
     position: absolute;
     width: 15vh;
