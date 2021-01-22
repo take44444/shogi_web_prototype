@@ -109,6 +109,10 @@ function playBoardEffect() {
         effect = effects["tumi"];
         effect.style.visibility = "visible";
         effect.play();
+    } else if (boardState == BOARD_STATE.OUTE) {
+        effect = effects["oute"];
+        effect.style.visibility = "visible";
+        effect.play();
     }
 }
 
@@ -388,6 +392,7 @@ window.onload = function () {
     effects["nari"] = document.getElementById("nari_effect");
     effects["normal"] = document.getElementById("normal_effect");
     effects["tumi"] = document.getElementById("tumi_effect");
+    effects["oute"] = document.getElementById("oute_effect");
 
     fromPoint = point(0, 0);
     toPoint = point(0, 0);
@@ -406,6 +411,9 @@ window.onload = function () {
     });
     effects["tumi"].addEventListener('ended', (event) => {
         effects["tumi"].style.visibility = "hidden";
+    });
+    effects["oute"].addEventListener('ended', (event) => {
+        effects["oute"].style.visibility = "hidden";
     });
 
     showBoard();
