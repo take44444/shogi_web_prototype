@@ -24,7 +24,7 @@ body {
     border: 0.2vh solid rgb(100, 30, 0);
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 6.5vh 7.3vh;
+    background-size: 7.3vh 7.3vh;
 }
 .board .lrside {
     width: 1.3vh;
@@ -64,7 +64,7 @@ body {
 .komadai td {
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 6.5vh 7.3vh;
+    background-size: 7.3vh 7.3vh;
 }
 #komadai_gote {
     position: absolute;
@@ -202,7 +202,7 @@ body {
 #nari_window td {
     background-position: center center;
     background-repeat: no-repeat;
-    background-size: 6.5vh 7.3vh;
+    background-size: 7.3vh 7.3vh;
 }
 #NARI {
     background-color:  coral;
