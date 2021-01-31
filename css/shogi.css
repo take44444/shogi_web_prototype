@@ -1,17 +1,33 @@
 body {
     font-family: 'Osaka-Mono';
+    background-color: #000;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    height: 100vh;
+    width: 100vw;
+}
+
+@media (min-aspect-ratio: 48/27) {
+
+#canvas {
+    position: relative;
+    display: inline-block;
     background-size: 504.7px 387.1px;
     background-image: url(../img/bg.png);
+    height: 100vh;
+    width: calc(100vh * 48 / 27);
 }
-/* @media screen and (orientation: landscape) {} */
+
 .board {
     border-collapse:collapse;
     table-layout: fixed;
     border: 0px solid;
     position: absolute;
-    left: 50vw;
-    top: 50vh;
-    transform: translate(-50%, -50%);
+    left: calc(((100vh * 48 / 27) - 70vh)/2);
+    top: 11.5vh;
     width: 70vh;
     height: 77vh;
 }
@@ -68,9 +84,8 @@ body {
 }
 #komadai_gote {
     position: absolute;
-    left: calc(50vw - 35vh - 14vh);
-    top: 25vh;
-    transform: translate(-50%, -50%);
+    left: calc(((100vh * 48 / 27) - 70vh)/2 - 26vh);
+    top: 11.5vh;
     background-size: cover;
     background-image: url("../img/komadai_neg.png");
 }
@@ -103,15 +118,13 @@ body {
 #komadai_gote_mask {
     visibility: hidden;
     position: absolute;
-    left: calc(50vw - 35vh - 14vh);
-    top: 25vh;
-    transform: translate(-50%, -50%);
+    left: calc(((100vh * 48 / 27) - 70vh)/2 - 26vh);
+    top: 11.5vh;
 }
 #komadai_sente {
     position: absolute;
-    left: calc(50vw + 35vh + 14vh);
-    top: 75vh;
-    transform: translate(-50%, -50%);
+    right: calc(((100vh * 48 / 27) - 70vh)/2 - 26vh);
+    bottom: 11.5vh;
     background-size: cover;
     background-image: url("../img/komadai_pos.png");
 }
@@ -144,9 +157,8 @@ body {
 #komadai_sente_mask {
     visibility: hidden;
     position: absolute;
-    left: calc(50vw + 35vh + 14vh);
-    top: 75vh;
-    transform: translate(-50%, -50%);
+    right: calc(((100vh * 48 / 27) - 70vh)/2 - 26vh);
+    bottom: 11.5vh;
 }
 #SHI {
     background-image: url(../img/HI_pos.png);
@@ -220,8 +232,8 @@ body {
     background-color: rgb(27, 27, 27);
     width: 20vh;
     position: absolute;
-    left: calc(50vw + 37.5vh);
-    top: 13vh;
+    left: calc(((100vh * 48 / 27) - 70vh)/2 + 73vh);
+    top: 15vh;
 }
 
 #kifu_table thead {
@@ -258,6 +270,7 @@ body {
 }
 
 #kill_effect {
+    object-fit: fill;
     visibility: hidden;
     position: absolute;
     width: 20vh;
@@ -267,6 +280,7 @@ body {
 }
 
 #nari_effect {
+    object-fit: fill;
     visibility: hidden;
     position: absolute;
     width: 15vh;
@@ -276,6 +290,7 @@ body {
 }
 
 #normal_effect {
+    object-fit: fill;
     visibility: hidden;
     position: absolute;
     width: 15vh;
@@ -285,24 +300,341 @@ body {
 }
 
 .board_effect {
+    object-fit: fill;
     visibility: hidden;
     position: absolute;
-    top: 50vh;
-    left: 50vw;
-    transform: translate(-50%, -50%);
-    width: 100vw;
+    left: 0px;
+    top: 0px;
+    width: calc(100vh * 48 / 27);
+    height: 100vh;
     opacity: 0.9;
     z-index: 300;
 }
 
 #oute_effect {
+    object-fit: fill;
     visibility: hidden;
     position: absolute;
-    top: 50vh;
+    top: 0px;
     left: 0px;
-    transform: translate(0%, -50%);
     height: 100vh;
     opacity: 1.0;
     mix-blend-mode: screen;
     z-index: 300;
+}
+}
+
+@media (max-aspect-ratio: 48/27) {
+
+#canvas {
+    position: relative;
+    display: inline-block;
+    background-size: 504.7px 387.1px;
+    background-image: url(../img/bg.png);
+    height: calc(100vw * 27 / 48);
+    width: 100vw;
+    /* vertical-align: middle; */
+}
+
+.board {
+    border-collapse:collapse;
+    table-layout: fixed;
+    border: 0px solid;
+    position: absolute;
+    left: 30vw;
+    top: calc((100vw * 27 / 48 - 44vw)/2);
+    width: 40vw;
+    height: 44vw;
+}
+#board {
+    background-size: 40vw 44vw;
+    background-image: url(../img/ban.png);
+    opacity: 1.0;
+}
+#board td {
+    border: 0.1vw solid rgb(100, 30, 0);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 4vw 4vw;
+}
+.board .lrside {
+    width: 0.7vw;
+    background-color: rgb(100, 30, 0);
+    opacity: 0.4;
+}
+.board .udside {
+    height: 0.7vw;
+    background-color: rgb(100, 30, 0);
+    opacity: 0.4;
+}
+.komadai {
+    border-collapse:collapse;
+    table-layout: fixed;
+    border: 0px solid;
+    width: 14vw;
+    height: 15.4vw;
+    opacity: 1.0;
+}
+.komadai .lrside {
+    width: 0.7vw;
+    background-color: rgb(59, 0, 0);
+}
+.komadai .udside {
+    height: 0.7vw;
+    background-color: rgb(59, 0, 0);
+}
+#board_mask {
+    visibility: hidden;
+    opacity: 1.0;
+}
+#board_mask td {
+    border: 0.1vw solid rgb(100, 30, 0);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+.komadai td {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 4vw 4vw;
+}
+#komadai_gote {
+    position: absolute;
+    top: calc(((100vw * 27 / 48) - 44vw)/2);
+    left: 15vw;
+    background-size: cover;
+    background-image: url("../img/komadai_neg.png");
+}
+#komadai_gote td[data-num="0"] {
+    visibility: hidden;
+}
+#komadai_gote td[data-num="1"]::before {
+    visibility: hidden;
+}
+#komadai_gote td::before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    content: attr(data-num);
+    width: 1.7vw;
+    height: 1.7vw;
+    box-sizing: border-box;
+    padding: 0.2vw;
+    font-size: 0.8vw;
+    font-weight: bold;
+    background-color: coral;
+    border: 0.1vw solid #fff;
+    border-radius: 0.8vw;
+    bottom: 0.1vw;
+    right: 0.4vw;
+    transform: translate(150%, 90%);
+    z-index: 1;
+}
+#komadai_gote_mask {
+    visibility: hidden;
+    position: absolute;
+    top: calc(((100vw * 27 / 48) - 44vw)/2);
+    left: 15vw;
+}
+#komadai_sente {
+    position: absolute;
+    bottom: calc(((100vw * 27 / 48) - 44vw)/2);
+    right: 15vw;
+    background-size: cover;
+    background-image: url("../img/komadai_pos.png");
+}
+#komadai_sente td[data-num="0"] {
+    visibility: hidden;
+}
+#komadai_sente td[data-num="1"]::before {
+    visibility: hidden;;
+}
+#komadai_sente td::before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    content: attr(data-num);
+    width: 1.7vw;
+    height: 1.7vw;
+    box-sizing: border-box;
+    padding: 0.2vw;
+    font-size: 0.8vw;
+    font-weight: bold;
+    background-color: coral;
+    border: 0.1vw solid #fff;
+    border-radius: 0.8vw;
+    bottom: 0.1vw;
+    right: 0.4vw;
+    transform: translate(150%, 90%);
+    z-index: 1;
+}
+#komadai_sente_mask {
+    visibility: hidden;
+    position: absolute;
+    bottom: calc(((100vw * 27 / 48) - 44vw)/2);
+    right: 15vw;
+}
+#SHI {
+    background-image: url(../img/HI_pos.png);
+}
+#SKA {
+    background-image: url(../img/KA_pos.png);
+}
+#SKI {
+    background-image: url(../img/KI_pos.png);
+}
+#SGI {
+    background-image: url(../img/GI_pos.png);
+}
+#SKE {
+    background-image: url(../img/KE_pos.png);
+}
+#SKY {
+    background-image: url(../img/KY_pos.png);
+}
+#SFU {
+    background-image: url(../img/FU_pos.png);
+}
+#GHI {
+    background-image: url(../img/HI_neg.png);
+}
+#GKA {
+    background-image: url(../img/KA_neg.png);
+}
+#GKI {
+    background-image: url(../img/KI_neg.png);
+}
+#GGI {
+    background-image: url(../img/GI_neg.png);
+}
+#GKE {
+    background-image: url(../img/KE_neg.png);
+}
+#GKY {
+    background-image: url(../img/KY_neg.png);
+}
+#GFU {
+    background-image: url(../img/FU_neg.png);
+}
+#nari_window {
+    visibility: hidden;
+    border-collapse:collapse;
+    table-layout: fixed;
+    border: 0px solid;
+    width: 8.2vw;
+    height: 4.6vw;
+    position: absolute;
+}
+#nari_window td {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 4vw 4vw;
+}
+#NARI {
+    background-color:  coral;
+    box-shadow: 0 0 1.7vw coral;
+}
+#NARAZU {
+    background-color: cornflowerblue;
+    box-shadow: 0 0 1.7vw cornflowerblue;
+}
+
+#kifu_table {
+    border-collapse: separate;
+    border: 0.6vw solid rgb(10, 10, 10);
+    border-radius: 1vw;
+    background-color: rgb(27, 27, 27);
+    width: 12vw;
+    position: absolute;
+    top: calc(((100vw * 27 / 48) - 44vw)/2 + 2vw);
+    left: 71vw;
+}
+
+#kifu_table thead {
+    display: block;
+    font-size: 1vw;
+    color: rgb(197, 213, 226);
+}
+
+#kifu_tbody {
+    display: block;
+    border-collapse: collapse;
+    height: 12.4vw;
+    font-size: 1vw;
+    color: rgb(197, 213, 226);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    z-index: 100;
+}
+
+#kifu_table td {
+    text-align: center;
+    vertical-align: middle;
+    width: 9vw;
+}
+
+#kifu_tbody .even {
+    background-color: rgb(37, 37, 37);
+}
+
+#kifu_table th {
+    text-align: center;
+    vertical-align: middle;
+    width: 3vw;
+}
+
+#kill_effect {
+    object-fit: fill;
+    visibility: hidden;
+    position: absolute;
+    width: 11vw;
+    height: 11vw;
+    mix-blend-mode: screen;
+    z-index: 200;
+}
+
+#nari_effect {
+    object-fit: fill;
+    visibility: hidden;
+    position: absolute;
+    width: 8vw;
+    height: 8vw;
+    mix-blend-mode: screen;
+    z-index: 200;
+}
+
+#normal_effect {
+    object-fit: fill;
+    visibility: hidden;
+    position: absolute;
+    width: 8vw;
+    height: 8vw;
+    mix-blend-mode: screen;
+    z-index: 200;
+}
+
+.board_effect {
+    object-fit: fill;
+    visibility: hidden;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: calc(100vw * 27 / 48);
+    opacity: 0.9;
+    z-index: 300;
+}
+
+#oute_effect {
+    object-fit: fill;
+    visibility: hidden;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: calc(100vw * 27 / 48);
+    opacity: 1.0;
+    mix-blend-mode: screen;
+    z-index: 300;
+}
 }

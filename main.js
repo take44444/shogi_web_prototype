@@ -75,24 +75,39 @@ function hideMask() {
 
 function playKillEffect() {
     var effect = effects["kill"];
-    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 6.25vh)`;
-    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 5.865vh)`;
+    if (document.body.clientWidth*27 >= document.body.clientHeight*48) {
+        effect.style.left = `calc(((100vh * 48 / 27) - 70vh)/2 + 7.5vh * ${9-toPoint.x} - 5vh)`;
+        effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 5.865vh)`;
+    } else {
+        effect.style.left = `calc(29.4vw + 4.22vw * ${9-toPoint.x} - 4.1vw / 2)`;
+        effect.style.top = `calc(((100vw * 27 / 48) - 44vw)/2 + 4.65vw * ${toPoint.y-1} - 2.3vw)`;
+    }
     effect.style.visibility = "visible";
     effect.play();
 }
 
 function playNariEffect() {
     var effect = effects["nari"];
-    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 3.65vh)`;
-    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
+    if (document.body.clientWidth*27 >= document.body.clientHeight*48) {
+        effect.style.left = `calc(((100vh * 48 / 27) - 70vh)/2 + 7.5vh * ${9-toPoint.x} - 2.7vh)`;
+        effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
+    } else {
+        effect.style.left = `calc(31.2vw + 4.22vw * ${9-toPoint.x} - 4.1vw / 2)`;
+        effect.style.top = `calc(((100vw * 27 / 48) - 44vw)/2 + 4.65vw * ${toPoint.y-1} - 0.9vw)`;
+    }
     effect.style.visibility = "visible";
     effect.play();
 }
 
 function playNormalEffect() {
     var effect = effects["normal"];
-    effect.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 3.65vh)`;
-    effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
+    if (document.body.clientWidth*27 >= document.body.clientHeight*48) {
+        effect.style.left = `calc(((100vh * 48 / 27) - 70vh)/2 + 7.5vh * ${9-toPoint.x} - 2.7vh)`;
+        effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
+    } else {
+        effect.style.left = `calc(31.2vw + 4.22vw * ${9-toPoint.x} - 4.1vw / 2)`;
+        effect.style.top = `calc(((100vw * 27 / 48) - 44vw)/2 + 4.65vw * ${toPoint.y-1} - 0.9vw)`;
+    }
     effect.style.visibility = "visible";
     effect.play();
 }
@@ -351,8 +366,13 @@ function showNariWindow() {
     gameState = NARI_SELECTING;
 
     var nariWindow = document.getElementById("nari_window");
-    nariWindow.style.left = `calc(50vw - 33.7vh + 7.5vh * ${9-toPoint.x} - 7.5vh / 2)`;
-    nariWindow.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1})`;
+    if (document.body.clientWidth*27 >= document.body.clientHeight*48) {
+        nariWindow.style.left = `calc(((100vh * 48 / 27) - 70vh)/2 + 7.5vh * ${9-toPoint.x} - 7.5vh / 2 + 1.7vh)`;
+        nariWindow.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1})`;
+    } else {
+        nariWindow.style.left = `calc(31.7vw + 4.1vw * ${9-toPoint.x} - 4.1vw / 2)`;
+        nariWindow.style.top = `calc(((100vw * 27 / 48) - 44vw)/2 + 4.65vw * ${toPoint.y-1} + 1vw)`;
+    }
 
     var nari = document.getElementById("NARI");
     nari.style.backgroundImage = selectedKoma.createNari().img;
