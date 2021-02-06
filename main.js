@@ -99,18 +99,18 @@ function playNariEffect() {
     effect.play();
 }
 
-function playNormalEffect() {
-    var effect = effects["normal"];
-    if (document.body.clientWidth*27 >= document.body.clientHeight*48) {
-        effect.style.left = `calc(((100vh * 48 / 27) - 70vh)/2 + 7.5vh * ${9-toPoint.x} - 2.7vh)`;
-        effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
-    } else {
-        effect.style.left = `calc(31.2vw + 4.22vw * ${9-toPoint.x} - 4.1vw / 2)`;
-        effect.style.top = `calc(((100vw * 27 / 48) - 44vw)/2 + 4.65vw * ${toPoint.y-1} - 0.9vw)`;
-    }
-    effect.style.visibility = "visible";
-    effect.play();
-}
+// function playNormalEffect() {
+//     var effect = effects["normal"];
+//     if (document.body.clientWidth*27 >= document.body.clientHeight*48) {
+//         effect.style.left = `calc(((100vh * 48 / 27) - 70vh)/2 + 7.5vh * ${9-toPoint.x} - 2.7vh)`;
+//         effect.style.top = `calc(12.8vh + 8.27vh * ${toPoint.y-1} - 3.365vh)`;
+//     } else {
+//         effect.style.left = `calc(31.2vw + 4.22vw * ${9-toPoint.x} - 4.1vw / 2)`;
+//         effect.style.top = `calc(((100vw * 27 / 48) - 44vw)/2 + 4.65vw * ${toPoint.y-1} - 0.9vw)`;
+//     }
+//     effect.style.visibility = "visible";
+//     effect.play();
+// }
 
 function setBg(element, color, opacity) {
     element.style.opacity = opacity;
@@ -142,9 +142,9 @@ function rotateTurn() {
     if (nariFlg) {
         playNariEffect();
     }
-    if (!capFlg && !nariFlg) {
-        playNormalEffect();
-    }
+    // if (!capFlg && !nariFlg) {
+    //     playNormalEffect();
+    // }
     playBoardEffect();
     capFlg = false;
     nariFlg = false;
@@ -410,7 +410,7 @@ window.onload = function () {
     sounds["komaoto"] = document.getElementById("komaoto");
     effects["kill"] = document.getElementById("kill_effect");
     effects["nari"] = document.getElementById("nari_effect");
-    effects["normal"] = document.getElementById("normal_effect");
+    // effects["normal"] = document.getElementById("normal_effect");
     effects["tumi"] = document.getElementById("tumi_effect");
     effects["oute"] = document.getElementById("oute_effect");
 
@@ -426,9 +426,9 @@ window.onload = function () {
     effects["nari"].addEventListener('ended', (event) => {
         effects["nari"].style.visibility = "hidden";
     });
-    effects["normal"].addEventListener('ended', (event) => {
-        effects["normal"].style.visibility = "hidden";
-    });
+    // effects["normal"].addEventListener('ended', (event) => {
+    //     effects["normal"].style.visibility = "hidden";
+    // });
     effects["tumi"].addEventListener('ended', (event) => {
         effects["tumi"].style.visibility = "hidden";
     });
