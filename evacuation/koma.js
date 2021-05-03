@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * 駒のクラス
  * @param {number} koma 駒を表す数値

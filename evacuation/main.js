@@ -1,3 +1,4 @@
+/* eslint-disable */
 // coding rule: https://cou929.nu/data/google_javascript_style_guide/
 let sounds = {};
 let effects = {};

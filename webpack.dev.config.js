@@ -3,10 +3,10 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.js', 
+  entry: './src/index.js',
   output: {
     path: __dirname + '/public/src',
-    filename: 'shogi-bundle.js'
+    filename: 'shogi-bundle.js',
   },
   optimization: {
     minimizer: [new TerserPlugin({
@@ -15,37 +15,37 @@ module.exports = {
   },
   module: {
     rules: [{
-      test: /\.js[x]?$/,  // .jsxも対象に含む
+      test: /\.js[x]?$/,
       exclude: /node_modules/,
       use: {
         loader: 'babel-loader',
         options: {
           presets: [
             '@babel/preset-env',
-            '@babel/preset-react' //ReactのPresetを追加
+            '@babel/preset-react',
           ],
-          plugins: ['@babel/plugin-syntax-jsx'] //JSXパース用
-        }
-      }
-    },{
+          plugins: ['@babel/plugin-syntax-jsx'],
+        },
+      },
+    }, {
       test: /\.(sa|sc|c)ss$/,
       exclude: /node_modules/,
       use: [
         MiniCssExtractPlugin.loader, // style-loaderの代わり
         {
           loader: 'css-loader',
-          options: { url: false }
+          options: {url: false},
         },
-        'sass-loader'
-      ]
-    }]
+        'sass-loader',
+      ],
+    }],
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'shogi-bundle.css',  // /dist/css/sample.cssに出力
-    })
+      filename: 'shogi-bundle.css',
+    }),
   ],
   resolve: {
-    extensions: ['.js', '.jsx', '.json']  // .jsxも省略可能対象にする
-  }
+    extensions: ['.js', '.jsx', '.json'],
+  },
 };

@@ -1,38 +1,47 @@
-import React from 'react';
-import {changeTitle} from '../scripts/changeTitle';
+import React, {useEffect, useState} from 'react';
+import changeTitle from '../scripts/changeTitle';
+import Form from './Form';
+import FormObject from './FormObject';
 import Popup from './Popup';
 import Triangles from './Triangles';
 
-class Home extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            namePopup: false,
-        };
-        this.handleNamePopup = this.handleNamePopup.bind(this);
-    };
-    componentDidMount() {
-        changeTitle('ホーム')
-    }
-    handleNamePopup(state) {
-        this.setState({
-            namePopup: state === 'open',
-        });
-    };
-    render() {
-        const TrianglesCenterLink = (
-            <div onClick={this.handleNamePopup.bind(this, 'open')}>Please click here.</div>
-        );
-        return (
-            <Triangles
-            trianglesCenterTitle='Ne:SHOGI'
-            trianglesCenterLink={TrianglesCenterLink}>
-                <Popup show={this.state.namePopup} handlePopup={this.handleNamePopup}>
-                    名前入力ポップアップ
-                </Popup>
-            </Triangles>
-        )
-    };
+/**
+ * Homeコンポーネント
+ * @param {Object} props
+ * @param {Object} props.appState
+ * @param {Object} handleAppState
+ * @return {JSX}
+ */
+function Home(props) {
+  const [namePopup, handleNamePopup] = useState(false);
+  const [name, handleName] = useState(props.appState.user.name);
+
+  useEffect(() => {
+    changeTitle('ホーム');
+  });
+
+  const TrianglesCenterLink = (
+    <div onClick={handleNamePopup.bind(this, true)}>
+      Please click here.
+    </div>
+  );
+
+  return (
+    <Triangles
+      trianglesCenterTitle='Ne:SHOGI'
+      trianglesCenterLink={TrianglesCenterLink}>
+      <Popup show={namePopup} handlePopup={handleNamePopup}>
+        <Form>
+          <FormObject
+            type='text'
+            name='name'
+            placeholder='将棋太郎'
+            value={name}
+            handleChange={handleName} />
+        </Form>
+      </Popup>
+    </Triangles>
+  );
 };
 
 export default Home;
