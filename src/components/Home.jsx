@@ -4,6 +4,7 @@ import Form from './Form';
 import FormObject from './FormObject';
 import Popup from './Popup';
 import Triangles from './Triangles';
+import '../styles/Home.scss';
 
 /**
  * Homeコンポーネント
@@ -20,16 +21,18 @@ function Home(props) {
     changeTitle('ホーム');
   });
 
-  const TrianglesCenterLink = (
-    <div onClick={handleNamePopup.bind(this, true)}>
-      Please click here.
+  const TrianglesCenterContent = (
+    <div className='shogi--home-center-content'>
+      <h1>Ne:SHOGI</h1>
+      <div>Please Click Here.</div>
     </div>
   );
 
   return (
     <Triangles
-      trianglesCenterTitle='Ne:SHOGI'
-      trianglesCenterLink={TrianglesCenterLink}>
+      TrianglesCenterContent={TrianglesCenterContent}
+      handleClick={handleNamePopup}
+    >
       <Popup show={namePopup} handlePopup={handleNamePopup}>
         <Form>
           <FormObject

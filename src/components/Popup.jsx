@@ -11,20 +11,20 @@ import '../styles/Popup.scss';
 function Popup(props) {
   if (props.show) {
     return (
-      <div className='shogi__popup_wrapper'>
-        <div className='shogi__popup'>
+      <div className='shogi--popup-wrapper'>
+        <div className='shogi--popup'>
           <button type='button'
-            className='shogi__popup_close'
+            className='shogi--popup-close'
             onClick={props.handlePopup.bind(this, false)}>
             <FontAwesomeIcon icon={faTimesCircle} />
           </button>
-          <div className='shogi__popup_content'>{props.children}</div>
+          <div className='shogi--popup-content'>{props.children}</div>
         </div>
       </div>
     );
   };
   return (
-    <div className='shogi__popup_closed'>
+    <div className='shogi--popup-closed'>
     </div>
   );
 }

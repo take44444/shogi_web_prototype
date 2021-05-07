@@ -1,13 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Noto+Serif+JP&display=swap');
 :root{
-    --shogi__accent1: rgb(198, 85, 185);
-    --shogi__accent2: rgb(65, 185, 195);
+  --shogi--root-theme: rgb(183, 194, 64);
+  --shogi--root-accent_1: rgb(198, 85, 185);
+  --shogi--root-accent_2: rgb(65, 185, 195);
 }
 html, body{
-    margin: 0;
-    padding: 0;
-    font-family: 'Noto Sans JP', sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans JP', sans-serif;
 }
-.shogi__serif{
-    font-family: 'Noto Serif JP', serif;
+.shogi--serif{
+  font-family: 'Noto Serif JP', serif;
 }

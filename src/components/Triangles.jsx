@@ -4,17 +4,21 @@ import '../styles/Triangles.scss';
 /**
  * 右上と左下に三角形があるフルスクリーンフレームコンポーネント
  * @param {Object} props
+ * @param {JSX} props.trianglesCenter centerのコンテンツ
+ * @param {Object} props.handleClick centerクリック時のハンドラ
  * @return {JSX}
  */
 function Triangles(props) {
   return (
-    <div className='shogi__triangles_wrapper'>
-      <div className='shogi__triangles_right-top'></div>
-      <div className='shogi__triangles_left-bottom'></div>
-      <div className='shogi__triangles_center shogi__triangles_link'>
-        <div className='shogi__triangles_center-content'>
-          <h1>{props.trianglesCenterTitle}</h1>
-          <div>{props.trianglesCenterLink}</div>
+    <div className='shogi--triangles-wrapper'>
+      <div className='shogi--triangles-right_top' />
+      <div className='shogi--triangles-left_bottom' />
+      <div
+        className='shogi--triangles-center shogi--triangles-link'
+        onClick={props.handleClick.bind(this, true)}
+      >
+        <div className='shogi--triangles-center-content'>
+          {props.TrianglesCenterContent}
         </div>
       </div>
       {props.children}
