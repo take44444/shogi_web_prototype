@@ -28,10 +28,20 @@ module.exports = {
         },
       },
     }, {
+      test: /\.svg$/,
+      use: [
+        {
+          loader: 'svg-react-loader',
+          options: {
+            limit: 10000,
+          },
+        },
+      ],
+    }, {
       test: /\.(sa|sc|c)ss$/,
       exclude: /node_modules/,
       use: [
-        MiniCssExtractPlugin.loader, // style-loaderの代わり
+        MiniCssExtractPlugin.loader,
         {
           loader: 'css-loader',
           options: {url: false},

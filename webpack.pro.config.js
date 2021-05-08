@@ -28,6 +28,16 @@ module.exports = {
         },
       },
     }, {
+      test: /\.svg$/,
+      use: [
+        {
+          loader: 'svg-react-loader',
+          options: {
+            limit: 10000,
+          },
+        },
+      ],
+    }, {
       test: /\.(sa|sc|c)ss$/,
       exclude: /node_modules/,
       use: [

@@ -1,0 +1,72 @@
+.shogi--triangle_swirls{
+  width: 100vw;
+  height: var(--vh);
+  overflow: hidden;
+  position: relative;
+  --shogi--triangle_swirls-edge: min(calc(min(var(--vh), 100vw) * 0.70), calc(max(var(--vh), 100vw) * 0.70));
+}
+.shogi--triangle_swirls-right_top-wrapper{
+  width: var(--shogi--triangle_swirls-edge);
+  height: calc(var(--shogi--triangle_swirls-edge) * 0.873);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.shogi--triangle_swirls-left_bottom-wrapper{
+  width: var(--shogi--triangle_swirls-edge);
+  height: calc(var(--shogi--triangle_swirls-edge) * 0.873);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: rotate(180deg);
+}
+@keyframes shogi--triangle_swirls-swirls{
+  0% {
+    stroke-dashoffset: 1750;
+    fill-opacity: 0;
+    stroke-opacity: 0;
+  }
+  15% {
+    stroke-opacity: 1;
+  }
+  85% {
+    fill-opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 2000;
+    fill-opacity: 1;
+  }
+}
+.shogi--triangle_swirls-right_top, .shogi--triangle_swirls-left_bottom{
+  stroke-width: 10;
+  stroke-dasharray: 500;
+  stroke-dashoffset: 2000;
+  animation-name: shogi--triangle_swirls-swirls;
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+.shogi--triangle_swirls-right_top{
+  fill: var(--shogi--root-accent_1);
+  stroke: var(--shogi--root-accent_1);
+}
+.shogi--triangle_swirls-left_bottom{
+  fill: var(--shogi--root-accent_2);
+  stroke: var(--shogi--root-accent_2);
+}
+.shogi--triangle_swirls-content-wrapper{
+  display: grid;
+  width: 100vw;
+  height: var(--vh);
+  grid-template-rows: 1fr auto 1fr;
+  grid-template-columns: 1fr auto 1fr;
+}
+.shogi--triangle_swirls-content{
+  grid-row: 2/3;
+  grid-column: 2/3;
+  width: 900px;
+  max-width: 95vw;
+  max-height: calc(var(--vh) * 0.95);
+  overflow-y: auto;
+  z-index: 1;
+}
