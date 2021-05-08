@@ -1,0 +1,41 @@
+.shogi--menu_button{
+  width: 100%;
+  margin: 1em 0 1em 0;
+  background-color: var(--shogi--root-text);
+  color: var(--shogi--root-background);
+  padding: 1em;
+  cursor: pointer;
+  border: none;
+  position: relative;
+}
+.shogi--menu_button-content{
+  transition: 0.3s;
+  box-sizing: border-box;
+  border: solid 1px var(--shogi--root-background);
+}
+.shogi--menu_button-content:hover{
+  color: var(--shogi--root-theme);
+  border: solid 1px var(--shogi--root-theme);
+}
+.shogi--menu_button-content-text{
+  display: block;
+  text-align: center;
+  font-size: 4em;
+  margin: 1rem;
+}
+.shogi--menu_button-ribbon-left{
+  background: linear-gradient(var(--shogi--root-accent_2), rgba(0, 0, 0, 0));;
+  position: absolute;
+  width: 2em;
+  top: 0;
+  left: 1em;
+  bottom: 1em;
+}
+.shogi--menu_button-ribbon-right{
+  background: linear-gradient(rgba(0, 0, 0, 0), var(--shogi--root-accent_1));;
+  position: absolute;
+  width: 2em;
+  top: 1em;
+  right: 1em;
+  bottom: 0;
+}

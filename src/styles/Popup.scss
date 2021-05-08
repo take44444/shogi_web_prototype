@@ -1,66 +1,60 @@
-.shogi__popup_wrapper{
-    background-color: rgba(0, 0, 0, 0.15);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    margin: auto;
-    z-index: 10;
-    display: grid;
-    grid-template-rows: 1fr auto 1fr;
+.shogi--popup-wrapper{
+  background-color: var(--shogi--root-shadow);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  z-index: 10;
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
 }
-.shogi__popup{
-    margin: auto;
-    grid-row: 2/3;
-    background-color: white;
-    border: solid 3px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    max-width: 95vw;
-    padding: 50px 15px 15px 15px;
-    box-sizing: border-box;
-    position: relative;
+.shogi--popup{
+  background-color: var(--shogi--root-background);
+  margin: auto;
+  grid-row: 2/3;
+  background-color: var(var(--shogi--root-background));
+  border: solid 3px var(--shogi--root-shadow);
+  border-radius: 10px;
+  max-width: 95vw;
+  padding: 50px 15px 15px 15px;
+  box-sizing: border-box;
+  position: relative;
 }
-.shogi__popup_close{
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 30px;
-    height: 30px;
-    font-size: 20px;
-    transition-duration: 0.5s;
+.shogi--popup-close{
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  transition-duration: 0.5s;
 }
-.shogi__popup_close:hover{
-    color: var(--shogi__accent2);
-    font-size: 20px;
+.shogi--popup-close:hover{
+  color: var(--shogi--root-theme);
+  font-size: 20px;
 }
-.shogi__popup_content{
-    width: 100%;
-    max-height: calc(var(--vh) * 0.75);
-    overflow-y: auto;
+.shogi--popup-content{
+  width: 100%;
+  max-height: calc(var(--vh) * 0.75);
+  overflow-y: auto;
 }
-.shogi__triangles_link{
-    cursor: pointer;
-    transition-duration: 0.25s;
-}
-.shogi__triangles_link:hover{
-    color: var(--shogi__accent2);
-}
-.shogi__popup_closed{
-    display: none;
+.shogi--popup-closed{
+  display: none;
 }
 @media(min-width: 640px){
-    .shogi__popup{
-        min-width: 600px;
-    }
+  .shogi--popup{
+    min-width: 600px;
+  }
 }
 @media(max-width: 639px){
-    .shogi__popup{
-        min-width: 96vw;
-    }
+  .shogi--popup{
+    min-width: 96vw;
+  }
 }

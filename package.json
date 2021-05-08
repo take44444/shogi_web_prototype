@@ -14,6 +14,11 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.1.3",
+    "eslint": "^7.25.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.23.2",
     "mini-css-extract-plugin": "^1.3.9",
     "node-sass": "^5.0.0",
     "react": "^17.0.1",
@@ -22,6 +27,7 @@
     "sass-loader": "^11.0.1",
     "serve": "^11.3.2",
     "style-loader": "^2.0.0",
+    "svg-react-loader": "^0.4.6",
     "webpack": "^5.26.3",
     "webpack-cli": "^4.5.0"
   },
@@ -37,7 +43,6 @@
     "url": "git+https://github.com/lenna-kun/shogi_web_prototype.git"
   },
   "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/lenna-kun/shogi_web_prototype/issues"
   },

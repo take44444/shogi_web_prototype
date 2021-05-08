@@ -1,3 +1,4 @@
+/* eslint-disable */
 class Kifu {
     constructor() {
         this.moves = 1;

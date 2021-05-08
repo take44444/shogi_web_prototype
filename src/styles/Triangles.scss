@@ -1,109 +1,106 @@
-@keyframes shogi__triangles_right-top {
-    0% {
-        border-top: solid 0 var(--shogi__accent1);
-        border-right: solid 0 var(--shogi__accent1);
-        border-bottom: solid 0 transparent;
-        border-left: solid 0 transparent;
-    }
-    100% {
-        border-top: solid var(--shogi__edge) var(--shogi__accent1);
-        border-right: solid var(--shogi__edge) var(--shogi__accent1);
-        border-bottom: solid var(--shogi__edge) transparent;
-        border-left: solid var(--shogi__edge) transparent;
-    }
+@keyframes shogi--triangles-right_top {
+  0% {
+    border-top: solid 0 var(--shogi--root-accent_1);
+    border-right: solid 0 var(--shogi--root-accent_1);
+    border-bottom: solid 0 transparent;
+    border-left: solid 0 transparent;
+  }
+  100% {
+    border-top: solid var(--shogi--triangles-edge) var(--shogi--root-accent_1);
+    border-right: solid var(--shogi--triangles-edge) var(--shogi--root-accent_1);
+    border-bottom: solid var(--shogi--triangles-edge) transparent;
+    border-left: solid var(--shogi--triangles-edge) transparent;
+  }
 }
-@keyframes shogi__triangles_left-bottom {
-    0% {
-        border-top: solid 0 transparent;
-        border-right: solid 0 transparent;
-        border-bottom: solid 0 var(--shogi__accent2);
-        border-left: solid 0 var(--shogi__accent2);
-    }
-    100% {
-        border-top: solid var(--shogi__edge) transparent;
-        border-right: solid var(--shogi__edge) transparent;
-        border-bottom: solid var(--shogi__edge) var(--shogi__accent2);
-        border-left: solid var(--shogi__edge) var(--shogi__accent2);
-    }
+@keyframes shogi--triangles-left_bottom {
+  0% {
+    border-top: solid 0 transparent;
+    border-right: solid 0 transparent;
+    border-bottom: solid 0 var(--shogi--root-accent_2);
+    border-left: solid 0 var(--shogi--root-accent_2);
+  }
+  100% {
+    border-top: solid var(--shogi--triangles-edge) transparent;
+    border-right: solid var(--shogi--triangles-edge) transparent;
+    border-bottom: solid var(--shogi--triangles-edge) var(--shogi--root-accent_2);
+    border-left: solid var(--shogi--triangles-edge) var(--shogi--root-accent_2);
+  }
 }
-@keyframes shogi__triangles_center {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
+@keyframes shogi--triangles-center {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-.shogi__triangles_wrapper{
-    width: 100vw;
-    height: var(--vh);
-    overflow: hidden;
-    position: relative;
+.shogi--triangles{
+  width: 100vw;
+  height: var(--vh);
+  overflow: hidden;
+  position: relative;
 }
-.shogi__triangles_right-top{
-    --shogi__edge: min(calc(min(var(--vh), 100vw) * 0.37), calc(max(var(--vh), 100vw) * 0.22));
-    width: 0;
-    height: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: -1;
-    animation-name: shogi__triangles_right-top;
-    animation-duration: 1s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
+.shogi--triangles-right_top{
+  --shogi--triangles-edge: min(calc(min(var(--vh), 100vw) * 0.37), calc(max(var(--vh), 100vw) * 0.22));
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  animation-name: shogi--triangles-right_top;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
 }
-.shogi__triangles_left-bottom{
-    --shogi__edge: min(calc(min(var(--vh), 100vw) * 0.37), calc(max(var(--vh), 100vw) * 0.22));
-    width: 0;
-    height: 0;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: -1;
-    animation-name: shogi__triangles_left-bottom;
-    animation-duration: 1s;
-    animation-timing-function: ease-out;
-    animation-fill-mode: forwards;
+.shogi--triangles-left_bottom{
+  --shogi--triangles-edge: min(calc(min(var(--vh), 100vw) * 0.37), calc(max(var(--vh), 100vw) * 0.22));
+  width: 0;
+  height: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  animation-name: shogi--triangles-left_bottom;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
 }
-.shogi__triangles_center{
-    width: var(--shogi__center-edge);
-    height: var(--shogi__center-edge);
-    font-size: calc(var(--shogi__center-edge) * 0.15);
-    background-color: rgb(255, 255, 255);
-    border: solid 1px rgb(0, 0, 0);
-    position: absolute;
-    top: calc(var(--vh) / 2 - var(--shogi__center-edge) / 2);
-    left: calc(50vw - var(--shogi__center-edge) / 2);
-    animation-name: shogi__triangles_center;
-    animation-duration: 1.5s;
-    animation-timing-function: ease-in-out;
-    animation-fill-mode: forwards;
-    transform: rotate(45deg);
-    display: grid;
-    grid-template-rows: 1fr auto 1fr;
+.shogi--triangles-center{
+  width: var(--shogi--center-edge);
+  height: var(--shogi--center-edge);
+  font-size: calc(var(--shogi--center-edge) * 0.15);
+  background-color: rgb(255, 255, 255);
+  border: solid 1px rgb(0, 0, 0);
+  position: absolute;
+  top: calc(var(--vh) / 2 - var(--shogi--center-edge) / 2);
+  left: calc(50vw - var(--shogi--center-edge) / 2);
+  animation-name: shogi--triangles-center;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+  transform: rotate(45deg);
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
 }
 @media(min-width: 640px){
-    .shogi__triangles_center{
-        --shogi__center-edge: calc(min(var(--vh), 100vw) * 0.45);
-    }
+  .shogi--triangles-center{
+    --shogi--center-edge: calc(min(var(--vh), 100vw) * 0.45);
+  }
 }
 @media(max-width: 639px){
-    .shogi__triangles_center{
-        --shogi__center-edge: calc(min(var(--vh), 100vw) * 0.65);
-    }
+  .shogi--triangles-center{
+    --shogi--center-edge: calc(min(var(--vh), 100vw) * 0.65);
+  }
 }
-.shogi__triangles_center-content{
-    grid-row: 2/3;
-    text-align: center;
-    transform: rotate(-45deg);
-    overflow: hidden;
+.shogi--triangles-center-content{
+  grid-row: 2/3;
+  text-align: center;
+  transform: rotate(-45deg);
+  overflow: hidden;
 }
-.shogi__triangles_center-content > h1{
-    font-size: 1em;
-    font-weight: normal;
-    letter-spacing: 0.25em;
+.shogi--triangles-link{
+  cursor: pointer;
+  transition-duration: 0.25s;
 }
-.shogi__triangles_center-content > div{
-    font-size: 0.5em;
+.shogi--triangles-link:hover{
+  color: var(--shogi--root-theme);
 }

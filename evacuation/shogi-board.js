@@ -1,3 +1,4 @@
+/* eslint-disable */
 const MODE = { BOOL: 0, POINT: 1, ITERATOR: 2 };
 const BOARD_STATE = { NOTHING: 0, OUTE: 1, TUMI: 2, SENNICHITE: 3 };
 
