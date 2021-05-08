@@ -4,7 +4,7 @@ import '../styles/MenuButton.scss';
 /**
  * メニュー画面のボタン
  * @param {Object} props
- * @param {String} props.text ボタンのテキスト\
+ * @param {String} props.text ボタンのテキスト
  * @return {JSX}
  */
 function MenuButton(props) {
