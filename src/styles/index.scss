@@ -3,11 +3,16 @@
   --shogi--root-theme: rgb(183, 194, 64);
   --shogi--root-accent_1: rgb(198, 85, 185);
   --shogi--root-accent_2: rgb(65, 185, 195);
+  --shogi--root-background: rgb(255, 255, 255);
+  --shogi--root-text: rgb(0, 0, 0);
+  --shogi--root-shadow: rgba(0, 0, 0, 0.2);
 }
 html, body{
   margin: 0;
   padding: 0;
   font-family: 'Noto Sans JP', sans-serif;
+  background-color: var(--shogi--root-background);
+  color: var(--shogi--root-text);
 }
 .shogi--serif{
   font-family: 'Noto Serif JP', serif;

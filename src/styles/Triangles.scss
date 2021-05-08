@@ -34,7 +34,7 @@
     opacity: 1;
   }
 }
-.shogi--triangles-wrapper{
+.shogi--triangles{
   width: 100vw;
   height: var(--vh);
   overflow: hidden;
@@ -47,7 +47,6 @@
   position: absolute;
   top: 0;
   right: 0;
-  z-index: -1;
   animation-name: shogi--triangles-right_top;
   animation-duration: 1s;
   animation-timing-function: ease-out;
@@ -60,7 +59,6 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  z-index: -1;
   animation-name: shogi--triangles-left_bottom;
   animation-duration: 1s;
   animation-timing-function: ease-out;

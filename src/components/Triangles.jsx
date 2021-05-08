@@ -10,7 +10,7 @@ import '../styles/Triangles.scss';
  */
 function Triangles(props) {
   return (
-    <div className='shogi--triangles-wrapper'>
+    <div className='shogi--triangles'>
       <div className='shogi--triangles-right_top' />
       <div className='shogi--triangles-left_bottom' />
       <div

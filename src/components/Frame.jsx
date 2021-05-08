@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import Home from './Home';
+import MainMenu from './MainMenu';
 import NotFound from './NotFound';
 
 /**
@@ -22,8 +23,18 @@ function Frame() {
   return (
     <Router>
       <Switch>
-        <Route path='/' exact render={() => <Home {...commonProps} />} />
-        <Route path='/' component={NotFound} />
+        <Route
+          path='/' exact
+          render={() => <Home {...commonProps} />}
+        />
+        <Route
+          path='/main' exact
+          render={() => <MainMenu {...commonProps} />}
+        />
+        <Route
+          path='/'
+          component={NotFound}
+        />
       </Switch>
     </Router>
   );
