@@ -3,6 +3,7 @@ import Piece from './components/Piece';
 import ShogiBoard from './ShogiBoard';
 import {Fu, Ky, Ke} from './Koma';
 import {point, komaToComponent} from './utils';
+
 /**
  * 自分の陣地ないか否かをBooleanで返す関数
  * @param {Number} x 盤における筋
@@ -24,15 +25,30 @@ function isGoteArea(x, y) {
 }
 
 /**
-* 与えられた駒がそのマスに移動した時に成れる否かをBooleanで返す関数
+* 与えられた駒がそのマスに移動した時に成れるか否かをBooleanで返す関数
 * @param {Number} koma 駒を表す数値
 * @param {Number} x 盤における筋
 * @param {Number} y 盤における段
-* @return {Boolean} 引数で与えられた駒が，同じく引数で与えられたマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
+* @return {Boolean} 引数で与えられた駒が，そのマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
 */
 function canNari(koma, x, y) {
   return (koma.canNari &&
   ((koma.isSente && isGoteArea(x, y)) || (!koma.isSente && isSenteArea(x, y))));
+}
+
+/**
+ * 与えられた駒がそのマスに移動したときに成らずを選択できるか否かをBooleanで返す関数
+ * @param {Number} koma 駒を表す数値
+ * @param {Number} y 盤における段
+ * @return {Boolean} 引数で与えられた駒が，そのマスに移動した時に成らずを選択できる場合はtrue，違う場合はfalseを返す
+ */
+function canNarazu(koma, y) {
+  return !((koma instanceof Ke && koma.isSente && y <= 2) ||
+  (koma instanceof Ky && koma.isSente && y == 1) ||
+  (koma instanceof Fu && koma.isSente && y == 1) ||
+  (koma instanceof Ke && !koma.isSente && y >= 8) ||
+  (koma instanceof Ky && !koma.isSente && y == 9) ||
+  (koma instanceof Fu && !koma.isSente && y == 9));
 }
 
 /**
@@ -141,12 +157,7 @@ class Game {
             path, koma.createNari())) {
           continue;
         }
-        if ((koma instanceof Ke && koma.isSente && path.y <= 2) ||
-        (koma instanceof Ky && koma.isSente && path.y == 1) ||
-        (koma instanceof Fu && koma.isSente && path.y == 1) ||
-        (koma instanceof Ke && !koma.isSente && path.y >= 8) ||
-        (koma instanceof Ky && !koma.isSente && path.y == 9) ||
-        (koma instanceof Fu && !koma.isSente && path.y == 9)) {
+        if (!canNarazu(koma, path.y)) {
           props.code =
             `${fromX}${fromY}${path.x}${path.y}${koma.createNari().symbol}`;
         } else {
@@ -180,6 +191,24 @@ class Game {
       }
     }
     /** 手駒 */
+    for (let turn = 0; turn <= 1; turn++) {
+      let tegoma = this.gameState.boardState.myTegoma;
+      if (turn != +this.order) {
+        tegoma = this.gameState.boardState.yourTegoma;
+      }
+      tegoma.length = 0;
+      for (const koma of ['FU', 'KY', 'KE', 'GI', 'KI', 'KA', 'HI']) {
+        for (let i = 0; i < shogiBoard.tegoma[turn][koma].num; i++) {
+          const props = {
+            mine: turn == +this.order,
+            key: `0${i.toString(20)}${koma}`,
+          };
+          tegoma.push(
+              komaToComponent(shogiBoard.tegoma[turn][koma].koma, props),
+          );
+        }
+      }
+    }
   }
 };
 

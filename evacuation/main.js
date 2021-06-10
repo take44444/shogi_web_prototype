@@ -71,30 +71,6 @@ function updateKifuTable(moves, csaData) {
 }
 
 /**
- * 手駒を表示する関数
- */
-function showTegoma() {
-    for (var turn = 0; turn <= 1; turn++) {
-        for (var koma in shogiBoard.tegoma[turn]) {
-            var square = document.getElementById(`${turn==SENTE?"S":"G"}${koma}`);
-            square.dataset.num = shogiBoard.tegoma[turn][koma].num;
-
-            if (shogiBoard.tegoma[turn][koma].num != 0) {
-                (function () {
-                    var turnLocal = turn;
-                    var komaLocal = shogiBoard.tegoma[turn][koma].koma;
-                    square.onclick = function () {
-                        if (+shogiBoard.turn == turnLocal && gameState == SELECTING) {
-                            selectTegoma(komaLocal);
-                        }
-                    }
-                })();
-            }
-        }
-    }
-}
-
-/**
  * 動かしたい(使いたい)駒を選択した後に，設置可能な空白マスを選択した時に必要な処理を行う関数
  * @param {Number} x 選択した，設置可能な空白マスの筋
  * @param {Number} y 選択した，設置可能な空白マスの段
