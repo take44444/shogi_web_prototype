@@ -124,7 +124,7 @@ class Game {
     /** 手駒が選択されたとき */
     if (code.startsWith('0')) {
       const index = code[1];
-      koma = this.shogiBoard.tegoma[+this.order][code.substr(2, 3)].koma;
+      koma = this.shogiBoard.tegoma[+this.order][code.substr(2, 2)].koma;
       this.setDrop(koma, index);
       this.handleChange(this.gameState);
       return;
@@ -175,7 +175,8 @@ class Game {
       };
       /** その場所に動かした時，自分の王様に利きがないかを調べる */
       if (canNari(koma, fromX, fromY) || canNari(koma, path.x, path.y)) {
-        if (!this.shogiBoard.canMove(point(x, y), path, koma.createNari())) {
+        if (!this.shogiBoard.canMove(point(fromX, fromY),
+            path, koma.createNari())) {
           continue;
         }
         if ((koma instanceof Ke && koma.isSente && path.y <= 2) ||
