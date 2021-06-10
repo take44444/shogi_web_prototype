@@ -1,46 +1,8 @@
 import React from 'react';
 import Piece from './components/Piece';
 import ShogiBoard from './ShogiBoard';
-// import ? from './Koma';
-
-/**
- * KomaクラスのインスタンスからReactのコンポーネントに変換する関数
- * @param {Koma} koma
- * @param {Object} props
- * @return {React}
- */
-function komaToComponent(koma, props) {
-  if (koma instanceof Ry) {
-    return <Piece.Ry {...props}/>;
-  } else if (koma instanceof Um) {
-    return <Piece.Um {...props}/>;
-  } else if (koma instanceof Ng) {
-    return <Piece.Ng {...props}/>;
-  } else if (koma instanceof Nk) {
-    return <Piece.Nk {...props}/>;
-  } else if (koma instanceof Ny) {
-    return <Piece.Ny {...props}/>;
-  } else if (koma instanceof To) {
-    return <Piece.To {...props}/>;
-  } else if (koma instanceof Ou) {
-    return <Piece.Ou {...props}/>;
-  } else if (koma instanceof Hi) {
-    return <Piece.Hi {...props}/>;
-  } else if (koma instanceof Ka) {
-    return <Piece.Ka {...props}/>;
-  } else if (koma instanceof Ki) {
-    return <Piece.Ki {...props}/>;
-  } else if (koma instanceof Gi) {
-    return <Piece.Gi {...props}/>;
-  } else if (koma instanceof Ke) {
-    return <Piece.Ke {...props}/>;
-  } else if (koma instanceof Ky) {
-    return <Piece.Ky {...props}/>;
-  } else if (koma instanceof Fu) {
-    return <Piece.Fu {...props}/>;
-  }
-}
-
+import {Fu, Ky, Ke} from './Koma';
+import {point, komaToComponent} from './utils';
 /**
  * 自分の陣地ないか否かをBooleanで返す関数
  * @param {Number} x 盤における筋
@@ -180,11 +142,11 @@ class Game {
           continue;
         }
         if ((koma instanceof Ke && koma.isSente && path.y <= 2) ||
-        (koam instanceof Ky && koam.isSente && path.y == 1) ||
+        (koma instanceof Ky && koma.isSente && path.y == 1) ||
         (koma instanceof Fu && koma.isSente && path.y == 1) ||
         (koma instanceof Ke && !koma.isSente && path.y >= 8) ||
-        (koam instanceof Ky && !koma.isSente && path.y == 9) ||
-        (koam instanceof Fu && !koma.isSente && path.y == 9)) {
+        (koma instanceof Ky && !koma.isSente && path.y == 9) ||
+        (koma instanceof Fu && !koma.isSente && path.y == 9)) {
           props.code =
             `${fromX}${fromY}${path.x}${path.y}${koma.createNari().symbol}`;
         } else {

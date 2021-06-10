@@ -651,3 +651,5 @@ class Wall extends Koma {
         this.isWall_ = true;
     }
 }
+
+export default {Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, Um, Ry, Empty, Wall};
