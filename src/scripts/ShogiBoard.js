@@ -1,3 +1,5 @@
+import Kifu from './Kifu';
+
 const MODE = {
   BOOL: 0, POINT: 1, ITERATOR: 2,
 };
