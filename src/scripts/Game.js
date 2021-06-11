@@ -218,9 +218,17 @@ class Game {
         if (!canNarazu(koma, path.y)) {
           props.code = `${from}${path}${koma.createNari()}`;
         } else {
-          props.choose = [ // TODO
-            `${from}${path}${koma}`,
-            `${from}${path}${koma}`,
+          props.choose = [
+            komaToComponent(koma, {
+              key: 'narazu',
+              mine: true,
+              code: `${from}${path}${koma}`,
+            }),
+            komaToComponent(koma.createNari(), {
+              key: 'nari',
+              mine: true,
+              code: `${from}${path}${koma.createNari()}`,
+            }),
           ];
         }
       } else if (this.shogiBoard.canMove(from, path, koma)) {
