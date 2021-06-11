@@ -74,7 +74,7 @@ class Game {
       events: [],
     };
     this.setCurrentBoard();
-    this.setCurrentTegoma(null, null);
+    this.setCurrentTegoma(null, null, null);
     this.handleChange = handleChange;
     this.handleChange(this.gameState);
   };
@@ -84,7 +84,6 @@ class Game {
    * @param {String} code 指し手(CSA)
    */
   move(code) {
-    this.events.length = ['put'];
     const komaStr = code.substr(4, 2);
     let koma;
     let from;
@@ -96,11 +95,11 @@ class Game {
     if (code[0] == '0') {
       /** 手駒を使った場合 */
       from = point(0, 0);
-      koma = this.shogiBoard.tegoma[0][komaStr].koma;
+      koma = this.shogiBoard.tegoma[+this.shogiBoard.turn][komaStr].koma;
       const index = parseInt(code[1], 20);
       event = this.shogiBoard.move(from, to, koma);
       this.setCurrentBoard();
-      this.setCurrentTegoma(komaStr, index);
+      this.setCurrentTegoma(koma, index, null);
     } else {
       /** ボード上の駒を動かした場合 */
       from = point(Number(code[0]), Number(code[1]));
@@ -112,7 +111,11 @@ class Game {
       }
       event = this.shogiBoard.move(from, to, koma);
       this.setCurrentBoard();
-      this.setCurrentTegoma(null, null);
+      if (killee instanceof Empty) {
+        this.setCurrentTegoma(null, null, null);
+      } else {
+        this.setCurrentTegoma(null, null, killee);
+      }
       const props = {
         key: `${from.x}${from.y}`,
         from: komaToComponent(komaBefore, {mine: komaBefore == this.order}),
@@ -144,23 +147,7 @@ class Game {
     this.gameState.boardState
         .board[(to.y-1)*9+(to.x-1)] = <Piece.Replace {...propsRep}/>;
 
-    switch (event) {
-      case BOARD_STATE.NOTHING:
-        break;
-      case BOARD_STATE.OUTE:
-        this.events.push('oute');
-        break;
-      case BOARD_STATE.TUMI:
-        if (this.shogiBoard.turn == this.order) {
-          this.events.push('tumi-mine');
-        } else {
-          this.events.push('tumi-your');
-        }
-        break;
-      case BOARD_STATE.SENNICHITE:
-        this.events.push('sennichite');
-        break;
-    }
+    this.setEvents(event);
     this.handleChange(this.gameState);
   };
 
@@ -169,10 +156,10 @@ class Game {
    * @param {String} code
    */
   getActive(code) {
-    this.events.length = 0;
+    this.gameState.events.length = 0;
     if (code === null) {
       this.setCurrentBoard();
-      this.setCurrentTegoma(null, null);
+      this.setCurrentTegoma(null, null, null);
       this.handleChange(this.gameState);
       return;
     }
@@ -273,10 +260,14 @@ class Game {
 
   /**
    * 現在の手駒をセット
-   * @param {String} komaUsed
+   * @param {Koma} komaUsed
    * @param {Int} index
+   * @param {Koma} komaCaptured
    */
-  setCurrentTegoma(komaUsed, index) {
+  setCurrentTegoma(komaUsed, index, komaCaptured) {
+    if (komaCaptured.isNari) {
+      komaCaptured = komaCaptured.createNarazu();
+    }
     for (let turn = 0; turn <= 1; turn++) {
       let tegoma = this.gameState.boardState.myTegoma;
       if (turn != +this.order) {
@@ -284,9 +275,10 @@ class Game {
       }
       tegoma.length = 0;
       for (const komaStr of ['FU', 'KY', 'KE', 'GI', 'KI', 'KA', 'HI']) {
+        const koma = this.shogiBoard.tegoma[turn][komaStr].koma;
         for (let i = 0; i < this.shogiBoard.tegoma[turn][komaStr].num; i++) {
-          const koma = this.shogiBoard.tegoma[turn][komaStr].koma;
-          if (komaUsed == komaStr && index == i) {
+          if ((!(komaUsed === null)) && (+komaUsed.isSente) == turn &&
+          komaUsed.symbol == komaStr && index == i) {
             const props = {
               key: `--${komaStr}`,
               from: komaToComponent(koma, {mine: koma.isSente == this.order}),
@@ -304,7 +296,42 @@ class Game {
               komaToComponent(koma, props),
           );
         }
+        if ((!(komaCaptured === null)) && (+komaCaptured.isSente) != turn &&
+          komaCaptured.symbol == komaStr) {
+          const props = {
+            from: <Piece.Empty />,
+            to: komaToComponent(koma, {
+              mine: koma.isSente == this.order,
+            }),
+          };
+          tegoma[tegoma.length-1] = <Piece.Replace {...props}/>;
+        }
       }
+    }
+  }
+
+  /**
+   * イベントをセットするメソッド
+   * @param {Int} event
+   */
+  setEvents(event) {
+    this.gameState.events = ['put'];
+    switch (event) {
+      case BOARD_STATE.NOTHING:
+        break;
+      case BOARD_STATE.OUTE:
+        this.gameState.events.push('oute');
+        break;
+      case BOARD_STATE.TUMI:
+        if (this.shogiBoard.turn == this.order) {
+          this.gameState.events.push('tumi-mine');
+        } else {
+          this.gameState.events.push('tumi-your');
+        }
+        break;
+      case BOARD_STATE.SENNICHITE:
+        this.gameState.events.push('sennichite');
+        break;
     }
   }
 };
