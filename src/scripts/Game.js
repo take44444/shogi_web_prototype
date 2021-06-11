@@ -1,13 +1,13 @@
 import React from 'react';
 import Piece from './components/Piece';
-import ShogiBoard from './ShogiBoard';
+import {BOARD_STATE, ShogiBoard} from './ShogiBoard';
 import {Fu, Ky, Ke} from './Koma';
 import {point, komaToComponent} from './utils';
 
 /**
  * 自分の陣地ないか否かをBooleanで返す関数
- * @param {Number} x 盤における筋
- * @param {Number} y 盤における段
+ * @param {Int} x 盤における筋
+ * @param {Int} y 盤における段
  * @return {Boolean} 引数で与えられたマスが自分の陣地内の場合はtrue，違う場合はfalseを返す
  */
 function isSenteArea(x, y) {
@@ -16,8 +16,8 @@ function isSenteArea(x, y) {
 
 /**
 * 敵の陣地ないか否かをBooleanで返す関数
-* @param {Number} x 盤における筋
-* @param {Number} y 盤における段
+* @param {Int} x 盤における筋
+* @param {Int} y 盤における段
 * @return {Boolean} 引数で与えられたマスが敵の陣地内の場合はtrue，違う場合はfalseを返す
 */
 function isGoteArea(x, y) {
@@ -26,9 +26,9 @@ function isGoteArea(x, y) {
 
 /**
 * 与えられた駒がそのマスに移動した時に成れるか否かをBooleanで返す関数
-* @param {Number} koma 駒を表す数値
-* @param {Number} x 盤における筋
-* @param {Number} y 盤における段
+* @param {Int} koma 駒を表す数値
+* @param {Int} x 盤における筋
+* @param {Int} y 盤における段
 * @return {Boolean} 引数で与えられた駒が，そのマスに移動した時に成れる場合はtrue，違う場合はfalseを返す
 */
 function canNari(koma, x, y) {
@@ -38,8 +38,8 @@ function canNari(koma, x, y) {
 
 /**
  * 与えられた駒がそのマスに移動したときに成らずを選択できるか否かをBooleanで返す関数
- * @param {Number} koma 駒を表す数値
- * @param {Number} y 盤における段
+ * @param {Int} koma 駒を表す数値
+ * @param {Int} y 盤における段
  * @return {Boolean} 引数で与えられた駒が，そのマスに移動した時に成らずを選択できる場合はtrue，違う場合はfalseを返す
  */
 function canNarazu(koma, y) {
@@ -73,18 +73,94 @@ class Game {
       history: [],
       events: [],
     };
+    this.setCurrentBoard();
+    this.setCurrentTegoma(null, null);
     this.handleChange = handleChange;
     this.handleChange(this.gameState);
   };
 
   /**
    * 指し手を一度行う
-   * @param {String} code 指し手の情報
+   * @param {String} code 指し手(CSA)
    */
   move(code) {
-    // 何らかの処理
-    this.setCurrentBoard();
-    // 何らかの処理
+    this.events.length = ['put'];
+    const komaStr = code.substr(4, 2);
+    let koma;
+    let from;
+    const to = point(Number(code[2]), Number(code[3]));
+    let event;
+    const killee = this.shogiBoard.board[to.x][to.y];
+    let nariFlg = false;
+
+    if (code[0] == '0') {
+      /** 手駒を使った場合 */
+      from = point(0, 0);
+      koma = this.shogiBoard.tegoma[0][komaStr].koma;
+      const index = parseInt(code[1], 20);
+      event = this.shogiBoard.move(from, to, koma);
+      this.setCurrentBoard();
+      this.setCurrentTegoma(komaStr, index);
+    } else {
+      /** ボード上の駒を動かした場合 */
+      from = point(Number(code[0]), Number(code[1]));
+      komaBefore = this.shogiBoard.board[from.x][from.y];
+      koma = komaBefore;
+      if (this.shogiBoard.board[from.x][from.y].symbol != komaStr) {
+        koma = koma.createNari();
+        nariFlg = true;
+      }
+      event = this.shogiBoard.move(from, to, koma);
+      this.setCurrentBoard();
+      this.setCurrentTegoma(null, null);
+      const props = {
+        key: `${from.x}${from.y}`,
+        from: komaToComponent(komaBefore, {mine: komaBefore == this.order}),
+        to: <Piece.Empty />,
+      };
+      this.gameState.boardState
+          .board[(from.y-1)*9+(from.x-1)] = <Piece.Replace {...props} />;
+    }
+    this.shogiBoard.rotateTurn();
+
+    const propsRep = {
+      from: komaToComponent(killee, {
+        mine: (!(killee instanceof Empty)) && killee.isSente == this.order,
+      }),
+    };
+    if (nariFlg) {
+      const propsRev = {
+        from: komaToComponent(koma.createNarazu(), {
+          mine: koma.isSente == this.order,
+        }),
+        to: komaToComponent(koma, {
+          mine: koma.isSente == this.order,
+        }),
+      };
+      propsRep.to = <Piece.Reverse {...propsRev}/>;
+    } else {
+      propsRep.to = komaToComponent(koma, {mine: koma.isSente == this.order});
+    }
+    this.gameState.boardState
+        .board[(to.y-1)*9+(to.x-1)] = <Piece.Replace {...propsRep}/>;
+
+    switch (event) {
+      case BOARD_STATE.NOTHING:
+        break;
+      case BOARD_STATE.OUTE:
+        this.events.push('oute');
+        break;
+      case BOARD_STATE.TUMI:
+        if (this.shogiBoard.turn == this.order) {
+          this.events.push('tumi-mine');
+        } else {
+          this.events.push('tumi-your');
+        }
+        break;
+      case BOARD_STATE.SENNICHITE:
+        this.events.push('sennichite');
+        break;
+    }
     this.handleChange(this.gameState);
   };
 
@@ -93,14 +169,16 @@ class Game {
    * @param {String} code
    */
   getActive(code) {
+    this.events.length = 0;
     if (code === null) {
       this.setCurrentBoard();
+      this.setCurrentTegoma(null, null);
       this.handleChange(this.gameState);
       return;
     }
     let koma;
     /** 手駒が選択されたとき */
-    if (code.startsWith('0')) {
+    if (code[0] == '0') {
       const index = code[1];
       koma = this.shogiBoard.tegoma[+this.order][code.substr(2, 2)].koma;
       this.setDrop(koma, index);
@@ -123,6 +201,7 @@ class Game {
   setDrop(koma, index) {
     for (const path of koma.dropGen(this.shogiBoard.board)) {
       const props = {
+        // 移動先に駒はないため，mineではない
         key: `${path.x}${path.y}`,
         active: true,
         code: `0${index}${path.x}${path.y}${koma.symbol}`,
@@ -133,6 +212,7 @@ class Game {
       }
       const x = path.x - 1;
       const y = path.y - 1;
+      // 移動先はEmpty
       this.gameState.boardState.board[y*9+x] = <Piece.Empty {...props}/>;
     }
   }
@@ -147,8 +227,8 @@ class Game {
     for (const path of koma.pathGen(fromX, fromY, this.shogiBoard.board)) {
       const to = this.shogiBoard.board[path.x][path.y];
       const props = {
+        // このメソッドはturn==orderの時しか呼ばれないため，移動先はmineではない
         key: `${path.x}${path.y}`,
-        mine: to.isSente == this.order,
         active: true,
       };
       /** その場所に動かした時，自分の王様に利きがないかを調べる */
@@ -176,35 +256,52 @@ class Game {
   }
 
   /**
-   * 現在の盤面を表示する
+   * 現在のボードをセット
    */
   setCurrentBoard() {
-    /** ボード */
     for (let x = 0; x < 9; x++) {
       for (let y = 0; y < 9; y++) {
         const koma = this.shogiBoard.board[x+1][y+1];
         const props = {
           key: `${x+1}${y+1}`,
-          mine: koma.isSente == this.order,
+          mine: (!(koma instanceof Empty)) && (koma.isSente == this.order),
         };
         this.gameState.boardState.board[y*9+x] = komaToComponent(koma, props);
       }
     }
-    /** 手駒 */
+  }
+
+  /**
+   * 現在の手駒をセット
+   * @param {String} komaUsed
+   * @param {Int} index
+   */
+  setCurrentTegoma(komaUsed, index) {
     for (let turn = 0; turn <= 1; turn++) {
       let tegoma = this.gameState.boardState.myTegoma;
       if (turn != +this.order) {
         tegoma = this.gameState.boardState.yourTegoma;
       }
       tegoma.length = 0;
-      for (const koma of ['FU', 'KY', 'KE', 'GI', 'KI', 'KA', 'HI']) {
-        for (let i = 0; i < shogiBoard.tegoma[turn][koma].num; i++) {
+      for (const komaStr of ['FU', 'KY', 'KE', 'GI', 'KI', 'KA', 'HI']) {
+        for (let i = 0; i < this.shogiBoard.tegoma[turn][komaStr].num; i++) {
+          const koma = this.shogiBoard.tegoma[turn][komaStr].koma;
+          if (komaUsed == komaStr && index == i) {
+            const props = {
+              key: `--${komaStr}`,
+              from: komaToComponent(koma, {mine: koma.isSente == this.order}),
+              to: <Piece.Empty />,
+            };
+            tegoma.push(
+                <Piece.Replace {...props}/>,
+            );
+          }
           const props = {
             mine: turn == +this.order,
-            key: `0${i.toString(20)}${koma}`,
+            key: `0${i.toString(20)}${komaStr}`,
           };
           tegoma.push(
-              komaToComponent(shogiBoard.tegoma[turn][koma].koma, props),
+              komaToComponent(koma, props),
           );
         }
       }

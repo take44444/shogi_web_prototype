@@ -89,8 +89,8 @@ class Koma {
 
   /**
    * 駒が移動できるマスのジェネレータ
-   * @param {Number} x 選択した駒の筋
-   * @param {Number} y 選択した駒の段
+   * @param {Int} x 選択した駒の筋
+   * @param {Int} y 選択した駒の段
    * @param {Array} board 現在の盤の可変参照
    * @return {Generator}
    */

@@ -1,6 +1,8 @@
 import React from 'react';
 import Piece from './components/Piece';
-import {Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, Um, Ry} from './Koma';
+import {
+  Fu, Ky, Ke, Gi, Ki, Ka, Hi, Ou, To, Ny, Nk, Ng, Um, Ry, Empty,
+} from './Koma';
 
 /**
  * 座標のクラス
@@ -80,6 +82,8 @@ function komaToComponent(koma, props) {
     return <Piece.Ky {...props}/>;
   } else if (koma instanceof Fu) {
     return <Piece.Fu {...props}/>;
+  } else if (koma instanceof Empty) {
+    return <Piece.Empty {...props}/>;
   }
 }
 

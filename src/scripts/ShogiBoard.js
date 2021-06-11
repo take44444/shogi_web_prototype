@@ -168,7 +168,7 @@ class ShogiBoard {
    * @param {Point} from 移動元
    * @param {Point} to 移動先
    * @param {Koma} koma 駒
-   * @return {Number}
+   * @return {Int}
    */
   move(from, to, koma) {
     let ret = BOARD_STATE.NOTHING;
@@ -310,8 +310,8 @@ class ShogiBoard {
    * 利きを調べるメソッド
    * @param {Point} target
    * @param {Boolean} checkTurn
-   * @param {Number} mode
-   * @return {*}
+   * @param {Int} mode
+   * @return {Boolean/Point/Array}
    */
   searchKiller(target, checkTurn, mode=MODE.BOOL) {
     let ret;
@@ -476,8 +476,8 @@ class ShogiBoard {
    * @param {Boolean} checkTurn
    * @param {Function} updateX
    * @param {Function} updateY
-   * @param {Number} mode
-   * @return {Array/Point/Boolean}
+   * @param {Int} mode
+   * @return {Boolean/Point/Array}
    */
   searchKillerSub(target, checkList, checkTurn, updateX, updateY,
       mode=MODE.BOOL) {
@@ -543,4 +543,4 @@ class ShogiBoard {
   }
 }
 
-export default ShogiBoard;
+export default {BOARD_STATE, ShogiBoard};
