@@ -77,6 +77,14 @@ class Koma {
   }
 
   /**
+   * 文字列化
+   * @return {String}
+   */
+  toString() {
+    return this.symbol_;
+  }
+
+  /**
    * 指定されたマスにある駒が敵の駒か調べるメソッド
    * @param {point} cmp
    * @param {Array} board
