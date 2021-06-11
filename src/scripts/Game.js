@@ -100,24 +100,20 @@ class Game {
       /** ボード上の駒を動かした場合 */
       komaBefore = this.shogiBoard.board[code.from.x][code.from.y];
       koma = komaBefore;
-      if (this.shogiBoard.board[code.from.x][code.from.y]
-          .symbol != code.komaStr) {
+      if (this.shogiBoard
+          .board[code.from.x][code.from.y].symbol != code.komaStr) {
         koma = koma.createNari();
         nariFlg = true;
       }
       event = this.shogiBoard.move(code.from, code.to, koma);
       this.setCurrentBoard();
-      if (killee instanceof Empty) {
-        this.setCurrentTegoma(null, null, null);
-      } else {
-        this.setCurrentTegoma(null, null, killee);
-      }
+      this.setCurrentTegoma(null, null, killee);
       const x = code.from.x - 1;
       const y = code.from.y - 1;
       this.gameState.boardState.board[y*9+x] = <Piece.Replace {...{
         key: code.from.toString(),
         from: komaToComponent(komaBefore, {
-          mine: komaBefore == this.order,
+          mine: koma.isSente == this.order,
         }),
         to: <Piece.Empty />,
       }} />;
@@ -216,15 +212,13 @@ class Game {
       };
       /** その場所に動かした時，自分の王様に利きがないかを調べる */
       if (canNari(koma, from) || canNari(koma, path)) {
-        if (!this.shogiBoard.canMove(from,
-            path, koma.createNari())) {
+        if (!this.shogiBoard.canMove(from, path, koma.createNari())) {
           continue;
         }
         if (!canNarazu(koma, path.y)) {
-          props.code =
-            `${from}${path}${koma.createNari()}`;
+          props.code = `${from}${path}${koma.createNari()}`;
         } else {
-          props.choose = [
+          props.choose = [ // TODO
             `${from}${path}${koma}`,
             `${from}${path}${koma}`,
           ];
